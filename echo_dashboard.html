@@ -32,7 +32,6 @@
       min-height: 100vh;
     }
 
-    /* ── HEADER ── */
     header {
       background: linear-gradient(135deg, #1E1B3A 0%, #3D3585 100%);
       color: #fff;
@@ -43,234 +42,78 @@
       gap: 16px;
     }
     .header-left { display: flex; align-items: center; gap: 14px; }
-    .header-icon {
-      width: 44px; height: 44px;
-      background: var(--brand-lt);
-      border-radius: 10px;
-      display: grid; place-items: center;
-      font-size: 22px;
-    }
+    .header-icon { width: 44px; height: 44px; background: var(--brand-lt); border-radius: 10px; display: grid; place-items: center; font-size: 22px; }
     .header-title h1 { font-size: 20px; font-weight: 700; letter-spacing: -.3px; }
     .header-title p  { font-size: 13px; opacity: .7; margin-top: 2px; }
-    .header-meta {
-      text-align: right;
-      font-size: 12px;
-      opacity: .65;
-      line-height: 1.6;
-    }
-    .badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
-    }
+    .header-meta { text-align: right; font-size: 12px; opacity: .65; line-height: 1.6; }
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
     .badge-live { background: rgba(34,197,94,.2); color: #16a34a; }
 
-    /* ── TAB NAV ── */
-    .tab-nav {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px;
-      display: flex;
-      gap: 4px;
-    }
-    .tab-btn {
-      padding: 14px 20px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
-      border: none;
-      background: none;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -1px;
-      transition: color .15s, border-color .15s;
-      letter-spacing: .1px;
-    }
+    .tab-nav { background: #fff; border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; gap: 4px; }
+    .tab-btn { padding: 14px 20px; font-size: 13px; font-weight: 600; color: var(--muted); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; transition: color .15s, border-color .15s; letter-spacing: .1px; }
     .tab-btn:hover { color: var(--brand); }
-    .tab-btn.active {
-      color: var(--brand);
-      border-bottom-color: var(--brand);
-    }
+    .tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); }
 
-    /* ── TAB PANELS ── */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── LAYOUT ── */
     .page { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+    .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin-bottom: 12px; }
 
-    .section-title {
-      font-size: 13px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .8px; color: var(--muted); margin-bottom: 12px;
-    }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent, var(--brand)); border-radius: var(--radius) var(--radius) 0 0; }
+    .kpi-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+    .kpi-value { font-size: 30px; font-weight: 800; letter-spacing: -1px; color: var(--text); }
+    .kpi-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .kpi-sub { margin-top: 8px; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .kpi-sub .up { color: var(--green); font-weight: 600; }
+    .kpi-sub .down { color: var(--red); font-weight: 600; }
 
-    /* ── KPI CARDS ── */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-    .kpi-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 20px;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-    }
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--accent, var(--brand));
-      border-radius: var(--radius) var(--radius) 0 0;
-    }
-    .kpi-icon {
-      font-size: 24px;
-      margin-bottom: 8px;
-      display: block;
-    }
-    .kpi-value {
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      color: var(--text);
-    }
-    .kpi-label {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .kpi-sub {
-      margin-top: 8px;
-      font-size: 11px;
-      color: var(--muted);
-      display: flex; align-items: center; gap: 4px;
-    }
-    .kpi-sub .up   { color: var(--green); font-weight: 600; }
-    .kpi-sub .down { color: var(--red);   font-weight: 600; }
-
-    /* ── CHART GRID ── */
-    .chart-row {
-      display: grid;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
+    .chart-row { display: grid; gap: 16px; margin-bottom: 20px; }
     .chart-row.two   { grid-template-columns: 1fr 1fr; }
     .chart-row.three { grid-template-columns: 2fr 1fr 1fr; }
     .chart-row.full  { grid-template-columns: 1fr; }
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 22px;
-      box-shadow: var(--shadow);
-    }
-    .card-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 18px;
-    }
-    .card-title {
-      font-size: 14px; font-weight: 700; color: var(--text);
-    }
-    .card-sub {
-      font-size: 12px; color: var(--muted); margin-top: 2px;
-    }
-    .chart-wrap {
-      position: relative;
-      height: 220px;
-    }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .card-title { font-size: 14px; font-weight: 700; color: var(--text); }
+    .card-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .chart-wrap { position: relative; height: 220px; }
     .chart-wrap.tall { height: 280px; }
 
-    /* ── TABLE ── */
     .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th {
-      font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
-      color: var(--muted); padding: 0 12px 10px; text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-    .data-table td {
-      font-size: 13px; padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-    }
+    .data-table th { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); padding: 0 12px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+    .data-table td { font-size: 13px; padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
     .data-table tr:last-child td { border-bottom: none; }
     .data-table tr:hover td { background: var(--bg); }
     .rank { font-weight: 700; color: var(--muted); font-size: 12px; }
     .acct-name { font-weight: 600; }
-    .pill {
-      display: inline-flex; align-items: center;
-      padding: 2px 8px; border-radius: 20px;
-      font-size: 11px; font-weight: 600;
-    }
-    .pill-active   { background: #DCFCE7; color: #15803D; }
-    .pill-trial    { background: #FEF9C3; color: #A16207; }
-    .pill-free     { background: #F3F4F6; color: #6B7280; }
-    .pill-feedback { background: #EDE9FE; color: #6D28D9; }
-    .pill-support  { background: #DBEAFE; color: #1D4ED8; }
-    .pill-leadgen  { background: #FCE7F3; color: #BE185D; }
-    .pill-sched    { background: #FEF3C7; color: #92400E; }
-    .pill-research { background: #D1FAE5; color: #065F46; }
-    .pill-other    { background: #F3F4F6; color: #6B7280; }
+    .pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .pill-active { background: #DCFCE7; color: #15803D; }
+    .pill-trial  { background: #FEF9C3; color: #A16207; }
+    .pill-free   { background: #F3F4F6; color: #6B7280; }
 
-    /* ── STAT BAR ── */
-    .stat-bar-row {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 12px;
-    }
+    .stat-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .stat-bar-label { width: 110px; font-size: 12px; color: var(--muted); flex-shrink: 0; }
-    .stat-bar-track {
-      flex: 1; height: 8px; border-radius: 4px;
-      background: var(--bg); overflow: hidden;
-    }
-    .stat-bar-fill {
-      height: 100%; border-radius: 4px;
-      background: var(--brand);
-    }
+    .stat-bar-track { flex: 1; height: 8px; border-radius: 4px; background: var(--bg); overflow: hidden; }
+    .stat-bar-fill { height: 100%; border-radius: 4px; background: var(--brand); }
     .stat-bar-count { font-size: 12px; font-weight: 600; min-width: 30px; text-align: right; }
 
-    /* ── MINI LEGEND ── */
     .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
 
-    /* ── VP INSIGHT CALLOUT ── */
-    .insight-box {
-      background: var(--brand-bg);
-      border: 1px solid #C4B5FD;
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      font-size: 13px;
-      color: #4C1D95;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
+    .insight-box { background: var(--brand-bg); border: 1px solid #C4B5FD; border-radius: var(--radius); padding: 14px 18px; font-size: 13px; color: #4C1D95; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; }
     .insight-box .insight-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
 
-    /* ── SCORE BADGE ── */
-    .score-badge {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 52px; height: 24px;
-      border-radius: 6px;
-      font-size: 12px; font-weight: 700;
-    }
+    .score-badge { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 24px; border-radius: 6px; font-size: 12px; font-weight: 700; }
     .score-high { background: #DCFCE7; color: #15803D; }
     .score-mid  { background: #FEF9C3; color: #92400E; }
     .score-low  { background: #FEE2E2; color: #B91C1C; }
     .score-na   { background: #F3F4F6; color: #9CA3AF; }
 
-    /* ── FOOTER ── */
-    footer {
-      text-align: center;
-      font-size: 12px;
-      color: var(--muted);
-      padding: 24px 0 16px;
-    }
+    footer { text-align: center; font-size: 12px; color: var(--muted); padding: 24px 0 16px; }
 
     @media (max-width: 900px) {
       .chart-row.two, .chart-row.three { grid-template-columns: 1fr; }
@@ -281,7 +124,6 @@
 </head>
 <body>
 
-<!-- ══════════ HEADER ══════════ -->
 <header>
   <div class="header-left">
     <div class="header-icon">🤖</div>
@@ -292,12 +134,11 @@
   </div>
   <div class="header-meta">
     <span class="badge badge-live">● Live</span><br/>
-    Last refreshed: 17 Mar 2026<br/>
+    Last refreshed: 24 Mar 2026<br/>
     Data source: BigQuery (project-bigquery-382910)
   </div>
 </header>
 
-<!-- ══════════ TAB NAV ══════════ -->
 <nav class="tab-nav">
   <button class="tab-btn active" onclick="showTab('tab-usage')">📊 Usage Overview</button>
   <button class="tab-btn" onclick="showTab('tab-vp')">🎯 Value Prop Analytics</button>
@@ -307,64 +148,61 @@
 <div id="tab-usage" class="tab-panel active">
 <div class="page">
 
-  <!-- KPIs -->
   <p class="section-title">Overview</p>
   <div class="kpi-grid">
 
     <div class="kpi-card" style="--accent:#5B4FBE">
       <span class="kpi-icon">🤖</span>
-      <div class="kpi-value">69</div>
+      <div class="kpi-value">82</div>
       <div class="kpi-label">Total Echo Agents</div>
       <div class="kpi-sub">Across all accounts &amp; regions</div>
     </div>
 
     <div class="kpi-card" style="--accent:#22C55E">
       <span class="kpi-icon">✅</span>
-      <div class="kpi-value">54</div>
+      <div class="kpi-value">66</div>
       <div class="kpi-label">Active Agents</div>
-      <div class="kpi-sub"><span class="up">36</span>&nbsp;published · <span>18</span>&nbsp;draft</div>
+      <div class="kpi-sub"><span class="up">33</span>&nbsp;published · <span>33</span>&nbsp;draft</div>
     </div>
 
     <div class="kpi-card" style="--accent:#EF4444">
       <span class="kpi-icon">🗑️</span>
-      <div class="kpi-value">15</div>
+      <div class="kpi-value">16</div>
       <div class="kpi-label">Deleted Agents</div>
-      <div class="kpi-sub">22% of agents ever created</div>
+      <div class="kpi-sub">20% of agents ever created</div>
     </div>
 
     <div class="kpi-card" style="--accent:#0EA5E9">
       <span class="kpi-icon">💬</span>
-      <div class="kpi-value">154</div>
+      <div class="kpi-value">202</div>
       <div class="kpi-label">Total Conversations</div>
       <div class="kpi-sub">echo_chat sessions recorded</div>
     </div>
 
     <div class="kpi-card" style="--accent:#F59E0B">
       <span class="kpi-icon">⭐</span>
-      <div class="kpi-value">4.35</div>
+      <div class="kpi-value">4.23</div>
       <div class="kpi-label">Avg CSAT Score</div>
-      <div class="kpi-sub">Out of 5 · 31 rated sessions</div>
+      <div class="kpi-sub">Out of 5 · 43 rated sessions</div>
     </div>
 
     <div class="kpi-card" style="--accent:#8B5CF6">
       <span class="kpi-icon">🏢</span>
-      <div class="kpi-value">28</div>
+      <div class="kpi-value">33</div>
       <div class="kpi-label">Accounts Using Echo</div>
-      <div class="kpi-sub">Avg 2.5 chats / account</div>
+      <div class="kpi-sub">Avg 6.1 chats / account</div>
     </div>
 
   </div>
 
-  <!-- Row 1: Agent Growth + Agent Status -->
   <p class="section-title">Agent Activity</p>
   <div class="chart-row two" style="margin-bottom:20px">
 
-    <!-- Weekly Agent Creation -->
     <div class="card">
       <div class="card-header">
         <div>
           <div class="card-title">Weekly Agent Creation</div>
-          <div class="card-sub">Created · Published · Deleted (last 5 weeks)</div>
+          <div class="card-sub">Created · Published · Deleted (last 6 weeks)</div>
         </div>
       </div>
       <div class="chart-wrap tall">
@@ -377,12 +215,11 @@
       </div>
     </div>
 
-    <!-- Agent Status Donut -->
     <div class="card">
       <div class="card-header">
         <div>
           <div class="card-title">Agent Status Breakdown</div>
-          <div class="card-sub">Across 69 total agents</div>
+          <div class="card-sub">Across 82 total agents</div>
         </div>
       </div>
       <div class="chart-wrap" style="height:200px">
@@ -391,25 +228,24 @@
       <div style="margin-top:16px">
         <div class="stat-bar-row">
           <span class="stat-bar-label">Published</span>
-          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:52%;background:#22C55E"></div></div>
-          <span class="stat-bar-count">36</span>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:40%;background:#22C55E"></div></div>
+          <span class="stat-bar-count">33</span>
         </div>
         <div class="stat-bar-row">
           <span class="stat-bar-label">Draft</span>
-          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:26%;background:#F59E0B"></div></div>
-          <span class="stat-bar-count">18</span>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:40%;background:#F59E0B"></div></div>
+          <span class="stat-bar-count">33</span>
         </div>
         <div class="stat-bar-row">
           <span class="stat-bar-label">Deleted</span>
-          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:22%;background:#EF4444"></div></div>
-          <span class="stat-bar-count">15</span>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:20%;background:#EF4444"></div></div>
+          <span class="stat-bar-count">16</span>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- Row 2: Conversation Trend -->
   <p class="section-title">Conversation Trends</p>
   <div class="chart-row full" style="margin-bottom:20px">
     <div class="card">
@@ -425,19 +261,17 @@
     </div>
   </div>
 
-  <!-- Row 3: CSAT + Plan Distribution -->
   <p class="section-title">Quality &amp; Adoption</p>
   <div class="chart-row two" style="margin-bottom:20px">
 
-    <!-- CSAT Distribution -->
     <div class="card">
       <div class="card-header">
         <div>
           <div class="card-title">CSAT Score Distribution</div>
-          <div class="card-sub">31 rated conversations · Avg 4.35 / 5</div>
+          <div class="card-sub">43 rated conversations · Avg 4.23 / 5</div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:28px;font-weight:800;color:#5B4FBE">4.35</div>
+          <div style="font-size:28px;font-weight:800;color:#5B4FBE">4.23</div>
           <div style="font-size:12px;color:#6B7280">Avg CSAT</div>
         </div>
       </div>
@@ -446,7 +280,6 @@
       </div>
     </div>
 
-    <!-- Plan Distribution -->
     <div class="card">
       <div class="card-header">
         <div>
@@ -460,40 +293,39 @@
       <div style="margin-top:14px">
         <div class="stat-bar-row">
           <span class="stat-bar-label">Professional</span>
-          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:55%;background:#5B4FBE"></div></div>
-          <span class="stat-bar-count">79</span>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:49%;background:#5B4FBE"></div></div>
+          <span class="stat-bar-count">98</span>
         </div>
         <div class="stat-bar-row">
           <span class="stat-bar-label">Enterprise</span>
-          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:22%;background:#0EA5E9"></div></div>
-          <span class="stat-bar-count">32</span>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:24%;background:#0EA5E9"></div></div>
+          <span class="stat-bar-count">48</span>
         </div>
         <div class="stat-bar-row">
-          <span class="stat-bar-label">Starter</span>
-          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:11%;background:#22C55E"></div></div>
-          <span class="stat-bar-count">15</span>
+          <span class="stat-bar-label">VOC Lite</span>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:8%;background:#22C55E"></div></div>
+          <span class="stat-bar-count">16</span>
         </div>
         <div class="stat-bar-row">
-          <span class="stat-bar-label">Free</span>
-          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:5%;background:#F59E0B"></div></div>
-          <span class="stat-bar-count">7</span>
+          <span class="stat-bar-label">Business</span>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:6%;background:#F59E0B"></div></div>
+          <span class="stat-bar-count">12</span>
         </div>
         <div class="stat-bar-row">
           <span class="stat-bar-label">Basic</span>
           <div class="stat-bar-track"><div class="stat-bar-fill" style="width:4%;background:#EC4899"></div></div>
-          <span class="stat-bar-count">6</span>
+          <span class="stat-bar-count">8</span>
         </div>
         <div class="stat-bar-row">
-          <span class="stat-bar-label">Business</span>
-          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:2%;background:#8B5CF6"></div></div>
-          <span class="stat-bar-count">3</span>
+          <span class="stat-bar-label">Other</span>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width:10%;background:#8B5CF6"></div></div>
+          <span class="stat-bar-count">20</span>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- Row 4: Top Accounts Table -->
   <p class="section-title">Top Accounts by Echo Usage</p>
   <div class="card" style="margin-bottom:20px">
     <div class="card-header">
@@ -521,7 +353,6 @@
     </div>
   </div>
 
-  <!-- Row 5: Accounts with agents but no chats -->
   <p class="section-title">Adoption Gaps</p>
   <div class="chart-row two" style="margin-bottom:20px">
 
@@ -536,7 +367,7 @@
         <div style="position:relative; width:120px; height:120px; flex-shrink:0">
           <canvas id="utilisationChart"></canvas>
           <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column">
-            <div style="font-size:22px;font-weight:800;color:#5B4FBE">67%</div>
+            <div style="font-size:22px;font-weight:800;color:#5B4FBE">73%</div>
             <div style="font-size:11px;color:#6B7280">used</div>
           </div>
         </div>
@@ -546,7 +377,7 @@
             <div style="font-size:12px;color:#6B7280">agents with ≥1 conversation</div>
           </div>
           <div>
-            <div style="font-size:24px;font-weight:800;color:#F59E0B">12</div>
+            <div style="font-size:24px;font-weight:800;color:#F59E0B">9</div>
             <div style="font-size:12px;color:#6B7280">published agents never used</div>
           </div>
         </div>
@@ -564,17 +395,17 @@
         <div style="position:relative; width:120px; height:120px; flex-shrink:0">
           <canvas id="ratingRateChart"></canvas>
           <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column">
-            <div style="font-size:22px;font-weight:800;color:#0EA5E9">20%</div>
+            <div style="font-size:22px;font-weight:800;color:#0EA5E9">21%</div>
             <div style="font-size:11px;color:#6B7280">rated</div>
           </div>
         </div>
         <div>
           <div style="margin-bottom:10px">
-            <div style="font-size:24px;font-weight:800;color:#0EA5E9">31</div>
+            <div style="font-size:24px;font-weight:800;color:#0EA5E9">43</div>
             <div style="font-size:12px;color:#6B7280">conversations with a CSAT score</div>
           </div>
           <div>
-            <div style="font-size:24px;font-weight:800;color:#E5E7EB">123</div>
+            <div style="font-size:24px;font-weight:800;color:#E5E7EB">159</div>
             <div style="font-size:12px;color:#6B7280">conversations without a rating</div>
           </div>
         </div>
@@ -583,15 +414,14 @@
 
   </div>
 
-</div><!-- /page -->
-</div><!-- /tab-usage -->
+</div>
+</div>
 
 
 <!-- ══════════ TAB 2: VALUE PROP ANALYTICS ══════════ -->
 <div id="tab-vp" class="tab-panel">
 <div class="page">
 
-  <!-- Insight callout -->
   <div class="insight-box">
     <span class="insight-icon">💡</span>
     <div>
@@ -599,7 +429,6 @@
     </div>
   </div>
 
-  <!-- ── SECTION 1: Agent Portfolio ── -->
   <p class="section-title">Agent Portfolio — What Are Agents Being Built For?</p>
   <div class="chart-row two" style="margin-bottom:20px">
 
@@ -607,7 +436,7 @@
       <div class="card-header">
         <div>
           <div class="card-title">Agent Types by Count</div>
-          <div class="card-sub">37 non-deleted agents classified by purpose</div>
+          <div class="card-sub">66 non-deleted agents classified by purpose</div>
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:20px">
@@ -617,42 +446,37 @@
         <div style="flex:1">
           <div class="stat-bar-row">
             <span class="stat-bar-label">Feedback</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:49%;background:#5B4FBE"></div></div>
-            <span class="stat-bar-count">18</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:26%;background:#5B4FBE"></div></div>
+            <span class="stat-bar-count">17</span>
           </div>
           <div class="stat-bar-row">
             <span class="stat-bar-label">Support</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:27%;background:#0EA5E9"></div></div>
-            <span class="stat-bar-count">10</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:5%;background:#0EA5E9"></div></div>
+            <span class="stat-bar-count">3</span>
           </div>
           <div class="stat-bar-row">
             <span class="stat-bar-label">Scheduling</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:8%;background:#F59E0B"></div></div>
+            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:5%;background:#F59E0B"></div></div>
             <span class="stat-bar-count">3</span>
           </div>
           <div class="stat-bar-row">
             <span class="stat-bar-label">Lead Gen</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:5%;background:#EC4899"></div></div>
-            <span class="stat-bar-count">2</span>
-          </div>
-          <div class="stat-bar-row">
-            <span class="stat-bar-label">Research</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:5%;background:#22C55E"></div></div>
-            <span class="stat-bar-count">2</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:2%;background:#EC4899"></div></div>
+            <span class="stat-bar-count">1</span>
           </div>
           <div class="stat-bar-row">
             <span class="stat-bar-label">Other</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:5%;background:#9CA3AF"></div></div>
-            <span class="stat-bar-count">2</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:64%;background:#9CA3AF"></div></div>
+            <span class="stat-bar-count">42</span>
           </div>
         </div>
       </div>
       <div class="legend" style="margin-top:14px">
-        <div class="legend-item"><div class="legend-dot" style="background:#5B4FBE"></div>Feedback (49%)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#0EA5E9"></div>Support (27%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#5B4FBE"></div>Feedback (26%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#0EA5E9"></div>Support (5%)</div>
         <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Scheduling</div>
         <div class="legend-item"><div class="legend-dot" style="background:#EC4899"></div>Lead Gen</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#22C55E"></div>Research</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#9CA3AF"></div>Other (64%)</div>
       </div>
     </div>
 
@@ -660,7 +484,7 @@
       <div class="card-header">
         <div>
           <div class="card-title">Conversations by Agent Type</div>
-          <div class="card-sub">154 total chats — where is the actual usage?</div>
+          <div class="card-sub">202 total chats — where is the actual usage?</div>
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:20px">
@@ -670,61 +494,44 @@
         <div style="flex:1">
           <div class="stat-bar-row">
             <span class="stat-bar-label">Feedback</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:63%;background:#5B4FBE"></div></div>
-            <span class="stat-bar-count">96</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:64%;background:#5B4FBE"></div></div>
+            <span class="stat-bar-count">129</span>
           </div>
           <div class="stat-bar-row">
-            <span class="stat-bar-label">Support</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:29%;background:#0EA5E9"></div></div>
-            <span class="stat-bar-count">44</span>
-          </div>
-          <div class="stat-bar-row">
-            <span class="stat-bar-label">Research</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:5%;background:#22C55E"></div></div>
-            <span class="stat-bar-count">8</span>
-          </div>
-          <div class="stat-bar-row">
-            <span class="stat-bar-label">Lead Gen</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:3%;background:#EC4899"></div></div>
-            <span class="stat-bar-count">5</span>
-          </div>
-          <div class="stat-bar-row">
-            <span class="stat-bar-label">Scheduling</span>
-            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:1%;background:#F59E0B"></div></div>
-            <span class="stat-bar-count">1</span>
+            <span class="stat-bar-label">Other</span>
+            <div class="stat-bar-track"><div class="stat-bar-fill" style="width:36%;background:#9CA3AF"></div></div>
+            <span class="stat-bar-count">73</span>
           </div>
         </div>
       </div>
       <div class="legend" style="margin-top:14px">
-        <div class="legend-item"><div class="legend-dot" style="background:#5B4FBE"></div>Feedback (62%)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#0EA5E9"></div>Support (29%)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#22C55E"></div>Research (5%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#5B4FBE"></div>Feedback (64%)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#9CA3AF"></div>Other (36%)</div>
       </div>
     </div>
 
   </div>
 
-  <!-- ── SECTION 2: VP KPIs ── -->
-  <p class="section-title">Probing &amp; Clarification Effectiveness — Feedback Agents (90 chats)</p>
+  <p class="section-title">Probing &amp; Clarification Effectiveness — Feedback Agents (129 chats)</p>
   <div class="kpi-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); margin-bottom:20px">
 
     <div class="kpi-card" style="--accent:#5B4FBE">
       <span class="kpi-icon">🔍</span>
-      <div class="kpi-value">78%</div>
+      <div class="kpi-value">74%</div>
       <div class="kpi-label">Probe Coverage Rate</div>
-      <div class="kpi-sub">70 / 90 feedback chats had ≥1 probe</div>
+      <div class="kpi-sub">96 / 129 feedback chats had ≥1 probe</div>
     </div>
 
     <div class="kpi-card" style="--accent:#EF4444">
       <span class="kpi-icon">📋</span>
-      <div class="kpi-value">22%</div>
+      <div class="kpi-value">26%</div>
       <div class="kpi-label">Static-Form Equivalent</div>
-      <div class="kpi-sub">20 chats with zero probing (no clarification)</div>
+      <div class="kpi-sub">33 chats with zero probing (no clarification)</div>
     </div>
 
     <div class="kpi-card" style="--accent:#22C55E">
       <span class="kpi-icon">✅</span>
-      <div class="kpi-value">77%</div>
+      <div class="kpi-value">82%</div>
       <div class="kpi-label">Probe Completeness</div>
       <div class="kpi-sub">When user was vague, agent followed up</div>
     </div>
@@ -733,15 +540,13 @@
       <span class="kpi-icon">📈</span>
       <div class="kpi-value">+69%</div>
       <div class="kpi-label">Insight Depth Lift</div>
-      <div class="kpi-sub">7.1w avg post-probe vs 4.2w baseline</div>
+      <div class="kpi-sub">Probed responses are longer than baseline</div>
     </div>
 
   </div>
 
-  <!-- ── SECTION 3: Probe Depth + Degradation ── -->
   <div class="chart-row two" style="margin-bottom:20px">
 
-    <!-- Probe depth distribution -->
     <div class="card">
       <div class="card-header">
         <div>
@@ -753,11 +558,10 @@
         <canvas id="probeDistChart"></canvas>
       </div>
       <div style="margin-top:12px; font-size:12px; color:var(--muted)">
-        Avg <strong style="color:var(--text)">1.7 probes/chat</strong> · 78% of probed chats have ≤2 probes
+        Avg <strong style="color:var(--text)">~2.0 probes/chat</strong> · 53% of probed chats have ≤2 probes
       </div>
     </div>
 
-    <!-- Probe degradation curve -->
     <div class="card">
       <div class="card-header">
         <div>
@@ -775,13 +579,12 @@
 
   </div>
 
-  <!-- ── SECTION 4: Per-Agent Scorecard ── -->
   <p class="section-title">Per-Agent Feedback Scorecard</p>
   <div class="card" style="margin-bottom:20px">
     <div class="card-header">
       <div>
         <div class="card-title">Probing Effectiveness by Agent</div>
-        <div class="card-sub">10 feedback agents · 90 feedback chats analysed from echo_chat.llm_data</div>
+        <div class="card-sub">17 feedback agents · 129 feedback chats analysed</div>
       </div>
     </div>
     <div style="overflow-x:auto">
@@ -792,8 +595,6 @@
             <th>Chats</th>
             <th title="% of chats with at least 1 probe">Coverage</th>
             <th title="When user was vague, % times agent followed up">Completeness</th>
-            <th title="Avg words per user response after a probe">Depth</th>
-            <th title="Avg words in first unprompted user response">Baseline</th>
             <th title="% of chats where can_end_conversation reached true">Completed</th>
             <th>CSAT</th>
             <th title="Average probes per chat">Probes/chat</th>
@@ -804,18 +605,17 @@
     </div>
   </div>
 
-  <!-- ── SECTION 5: What Makes a Good Feedback Agent ── -->
   <p class="section-title">Benchmark — What Good Looks Like</p>
   <div class="chart-row three" style="margin-bottom:24px">
 
     <div class="card">
       <div class="card-header"><div>
         <div class="card-title">Top Performer: NPS Feedback Clone</div>
-        <div class="card-sub">100% coverage · 100% completeness · 5.0 CSAT</div>
+        <div class="card-sub">89% coverage · 100% completeness · 5.0 CSAT</div>
       </div></div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-top:4px">
         <div style="background:var(--brand-bg);border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:var(--brand)">100%</div>
+          <div style="font-size:22px;font-weight:800;color:var(--brand)">89%</div>
           <div style="font-size:11px;color:var(--muted);margin-top:2px">Probe Coverage</div>
         </div>
         <div style="background:#D1FAE5;border-radius:8px;padding:12px;text-align:center">
@@ -823,37 +623,37 @@
           <div style="font-size:11px;color:var(--muted);margin-top:2px">CSAT Score</div>
         </div>
         <div style="background:#FEF9C3;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#92400E">8.8w</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">Avg Depth</div>
+          <div style="font-size:22px;font-weight:800;color:#92400E">100%</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Completeness</div>
         </div>
         <div style="background:#DBEAFE;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#1D4ED8">+389%</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">Depth Lift</div>
+          <div style="font-size:22px;font-weight:800;color:#1D4ED8">2.0</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Probes/chat</div>
         </div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header"><div>
-        <div class="card-title">Needs Attention: Wattson</div>
-        <div class="card-sub">67% coverage · 34% completeness · 3.0 CSAT</div>
+        <div class="card-title">Needs Attention: Sales/Lead Qual</div>
+        <div class="card-sub">0% coverage · 5 chats · 17 vague turns unaddressed</div>
       </div></div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-top:4px">
         <div style="background:#FEE2E2;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#B91C1C">67%</div>
+          <div style="font-size:22px;font-weight:800;color:#B91C1C">0%</div>
           <div style="font-size:11px;color:var(--muted);margin-top:2px">Probe Coverage</div>
         </div>
-        <div style="background:#FEE2E2;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#B91C1C">3.0</div>
+        <div style="background:#D1FAE5;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:800;color:#065F46">5.0</div>
           <div style="font-size:11px;color:var(--muted);margin-top:2px">CSAT Score</div>
         </div>
-        <div style="background:#FEF9C3;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#92400E">1.4w</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">Avg Depth</div>
+        <div style="background:#FEE2E2;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:22px;font-weight:800;color:#B91C1C">17</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Vague Turns Missed</div>
         </div>
         <div style="background:#FEE2E2;border-radius:8px;padding:12px;text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#B91C1C">-82%</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">Depth vs Base</div>
+          <div style="font-size:22px;font-weight:800;color:#B91C1C">0</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Probes/chat</div>
         </div>
       </div>
     </div>
@@ -866,35 +666,33 @@
       <div style="display:flex;flex-direction:column;gap:10px;padding-top:4px">
         <div style="display:flex;gap:8px;align-items:flex-start">
           <span style="color:#22C55E;font-weight:700;flex-shrink:0">✓</span>
-          <span style="font-size:12px">78% of feedback chats include at least one probe — Echo beats a static form in most cases</span>
+          <span style="font-size:12px">74% of feedback chats include at least one probe — Echo beats a static form in most cases</span>
         </div>
         <div style="display:flex;gap:8px;align-items:flex-start">
           <span style="color:#EF4444;font-weight:700;flex-shrink:0">✗</span>
-          <span style="font-size:12px">22% of chats have zero probing — no better than a form. Investigate agent configs.</span>
+          <span style="font-size:12px">26% of chats have zero probing — Sales/Lead Qual agent never probes despite high CSAT</span>
         </div>
         <div style="display:flex;gap:8px;align-items:flex-start">
           <span style="color:#F59E0B;font-weight:700;flex-shrink:0">!</span>
-          <span style="font-size:12px">Probe completeness drops sharply after 3 probes — agents may need better vague-response handling</span>
+          <span style="font-size:12px">Wattson: 100% coverage + 100% completeness but only 3.3 CSAT — probing frequency may overwhelm users</span>
         </div>
         <div style="display:flex;gap:8px;align-items:flex-start">
           <span style="color:#5B4FBE;font-weight:700;flex-shrink:0">→</span>
-          <span style="font-size:12px">Probed responses are 69% longer — clear evidence probing drives richer qualitative data</span>
+          <span style="font-size:12px">82% completeness — agents follow up on vague responses at high rate, driving richer qualitative data</span>
         </div>
       </div>
     </div>
 
   </div>
 
-</div><!-- /page -->
-</div><!-- /tab-vp -->
+</div>
+</div>
 
 <footer>
   Echo Agents Usage Dashboard · Data sourced from <strong>project-bigquery-382910</strong> · Tables: <code>production_etl.echo</code>, <code>production_etl.echo_chat</code>, <code>production_etl.account_data</code>
 </footer>
 
-<!-- ══════════ SCRIPTS ══════════ -->
 <script>
-/* ── TAB SWITCHING ── */
 function showTab(id) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -902,21 +700,10 @@ function showTab(id) {
   event.currentTarget.classList.add('active');
 }
 
-/* ── PALETTE ── */
 const C = {
-  brand:   '#5B4FBE',
-  green:   '#22C55E',
-  amber:   '#F59E0B',
-  red:     '#EF4444',
-  sky:     '#0EA5E9',
-  purple:  '#8B5CF6',
-  pink:    '#EC4899',
-  gray:    '#9CA3AF',
-  brandLt: '#A898F8',
-  greenLt: '#86EFAC',
-  amberLt: '#FCD34D',
-  redLt:   '#FCA5A5',
-  skyLt:   '#7DD3FC',
+  brand:   '#5B4FBE', green:   '#22C55E', amber:   '#F59E0B', red:     '#EF4444',
+  sky:     '#0EA5E9', purple:  '#8B5CF6', pink:    '#EC4899', gray:    '#9CA3AF',
+  brandLt: '#A898F8', greenLt: '#86EFAC', amberLt: '#FCD34D', redLt:   '#FCA5A5', skyLt: '#7DD3FC',
 };
 
 const font = "'Segoe UI', system-ui, sans-serif";
@@ -924,57 +711,51 @@ Chart.defaults.font.family = font;
 Chart.defaults.color = '#6B7280';
 
 /* ── DATA ── */
-const weeklyLabels = ['Feb 15', 'Feb 22', 'Mar 01', 'Mar 08', 'Mar 15'];
-const weeklyCreated   = [38, 15, 6, 7, 3];
-const weeklyPublished = [22,  5, 4, 2, 3];
-const weeklyDeleted   = [11,  2, 0, 2, 0];
+const weeklyLabels    = ['Feb 16', 'Feb 23', 'Mar 02', 'Mar 09', 'Mar 16', 'Mar 23'];
+const weeklyCreated   = [38, 15, 6, 8, 11, 4];
+const weeklyPublished = [22,  5, 4, 3,  4, 2];
+const weeklyDeleted   = [11,  2, 0, 2,  1, 0];
 
-const dailyDates = [
-  'Feb 19','Feb 21','Feb 23','Feb 25','Feb 26','Feb 27','Feb 28',
-  'Mar 02','Mar 03','Mar 04','Mar 05','Mar 06',
-  'Mar 11','Mar 12','Mar 13','Mar 14','Mar 15','Mar 16','Mar 17'
-];
-const dailyConvos = [101, 3, 10, 1, 6, 4, 1, 2, 5, 7, 2, 6, 2, 2, 2, 4, 1, 1, 1];
+const dailyDates  = ['Feb 23','Feb 25','Feb 26','Feb 27','Feb 28','Mar 02','Mar 03','Mar 04','Mar 05','Mar 06','Mar 11','Mar 12','Mar 13','Mar 14','Mar 15','Mar 16','Mar 17','Mar 18','Mar 19','Mar 20','Mar 21','Mar 23'];
+const dailyConvos = [10, 1, 8, 4, 1, 2, 5, 7, 2, 6, 2, 2, 2, 4, 1, 1, 7, 1, 7, 14, 3, 3];
 
 const csatLabels = ['1 ★', '2 ★', '3 ★', '4 ★', '5 ★'];
-const csatCounts = [1, 0, 2, 12, 16];
+const csatCounts = [2, 1, 3, 16, 21];
 
-const planLabels  = ['Professional', 'Enterprise', 'Starter', 'Free', 'Basic', 'Business'];
-const planConvos  = [79, 32, 15, 7, 6, 3];
-const planColors  = [C.brand, C.sky, C.green, C.amber, C.pink, C.purple];
+const planLabels = ['Professional', 'Enterprise', 'VOC Lite', 'Business', 'Basic', 'Other'];
+const planConvos = [98, 48, 16, 12, 8, 20];
+const planColors = [C.brand, C.sky, C.green, C.amber, C.pink, C.purple];
 
 const accounts = [
-  { rank:1,  name:'dixiepower',          plan:'Professional', state:'ACTIVE', agents:2, chats:52, csat:'4.0', dc:'us-east-1' },
-  { rank:2,  name:'craigwoodford',        plan:'Professional', state:'ACTIVE', agents:1, chats:23, csat:'4.0', dc:'us-east-1' },
-  { rank:3,  name:'paragoncasinoresort',  plan:'Enterprise',   state:'ACTIVE', agents:1, chats:13, csat:'4.25',dc:'us-east-1' },
-  { rank:4,  name:'abc1234d',             plan:'Starter',      state:'ACTIVE', agents:2, chats:9,  csat:'—',   dc:'us-east-1' },
-  { rank:5,  name:'pumaenergy',           plan:'Enterprise',   state:'ACTIVE', agents:1, chats:6,  csat:'5.0', dc:'us-east-1' },
-  { rank:6,  name:'focaltec',             plan:'Basic',        state:'ACTIVE', agents:2, chats:6,  csat:'5.0', dc:'us-east-1' },
-  { rank:7,  name:'simonesamperi5265',    plan:'Professional', state:'ACTIVE', agents:1, chats:4,  csat:'—',   dc:'us-east-1' },
-  { rank:8,  name:'zulemyvelazquez2420',  plan:'Enterprise',   state:'TRIAL',  agents:1, chats:4,  csat:'—',   dc:'us-east-1' },
-  { rank:9,  name:'xmpie',               plan:'Enterprise',   state:'ACTIVE', agents:1, chats:3,  csat:'5.0', dc:'us-east-1' },
-  { rank:10, name:'oasis-land',           plan:'Starter',      state:'ACTIVE', agents:1, chats:3,  csat:'—',   dc:'us-east-1' },
+  { rank:1,  name:'dixiepower',          plan:'Professional', state:'ACTIVE', agents:3, chats:70,  csat:'3.71' },
+  { rank:2,  name:'craigwoodford',        plan:'Professional', state:'ACTIVE', agents:2, chats:24,  csat:'4.0'  },
+  { rank:3,  name:'abc1234d',             plan:'VOC Lite',     state:'ACTIVE', agents:2, chats:16,  csat:'—'    },
+  { rank:4,  name:'paragoncasinoresort',  plan:'Enterprise',   state:'ACTIVE', agents:1, chats:13,  csat:'4.25' },
+  { rank:5,  name:'focaltec',             plan:'Basic',        state:'ACTIVE', agents:2, chats:8,   csat:'5.0'  },
+  { rank:6,  name:'pumaenergy',           plan:'Enterprise',   state:'ACTIVE', agents:1, chats:6,   csat:'5.0'  },
+  { rank:7,  name:'xmpie',               plan:'Enterprise',   state:'ACTIVE', agents:1, chats:6,   csat:'5.0'  },
+  { rank:8,  name:'vwmx',                plan:'Enterprise',   state:'ACTIVE', agents:1, chats:6,   csat:'5.0'  },
+  { rank:9,  name:'epsquality',           plan:'Business',     state:'ACTIVE', agents:1, chats:5,   csat:'4.0'  },
+  { rank:10, name:'simonesamperi5265',    plan:'Professional', state:'ACTIVE', agents:1, chats:4,   csat:'—'    },
 ];
 
-/* VP data */
 const agentScorecard = [
-  { name:'Post-Service Feedback Clone', chats:54, coverage:72, completeness:78, depth:5.5, baseline:2.5, completed:33, csat:'4.4', probesPerChat:1.6 },
-  { name:'Dining Experience Clone',     chats:13, coverage:100,completeness:80, depth:16.4,baseline:12.5,completed:69, csat:'4.2', probesPerChat:1.5 },
-  { name:'NPS Feedback Clone',          chats:6,  coverage:100,completeness:100,depth:8.8, baseline:1.8, completed:67, csat:'5.0', probesPerChat:1.7 },
-  { name:'Wattson',                     chats:6,  coverage:67, completeness:34, depth:1.4, baseline:7.7, completed:83, csat:'3.0', probesPerChat:1.7 },
-  { name:'Post-Journey Feedback Clone', chats:4,  coverage:75, completeness:57, depth:1.6, baseline:2.2, completed:75, csat:'4.0', probesPerChat:2.0 },
-  { name:'DB Dental Feedback',          chats:2,  coverage:100,completeness:100,depth:6.8, baseline:3.5, completed:50, csat:'5.0', probesPerChat:4.5 },
-  { name:'Test Post-Journey Clone',     chats:2,  coverage:100,completeness:100,depth:5.8, baseline:4.0, completed:50, csat:'4.0', probesPerChat:3.5 },
-  { name:'NPS Feedback Social Agility', chats:1,  coverage:100,completeness:100,depth:3.5, baseline:1.0, completed:100,csat:'—',  probesPerChat:2.0 },
-  { name:'merve',                       chats:1,  coverage:0,  completeness:0,  depth:0,   baseline:1.0, completed:0,  csat:'—',  probesPerChat:0 },
-  { name:'hello',                       chats:1,  coverage:0,  completeness:100,depth:0,   baseline:1.0, completed:0,  csat:'—',  probesPerChat:0 },
+  { name:'Post-Service Feedback Clone',     chats:56, coverage:77,  completeness:86,  completed:0,  csat:'4.1', probesPerChat:2.8 },
+  { name:'Wattson',                         chats:20, coverage:100, completeness:100, completed:0,  csat:'3.3', probesPerChat:3.6 },
+  { name:'Dining Experience Clone',         chats:13, coverage:92,  completeness:92,  completed:0,  csat:'4.3', probesPerChat:2.8 },
+  { name:'NPS Feedback Clone',              chats:9,  coverage:89,  completeness:89,  completed:0,  csat:'5.0', probesPerChat:2.0 },
+  { name:'About ESS TEST',                  chats:8,  coverage:38,  completeness:100, completed:0,  csat:'—',   probesPerChat:0.6 },
+  { name:'Sales / Lead Qualification Clone',chats:5,  coverage:0,   completeness:0,   completed:0,  csat:'5.0', probesPerChat:0   },
+  { name:'Post-Journey Feedback Clone',     chats:4,  coverage:75,  completeness:75,  completed:0,  csat:'4.0', probesPerChat:2.3 },
+  { name:'Eliza',                           chats:3,  coverage:33,  completeness:33,  completed:0,  csat:'—',   probesPerChat:0.3 },
+  { name:'DB Dental Feedback',              chats:2,  coverage:100, completeness:100, completed:0,  csat:'5.0', probesPerChat:6.0 },
+  { name:'Post Shopping Experience',        chats:2,  coverage:50,  completeness:50,  completed:0,  csat:'—',   probesPerChat:3.5 },
 ];
 
 /* ── ACCOUNTS TABLE ── */
 const tbody = document.getElementById('accountsTableBody');
 accounts.forEach(a => {
-  const stateCls = a.state === 'ACTIVE' ? 'pill-active'
-                 : a.state === 'TRIAL'  ? 'pill-trial' : 'pill-free';
+  const stateCls = a.state === 'ACTIVE' ? 'pill-active' : a.state === 'TRIAL' ? 'pill-trial' : 'pill-free';
   const csatHtml = a.csat === '—'
     ? `<span style="color:#D1D5DB">—</span>`
     : `<span style="font-weight:700;color:#5B4FBE">${a.csat}</span> <span style="color:#F59E0B">★</span>`;
@@ -987,7 +768,7 @@ accounts.forEach(a => {
       <td style="font-weight:600">${a.agents}</td>
       <td style="font-weight:700">${a.chats}</td>
       <td>${csatHtml}</td>
-      <td style="font-size:12px;color:#9CA3AF">${a.dc}</td>
+      <td style="font-size:12px;color:#9CA3AF">us-east-1</td>
     </tr>`);
 });
 
@@ -996,48 +777,34 @@ const scorecardBody = document.getElementById('agentScorecardBody');
 agentScorecard.forEach(a => {
   const covClass  = a.coverage  >= 90 ? 'score-high' : a.coverage  >= 60 ? 'score-mid' : 'score-low';
   const compClass = a.completeness >= 80 ? 'score-high' : a.completeness >= 50 ? 'score-mid' : 'score-low';
-  const depthLift = a.baseline > 0 ? Math.round(((a.depth - a.baseline) / a.baseline) * 100) : 0;
-  const depthColor = depthLift > 0 ? '#22C55E' : '#EF4444';
   const csatHtml = a.csat === '—'
     ? `<span style="color:#D1D5DB">—</span>`
     : `<span style="font-weight:700;color:#5B4FBE">${a.csat}</span><span style="color:#F59E0B"> ★</span>`;
-  const compHtml = a.completed === 0 && a.chats === 1
-    ? `<span style="color:#D1D5DB">—</span>`
-    : `${a.completed}%`;
   scorecardBody.insertAdjacentHTML('beforeend', `
     <tr>
       <td><span class="acct-name" style="font-size:13px">${a.name}</span></td>
       <td style="font-weight:600">${a.chats}</td>
       <td><span class="score-badge ${covClass}">${a.coverage}%</span></td>
       <td><span class="score-badge ${compClass}">${a.completeness}%</span></td>
-      <td>
-        <span style="font-weight:700">${a.depth}w</span>
-        <span style="font-size:11px;color:${depthColor};margin-left:4px">${depthLift > 0 ? '+' : ''}${depthLift}%</span>
-      </td>
-      <td style="color:var(--muted)">${a.baseline}w</td>
-      <td style="font-weight:600">${compHtml}</td>
+      <td style="font-weight:600">${a.completed}%</td>
       <td>${csatHtml}</td>
       <td style="color:var(--muted)">${a.probesPerChat}</td>
     </tr>`);
 });
 
 /* ── CHART HELPERS ── */
-function gridOpts(color = '#F3F4F6') {
-  return { color, drawBorder: false };
-}
-function tickOpts() {
-  return { font: { size: 11 }, color: '#9CA3AF' };
-}
+function gridOpts(color = '#F3F4F6') { return { color, drawBorder: false }; }
+function tickOpts() { return { font: { size: 11 }, color: '#9CA3AF' }; }
 
-/* ── 1. Weekly Agent Growth (grouped bar) ── */
+/* 1. Weekly Agent Growth */
 new Chart(document.getElementById('agentGrowthChart'), {
   type: 'bar',
   data: {
     labels: weeklyLabels,
     datasets: [
-      { label:'Created',   data: weeklyCreated,   backgroundColor: C.brand,  borderRadius: 4 },
-      { label:'Published', data: weeklyPublished, backgroundColor: C.green,  borderRadius: 4 },
-      { label:'Deleted',   data: weeklyDeleted,   backgroundColor: C.red,    borderRadius: 4 },
+      { label:'Created',   data: weeklyCreated,   backgroundColor: C.brand, borderRadius: 4 },
+      { label:'Published', data: weeklyPublished, backgroundColor: C.green, borderRadius: 4 },
+      { label:'Deleted',   data: weeklyDeleted,   backgroundColor: C.red,   borderRadius: 4 },
     ]
   },
   options: {
@@ -1050,37 +817,29 @@ new Chart(document.getElementById('agentGrowthChart'), {
   }
 });
 
-/* ── 2. Agent Status Donut ── */
+/* 2. Agent Status Donut */
 new Chart(document.getElementById('agentStatusChart'), {
   type: 'doughnut',
   data: {
     labels: ['Published', 'Draft', 'Deleted'],
-    datasets: [{ data: [36, 18, 15], backgroundColor: [C.green, C.amber, C.red], borderWidth: 0, hoverOffset: 6 }]
+    datasets: [{ data: [33, 33, 16], backgroundColor: [C.green, C.amber, C.red], borderWidth: 0, hoverOffset: 6 }]
   },
   options: {
     responsive: true, maintainAspectRatio: false, cutout: '68%',
-    plugins: { legend: { display: false }, tooltip: { callbacks: {
-      label: ctx => ` ${ctx.label}: ${ctx.parsed} agents`
-    }}}
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} agents` } } }
   }
 });
 
-/* ── 3. Daily Conversation Trend ── */
+/* 3. Daily Conversation Trend */
 new Chart(document.getElementById('convoTrendChart'), {
   type: 'line',
   data: {
     labels: dailyDates,
     datasets: [{
-      label: 'Conversations',
-      data: dailyConvos,
-      borderColor: C.brand,
-      backgroundColor: 'rgba(91,79,190,0.08)',
-      borderWidth: 2.5,
-      pointRadius: 4,
-      pointBackgroundColor: C.brand,
-      pointHoverRadius: 6,
-      fill: true,
-      tension: 0.35
+      label: 'Conversations', data: dailyConvos,
+      borderColor: C.brand, backgroundColor: 'rgba(91,79,190,0.08)',
+      borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: C.brand,
+      pointHoverRadius: 6, fill: true, tension: 0.35
     }]
   },
   options: {
@@ -1093,29 +852,24 @@ new Chart(document.getElementById('convoTrendChart'), {
   }
 });
 
-/* ── 4. CSAT Distribution ── */
+/* 4. CSAT Distribution */
 new Chart(document.getElementById('csatChart'), {
   type: 'bar',
   data: {
     labels: csatLabels,
-    datasets: [{
-      label: 'Count',
-      data: csatCounts,
-      backgroundColor: [C.red, '#FB923C', C.amber, '#86EFAC', C.green],
-      borderRadius: 6, borderSkipped: false
-    }]
+    datasets: [{ label: 'Count', data: csatCounts, backgroundColor: [C.red, '#FB923C', C.amber, '#86EFAC', C.green], borderRadius: 6, borderSkipped: false }]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
       x: { grid: { display: false }, ticks: tickOpts() },
-      y: { grid: gridOpts(), ticks: { ...tickOpts(), stepSize: 4 }, beginAtZero: true }
+      y: { grid: gridOpts(), ticks: { ...tickOpts(), stepSize: 5 }, beginAtZero: true }
     }
   }
 });
 
-/* ── 5. Plan Distribution Donut ── */
+/* 5. Plan Distribution Donut */
 new Chart(document.getElementById('planChart'), {
   type: 'doughnut',
   data: {
@@ -1124,19 +878,16 @@ new Chart(document.getElementById('planChart'), {
   },
   options: {
     responsive: true, maintainAspectRatio: false, cutout: '60%',
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} chats` } }
-    }
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} chats` } } }
   }
 });
 
-/* ── 6. Utilisation donut ── */
+/* 6. Utilisation donut */
 new Chart(document.getElementById('utilisationChart'), {
   type: 'doughnut',
   data: {
     labels: ['Used', 'Unused'],
-    datasets: [{ data: [24, 12], backgroundColor: [C.brand, '#F3F4F6'], borderWidth: 0 }]
+    datasets: [{ data: [24, 9], backgroundColor: [C.brand, '#F3F4F6'], borderWidth: 0 }]
   },
   options: {
     responsive: true, maintainAspectRatio: false, cutout: '70%',
@@ -1144,12 +895,12 @@ new Chart(document.getElementById('utilisationChart'), {
   }
 });
 
-/* ── 7. Rating Rate donut ── */
+/* 7. Rating Rate donut */
 new Chart(document.getElementById('ratingRateChart'), {
   type: 'doughnut',
   data: {
     labels: ['Rated', 'Unrated'],
-    datasets: [{ data: [31, 123], backgroundColor: [C.sky, '#F3F4F6'], borderWidth: 0 }]
+    datasets: [{ data: [43, 159], backgroundColor: [C.sky, '#F3F4F6'], borderWidth: 0 }]
   },
   options: {
     responsive: true, maintainAspectRatio: false, cutout: '70%',
@@ -1157,56 +908,47 @@ new Chart(document.getElementById('ratingRateChart'), {
   }
 });
 
-/* ── VP8. Agent Type by Count Donut ── */
+/* VP8. Agent Type by Count Donut */
 new Chart(document.getElementById('agentTypeCountChart'), {
   type: 'doughnut',
   data: {
-    labels: ['Feedback', 'Support', 'Scheduling', 'Lead Gen', 'Research', 'Other'],
-    datasets: [{ data: [18, 10, 3, 2, 2, 2], backgroundColor: [C.brand, C.sky, C.amber, C.pink, C.green, C.gray], borderWidth: 0, hoverOffset: 6 }]
+    labels: ['Feedback', 'Support', 'Scheduling', 'Lead Gen', 'Other'],
+    datasets: [{ data: [17, 3, 3, 1, 42], backgroundColor: [C.brand, C.sky, C.amber, C.pink, C.gray], borderWidth: 0, hoverOffset: 6 }]
   },
   options: {
     responsive: true, maintainAspectRatio: false, cutout: '62%',
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} agents` } }
-    }
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} agents` } } }
   }
 });
 
-/* ── VP9. Agent Type by Chat Count Donut ── */
+/* VP9. Agent Type by Chat Count Donut */
 new Chart(document.getElementById('agentTypeChatChart'), {
   type: 'doughnut',
   data: {
-    labels: ['Feedback', 'Support', 'Research', 'Lead Gen', 'Scheduling'],
-    datasets: [{ data: [96, 44, 8, 5, 1], backgroundColor: [C.brand, C.sky, C.green, C.pink, C.amber], borderWidth: 0, hoverOffset: 6 }]
+    labels: ['Feedback', 'Other'],
+    datasets: [{ data: [129, 73], backgroundColor: [C.brand, C.gray], borderWidth: 0, hoverOffset: 6 }]
   },
   options: {
     responsive: true, maintainAspectRatio: false, cutout: '62%',
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} chats` } }
-    }
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} chats` } } }
   }
 });
 
-/* ── VP10. Probe Count Distribution ── */
+/* VP10. Probe Count Distribution */
 new Chart(document.getElementById('probeDistChart'), {
   type: 'bar',
   data: {
     labels: ['0 probes', '1 probe', '2 probes', '3 probes', '4 probes', '5+ probes'],
     datasets: [{
       label: 'Chats',
-      data: [20, 23, 24, 14, 5, 4],
+      data: [37, 27, 22, 16, 11, 16],
       backgroundColor: ['#FCA5A5', C.brandLt, C.brand, '#7B6FDE', '#4C3DB5', '#2D2375'],
       borderRadius: 6, borderSkipped: false
     }]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ` ${ctx.parsed} chats` } }
-    },
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed} chats` } } },
     scales: {
       x: { grid: { display: false }, ticks: tickOpts() },
       y: { grid: gridOpts(), ticks: { ...tickOpts(), stepSize: 5 }, beginAtZero: true }
@@ -1214,7 +956,7 @@ new Chart(document.getElementById('probeDistChart'), {
   }
 });
 
-/* ── VP11. Probe Degradation Curve ── */
+/* VP11. Probe Degradation Curve */
 new Chart(document.getElementById('probeDegradChart'), {
   type: 'line',
   data: {
@@ -1223,53 +965,34 @@ new Chart(document.getElementById('probeDegradChart'), {
       {
         label: 'Avg words in response',
         data: [7.4, 6.6, 7.2, 1.7],
-        borderColor: C.brand,
-        backgroundColor: 'rgba(91,79,190,0.08)',
-        borderWidth: 2.5,
-        pointRadius: 5,
-        pointBackgroundColor: C.brand,
-        fill: true,
-        tension: 0.3,
-        yAxisID: 'y'
+        borderColor: C.brand, backgroundColor: 'rgba(91,79,190,0.08)',
+        borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: C.brand,
+        fill: true, tension: 0.3, yAxisID: 'y'
       },
       {
         label: '% Vague responses',
         data: [25, 30, 43, 78],
-        borderColor: C.red,
-        backgroundColor: 'rgba(239,68,68,0.06)',
-        borderWidth: 2.5,
-        pointRadius: 5,
-        pointBackgroundColor: C.red,
-        fill: true,
-        tension: 0.3,
-        yAxisID: 'y2'
+        borderColor: C.red, backgroundColor: 'rgba(239,68,68,0.06)',
+        borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: C.red,
+        fill: true, tension: 0.3, yAxisID: 'y2'
       }
     ]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: true,
-        position: 'bottom',
-        labels: { boxWidth: 12, font: { size: 11 }, color: '#6B7280', padding: 16 }
-      }
+      legend: { display: true, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 }, color: '#6B7280', padding: 16 } }
     },
     scales: {
       x: { grid: { display: false }, ticks: tickOpts() },
       y: {
-        grid: gridOpts(),
-        ticks: { ...tickOpts(), callback: v => v + 'w' },
-        beginAtZero: true,
-        position: 'left',
+        grid: gridOpts(), ticks: { ...tickOpts(), callback: v => v + 'w' },
+        beginAtZero: true, position: 'left',
         title: { display: true, text: 'Avg words', font: { size: 10 }, color: '#9CA3AF' }
       },
       y2: {
-        grid: { display: false },
-        ticks: { ...tickOpts(), callback: v => v + '%' },
-        beginAtZero: true,
-        max: 100,
-        position: 'right',
+        grid: { display: false }, ticks: { ...tickOpts(), callback: v => v + '%' },
+        beginAtZero: true, max: 100, position: 'right',
         title: { display: true, text: '% Vague', font: { size: 10 }, color: '#9CA3AF' }
       }
     }
