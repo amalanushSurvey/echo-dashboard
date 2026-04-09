@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visitors — Targeting Rules</title>
+  <style>
+    :root {
+      --text:    #111827;
+      --muted:   #6B7280;
+      --light:   #9CA3AF;
+      --border:  #E5E7EB;
+      --bg:      #F9FAFB;
+      --surface: #FFFFFF;
+      --blue:    #2563EB;
+      --blue-lt: #EFF6FF;
+      --amber:   #D97706;
+      --amber-lt:#FFFBEB;
+      --red:     #DC2626;
+      --green:   #16A34A;
+      --r:       6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+
+    /* ── Page shell ──────────────────────────── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    /* ── Left: main card ─────────────────────── */
+    .card {
+      flex: 1;
+      min-width: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* Card header */
+    .card-header {
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .hicon {
+      width: 40px; height: 40px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-header-text { flex: 1; }
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .card-desc {
+      font-size: 13px; color: var(--muted);
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .desc-select {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      border: none; background: none; cursor: pointer;
+      border-bottom: 1px dashed var(--border); padding: 0 2px;
+      font-family: inherit;
+    }
+    .desc-select:focus { outline: none; border-bottom-color: var(--blue); }
+    .header-actions {
+      display: flex; gap: 6px; align-items: center; flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 14px; border-radius: var(--r); font-size: 13px; font-weight: 500;
+      cursor: pointer; border: 1px solid transparent; transition: all .15s;
+      font-family: inherit; white-space: nowrap;
+    }
+    .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn-primary:hover { background: #1D4ED8; }
+    .btn-outline { background: #fff; color: var(--text); border-color: var(--border); }
+    .btn-outline:hover { background: var(--bg); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* Expression strip */
+    .expr-strip {
+      padding: 8px 20px;
+      background: #1E293B;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      font-family: 'Menlo','Monaco','Consolas', monospace;
+      font-size: 11px;
+    }
+    .expr-label { color: #64748B; text-transform: uppercase; letter-spacing: .6px; flex-shrink: 0; }
+    .expr-body  { color: #7DD3FC; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .expr-hint  { color: #334155; font-size: 10px; white-space: nowrap; }
+    .ea { color: #60A5FA; font-weight: 700; }
+    .eo { color: #FBBF24; font-weight: 700; }
+    .ep { color: #A78BFA; }
+
+    /* Card body */
+    .card-body { padding: 0 0 8px; }
+
+    /* ── Group block ─────────────────────────── */
+    .group-block { position: relative; }
+
+    /* Group divider header */
+    .group-divider {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 20px 10px;
+    }
+    .group-divider-line { flex: 1; height: 1px; background: var(--border); }
+    .group-divider-label {
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .4px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .group-divider-label:first-child { color: var(--text); }
+
+    /* Group header row */
+    .group-head {
+      padding: 2px 20px 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .group-head-label { font-size: 13px; font-weight: 600; color: var(--text); }
+
+    /* Op toggle inside group head */
+    .op-toggle {
+      display: inline-flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .op-btn {
+      padding: 3px 10px;
+      font-size: 11px; font-weight: 700;
+      border: none; background: transparent; color: var(--muted);
+      cursor: pointer; transition: all .12s; font-family: inherit;
+    }
+    .op-btn.on-and { background: var(--blue); color: #fff; }
+    .op-btn.on-or  { background: var(--amber); color: #fff; }
+    .op-btn:not(.on-and):not(.on-or):hover { background: #fff; }
+
+    .group-head-actions { display: flex; gap: 2px; margin-left: auto; }
+    .icon-btn {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent; border-radius: 5px;
+      cursor: pointer; color: var(--light); transition: all .12s; font-size: 14px;
+    }
+    .icon-btn:hover { background: var(--bg); color: var(--muted); }
+    .icon-btn.del:hover { background: #FEF2F2; color: var(--red); }
+
+    /* Condition rows */
+    .cond-list { padding: 0 20px; }
+
+    .cond-row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 0;
+    }
+
+    /* AND/OR badge between conditions */
+    .cond-connector {
+      display: flex; align-items: center; gap: 8px;
+      padding: 2px 0;
+    }
+    .conn-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 8px;
+      border-radius: 999px; flex-shrink: 0;
+      user-select: none;
+    }
+    .conn-and { background: var(--blue-lt); color: var(--blue); border: 1px solid #BFDBFE; }
+    .conn-or  { background: var(--amber-lt); color: var(--amber); border: 1px solid #FDE68A; }
+    .conn-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* Field dropdowns */
+    .sel, .inp {
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 6px 8px;
+      font-size: 13px;
+      color: var(--text);
+      background: #fff;
+      font-family: inherit;
+      transition: border-color .12s;
+    }
+    .sel:focus, .inp:focus { outline: none; border-color: #93C5FD; box-shadow: 0 0 0 3px #EFF6FF; }
+    .sel-field { width: 110px; }
+    .sel-op    { width: 120px; }
+    .sel-var   { width: 120px; }
+    .inp-val   { flex: 1; min-width: 80px; }
+
+    .del-row {
+      color: var(--light); background: none; border: none;
+      cursor: pointer; font-size: 14px; padding: 4px;
+      border-radius: 4px; transition: all .12s; flex-shrink: 0;
+    }
+    .del-row:hover { color: var(--red); background: #FEF2F2; }
+
+    /* Add buttons row */
+    .add-row {
+      display: flex; gap: 6px;
+      padding: 10px 20px 14px;
+    }
+    .add-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: var(--r);
+      font-size: 12px; font-weight: 500; cursor: pointer;
+      border: 1px dashed; background: transparent; font-family: inherit;
+      transition: all .12s;
+    }
+    .add-cond  { border-color: #93C5FD; color: var(--blue); }
+    .add-cond:hover  { background: var(--blue-lt); }
+    .add-group { border-color: #C4B5FD; color: #7C3AED; }
+    .add-group:hover { background: #F5F3FF; }
+
+    /* Root add group */
+    .root-add {
+      padding: 8px 20px 16px;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+    }
+
+    /* ── Right: tree panel ───────────────────── */
+    .tree-panel {
+      width: 360px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: sticky;
+      top: 32px;
+    }
+
+    .tree-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .tree-card-head {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .tree-card-head h3 { font-size: 13px; font-weight: 700; }
+    .tree-badge {
+      font-size: 10px; padding: 2px 7px; border-radius: 999px; font-weight: 600;
+      background: #F5F3FF; color: #7C3AED; border: 1px solid #DDD6FE;
+    }
+
+    .tree-viz {
+      background: #FAFBFC;
+      background-image: radial-gradient(#E5E7EB 1px, transparent 1px);
+      background-size: 18px 18px;
+      overflow: auto;
+      position: relative;
+      min-height: 260px;
+      max-height: 400px;
+    }
+
+    #treeSVG { display: block; cursor: grab; }
+    #treeSVG:active { cursor: grabbing; }
+
+    .tree-zoom {
+      position: absolute; bottom: 8px; right: 8px;
+      display: flex; gap: 3px;
+    }
+    .zoom-btn {
+      width: 26px; height: 26px; background: #fff; border: 1px solid var(--border);
+      border-radius: 5px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px; color: var(--muted);
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    .zoom-btn:hover { background: var(--bg); }
+
+    .tree-legend {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 10px;
+      font-size: 11px; color: var(--muted);
+    }
+    .leg-item { display: flex; align-items: center; gap: 4px; }
+    .ldot { width: 9px; height: 9px; border-radius: 2px; }
+
+    /* ── Precedence note ─────────────────────── */
+    .prec-note {
+      margin-top: 12px;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #92400E;
+      line-height: 1.5;
+    }
+    .prec-note strong { display: block; margin-bottom: 3px; color: #78350F; }
+
+    /* ── Animations ──────────────────────────── */
+    @keyframes fadein { from { opacity:0; transform:translateY(-3px); } to { opacity:1; transform:translateY(0); } }
+    .group-block { animation: fadein .15s ease; }
+    .cond-row    { animation: fadein .12s ease; }
+
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 800px) {
+      .page { flex-direction: column; padding: 16px; }
+      .tree-panel { width: 100%; position: static; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── Main card ── -->
+  <div class="card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <div class="hicon">
+        <svg width="18" height="18" fill="none" stroke="#6B7280" stroke-width="1.8" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/>
+          <line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/>
+          <line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/>
+        </svg>
+      </div>
+      <div class="card-header-text">
+        <div class="card-title">Visitors</div>
+        <div class="card-desc">
+          Show survey to Users who meet
+          <select class="desc-select" id="rootOpSel" onchange="setRootOp(this.value)">
+            <option value="or">any</option>
+            <option value="and">all</option>
+          </select>
+          of these conditions:
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline btn-sm" onclick="resetToExample()">Example</button>
+        <button class="btn btn-primary btn-sm" onclick="saveRules()">Save</button>
+      </div>
+    </div>
+
+    <!-- Expression strip -->
+    <div class="expr-strip">
+      <span class="expr-label">Logic</span>
+      <span id="exprDisplay" class="expr-body"></span>
+      <span class="expr-hint">AND · before · OR</span>
+    </div>
+
+    <!-- Body: groups -->
+    <div class="card-body" id="cardBody"></div>
+
+    <!-- Root add group -->
+    <div class="root-add">
+      <button class="add-btn add-group" onclick="addRootGroup()">+ Add condition group</button>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- ── Right panel ── -->
+  <div class="tree-panel">
+
+    <div class="tree-card">
+      <div class="tree-card-head">
+        <h3>Logic Tree</h3>
+        <span class="tree-badge">Live preview</span>
+      </div>
+      <div class="tree-viz" id="treeViz">
+        <svg id="treeSVG" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="tree-zoom">
+          <button class="zoom-btn" onclick="doZoom(1.2)" title="Zoom in">+</button>
+          <button class="zoom-btn" onclick="doZoom(.83)" title="Zoom out">−</button>
+          <button class="zoom-btn" onclick="fitView()"   title="Fit" style="font-size:10px">⊡</button>
+        </div>
+      </div>
+      <div class="tree-legend">
+        <div class="leg-item"><div class="ldot" style="background:#7C3AED"></div> Root</div>
+        <div class="leg-item"><div class="ldot" style="background:#2563EB"></div> AND</div>
+        <div class="leg-item"><div class="ldot" style="background:#D97706"></div> OR</div>
+        <div class="leg-item"><div class="ldot" style="background:#6B7280;border-radius:50%"></div> Condition</div>
+      </div>
+    </div>
+
+    <div class="prec-note">
+      <strong>⚡ Precedence rules</strong>
+      <strong>AND</strong> conditions are evaluated before <strong>OR</strong> — just like in standard logic.
+      Use sub-groups to override precedence with explicit parentheses.
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ─────────────────────────────────────────────
+// Data model
+// ─────────────────────────────────────────────
+let state = null, uid = 0, selId = null;
+let svgScale = 1, svgOX = 20, svgOY = 20;
+
+const FIELDS = ['Location','Variable','Day','Time','Device','Browser','Language','URL','Referrer'];
+const OPS = {
+  Location : ['includes','excludes','is','is not'],
+  Variable : ['equals','not equals','starts with','ends with','contains','not contains'],
+  Day      : ['is','is not'],
+  Time     : ['before','after','between'],
+  Device   : ['is','is not'],
+  Browser  : ['is','is not','contains'],
+  Language : ['is','is not','includes'],
+  URL      : ['contains','starts with','ends with','matches regex'],
+  Referrer : ['contains','starts with','is empty','is not empty'],
+};
+const DAYS     = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DEVICES  = ['Desktop','Mobile','Tablet'];
+const BROWSERS = ['Chrome','Firefox','Safari','Edge','Opera'];
+
+const gid = () => 'n' + (++uid);
+
+function mkCond(o = {}) {
+  return { id: gid(), kind: 'cond', field: 'Location', op: 'includes', value: '', varName: '$custom_var', ...o };
+}
+function mkGroup(type = 'and', children) {
+  return { id: gid(), kind: 'group', type, children: children || [mkCond()] };
+}
+function initState() {
+  return {
+    id: gid(), kind: 'root', type: 'or',
+    children: [
+      mkGroup('and', [
+        mkCond({ field:'Location', op:'includes', value:'Albania: all' }),
+        mkCond({ field:'Variable', op:'starts with', value:'ggg', varName:'$sys_ashabai' }),
+      ]),
+      mkGroup('and', [
+        mkCond({ field:'Variable', op:'starts with', value:'ggg', varName:'$sys_ashabai' }),
+      ]),
+      mkGroup('and', [
+        mkCond({ field:'Day', op:'is', value:'Thursday,Wednesday' }),
+      ]),
+    ]
+  };
+}
+
+// ─────────────────────────────────────────────
+// Tree helpers
+// ─────────────────────────────────────────────
+function find(id, node = state, par = null) {
+  if (!node) return null;
+  if (node.id === id) return { node, par };
+  if (node.children) for (const c of node.children) { const r = find(id, c, node); if (r) return r; }
+  return null;
+}
+const getNode = id => { const r = find(id); return r ? r.node : null; };
+
+// ─────────────────────────────────────────────
+// Mutations
+// ─────────────────────────────────────────────
+function setRootOp(v) { state.type = v; render(); }
+
+function addCondTo(gid) {
+  const g = getNode(gid);
+  if (g && g.children) { g.children.push(mkCond()); render(); }
+}
+function addGroupTo(gid) {
+  const g = getNode(gid);
+  if (g && g.children) { g.children.push(mkGroup('and')); render(); }
+}
+function addRootGroup() {
+  state.children.push(mkGroup('and'));
+  render();
+}
+function delNode(id) {
+  const r = find(id);
+  if (!r || !r.par) return;
+  r.par.children = r.par.children.filter(c => c.id !== id);
+  if (selId === id) selId = null;
+  render();
+}
+function toggleGroupType(id, t) {
+  const n = getNode(id); if (n) { n.type = t; render(); }
+}
+function updCond(id, key, val) {
+  const n = getNode(id); if (!n) return;
+  n[key] = val;
+  if (key === 'field') { n.op = (OPS[val] || ['equals'])[0]; n.value = ''; }
+  render();
+}
+function wrapInGroup(id) {
+  const r = find(id);
+  if (!r || !r.par) return;
+  const idx = r.par.children.indexOf(r.node);
+  r.par.children[idx] = mkGroup('and', [r.node]);
+  render();
+}
+
+// ─────────────────────────────────────────────
+// Expression
+// ─────────────────────────────────────────────
+function condLabel(c) {
+  const f = c.field === 'Variable' ? (c.varName || '$var') : c.field;
+  return `${f} ${c.op} ${c.value || '…'}`;
+}
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function toExprHtml(n, ptype = null) {
+  if (n.kind === 'cond') return `<span style="color:#94A3B8">${esc(condLabel(n))}</span>`;
+  if (!n.children || !n.children.length) return '<span style="color:#475569">(empty)</span>';
+  const isOr = n.type === 'or';
+  const cls  = isOr ? 'eo' : 'ea';
+  const op   = isOr ? 'OR' : 'AND';
+  const sep  = `&nbsp;<span class="${cls}">${op}</span>&nbsp;`;
+  const parts = n.children.map(c => toExprHtml(c, n.type));
+  const joined = parts.join(sep);
+  if (n.kind === 'root') return joined;
+  const needParens = (isOr && ptype === 'and') || (!isOr && ptype === 'or' && parts.length > 1);
+  return needParens
+    ? `<span class="ep">(</span>${joined}<span class="ep">)</span>`
+    : joined;
+}
+
+function plainExpr(n) {
+  if (n.kind === 'cond') return condLabel(n);
+  if (!n.children || !n.children.length) return '(empty)';
+  const op = n.type === 'or' ? ' OR ' : ' AND ';
+  const parts = n.children.map(c => plainExpr(c));
+  if (n.kind === 'root' || parts.length === 1) return parts.join(op);
+  return '(' + parts.join(op) + ')';
+}
+
+// ─────────────────────────────────────────────
+// Editor rendering
+// ─────────────────────────────────────────────
+function renderEditor() {
+  const body = document.getElementById('cardBody');
+  let html = '';
+  state.children.forEach((group, gi) => {
+    html += renderGroupBlock(group, gi, state.children.length);
+  });
+  body.innerHTML = html;
+  document.getElementById('exprDisplay').innerHTML = toExprHtml(state, null);
+  // Sync root op selector
+  document.getElementById('rootOpSel').value = state.type;
+}
+
+function renderGroupBlock(group, gi, total) {
+  const isFirst = gi === 0;
+  const groupConnOp = state.type === 'or' ? 'OR' : 'AND';
+  const groupConnCls = state.type === 'or' ? 'conn-or' : 'conn-and';
+
+  // Divider
+  let divider = '';
+  if (isFirst) {
+    divider = `<div class="group-divider">
+      <span class="group-divider-label">When</span>
+      <div class="group-divider-line"></div>
+    </div>`;
+  } else {
+    divider = `<div class="group-divider">
+      <div class="group-divider-line"></div>
+      <span class="group-divider-label">
+        <span class="conn-badge ${groupConnCls}">${groupConnOp}</span>
+        When
+      </span>
+      <div class="group-divider-line"></div>
+    </div>`;
+  }
+
+  // Group type toggle (only meaningful if >1 condition)
+  const isAnd = group.type === 'and';
+  const isOr  = group.type === 'or';
+
+  const head = `<div class="group-head">
+    <div class="op-toggle">
+      <button class="op-btn ${isAnd ? 'on-and' : ''}" onclick="toggleGroupType('${group.id}','and')">AND</button>
+      <button class="op-btn ${isOr  ? 'on-or'  : ''}" onclick="toggleGroupType('${group.id}','or')">OR</button>
+    </div>
+    <span style="font-size:12px;color:var(--muted);margin-left:4px">${isAnd ? 'all must match' : 'any must match'}</span>
+    <div class="group-head-actions">
+      <button class="icon-btn" onclick="wrapInGroup('${group.id}')" title="Wrap in sub-group">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M12 8v8"/>
+        </svg>
+      </button>
+      <button class="icon-btn" onclick="openFilterMenu('${group.id}')" title="Filter options">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+        </svg>
+      </button>
+      <button class="icon-btn del" onclick="delNode('${group.id}')" title="Delete group">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+        </svg>
+      </button>
+    </div>
+  </div>`;
+
+  // Conditions
+  const condOp  = group.type;
+  const connCls = condOp === 'and' ? 'conn-and' : 'conn-or';
+  const connLbl = condOp === 'and' ? 'and' : 'or';
+
+  let condsHtml = '<div class="cond-list">';
+  group.children.forEach((child, ci) => {
+    if (ci > 0) {
+      condsHtml += `<div class="cond-connector">
+        <div class="conn-line"></div>
+        <span class="conn-badge ${connCls}">${connLbl}</span>
+        <div class="conn-line"></div>
+      </div>`;
+    }
+    if (child.kind === 'cond') {
+      condsHtml += renderCondRow(child);
+    } else {
+      // nested sub-group
+      condsHtml += renderSubGroup(child, condOp);
+    }
+  });
+  condsHtml += '</div>';
+
+  // Add buttons
+  const adds = `<div class="add-row">
+    <button class="add-btn add-cond"  onclick="addCondTo('${group.id}')">+ Condition</button>
+    <button class="add-btn add-group" onclick="addGroupTo('${group.id}')">⊂ Sub-group</button>
+  </div>`;
+
+  return `<div class="group-block" id="grp-${group.id}">
+    ${divider}${head}${condsHtml}${adds}
+  </div>`;
+}
+
+function renderSubGroup(group, parentOp) {
+  const isAnd = group.type === 'and';
+  const connCls = group.type === 'and' ? 'conn-and' : 'conn-or';
+  const connLbl = group.type === 'and' ? 'and' : 'or';
+
+  let inner = '';
+  group.children.forEach((c, ci) => {
+    if (ci > 0) {
+      inner += `<div class="cond-connector" style="padding:0 8px">
+        <div class="conn-line"></div>
+        <span class="conn-badge ${connCls}">${connLbl}</span>
+        <div class="conn-line"></div>
+      </div>`;
+    }
+    inner += c.kind === 'cond' ? renderCondRow(c) : renderSubGroup(c, group.type);
+  });
+
+  return `<div style="border:1px solid ${isAnd ? '#BFDBFE' : '#FDE68A'};border-radius:8px;
+      background:${isAnd ? '#EFF6FF' : '#FFFBEB'};padding:8px 10px;margin:4px 0">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+      <div class="op-toggle">
+        <button class="op-btn ${isAnd ? 'on-and' : ''}" onclick="toggleGroupType('${group.id}','and')">AND</button>
+        <button class="op-btn ${!isAnd ? 'on-or' : ''}" onclick="toggleGroupType('${group.id}','or')">OR</button>
+      </div>
+      <span style="font-size:11px;color:var(--muted);flex:1">${isAnd ? 'all must match' : 'any must match'}</span>
+      <button class="icon-btn del" onclick="delNode('${group.id}')" title="Remove sub-group">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    ${inner}
+    <div style="margin-top:6px">
+      <button class="add-btn add-cond" style="font-size:11px;padding:3px 8px" onclick="addCondTo('${group.id}')">+ Condition</button>
+    </div>
+  </div>`;
+}
+
+function renderCondRow(c) {
+  const ops  = OPS[c.field] || ['equals','not equals'];
+  const optsF = FIELDS.map(f => `<option${c.field === f ? ' selected' : ''}>${f}</option>`).join('');
+  const optsO = ops.map(o => `<option${c.op === o ? ' selected' : ''}>${o}</option>`).join('');
+
+  let valHtml = '';
+  if (c.field === 'Day') {
+    const opts = DAYS.map(d => `<option value="${d}"${(c.value||'').split(',').includes(d) ? ' selected':''}>${d}</option>`).join('');
+    valHtml = `<select class="sel inp-val" multiple style="height:auto" onchange="updCond('${c.id}','value',Array.from(this.selectedOptions).map(o=>o.value).join(','))">${opts}</select>`;
+  } else if (c.field === 'Device') {
+    valHtml = `<select class="sel inp-val" onchange="updCond('${c.id}','value',this.value)">${DEVICES.map(d=>`<option${c.value===d?' selected':''}>${d}</option>`).join('')}</select>`;
+  } else if (c.field === 'Browser') {
+    valHtml = `<select class="sel inp-val" onchange="updCond('${c.id}','value',this.value)">${BROWSERS.map(b=>`<option${c.value===b?' selected':''}>${b}</option>`).join('')}</select>`;
+  } else {
+    valHtml = `<input class="inp inp-val" type="text" value="${esc(c.value||'')}" placeholder="value…" oninput="updCond('${c.id}','value',this.value)">`;
+  }
+
+  const varSel = c.field === 'Variable'
+    ? `<input class="sel sel-var" type="text" value="${esc(c.varName||'$var')}" placeholder="$variable" oninput="updCond('${c.id}','varName',this.value)">`
+    : '';
+
+  return `<div class="cond-row" id="cond-${c.id}">
+    <select class="sel sel-field" onchange="updCond('${c.id}','field',this.value)">${optsF}</select>
+    ${varSel}
+    <select class="sel sel-op" onchange="updCond('${c.id}','op',this.value)">${optsO}</select>
+    ${valHtml}
+    <button class="del-row" onclick="delNode('${c.id}')" title="Remove">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+      </svg>
+    </button>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// SVG Tree
+// ─────────────────────────────────────────────
+const NW=160, NH=40, HG=20, VG=56;
+
+function calcW(n) {
+  if (n.kind === 'cond') { n._sw = NW; return; }
+  (n.children || []).forEach(c => calcW(c));
+  if (!n.children || !n.children.length) { n._sw = NW; return; }
+  n._sw = n.children.reduce((s,c) => s+c._sw, 0) + HG*(n.children.length-1);
+}
+function posNode(n, x, y) {
+  n._x = x + n._sw/2 - NW/2;
+  n._y = y;
+  if (n.kind !== 'cond' && n.children) {
+    let cx = x;
+    n.children.forEach(c => { posNode(c, cx, y+NH+VG); cx += c._sw+HG; });
+  }
+}
+function collectAll(n, a=[]) { a.push(n); if(n.children) n.children.forEach(c=>collectAll(c,a)); return a; }
+function treeDepth(n) { if(n.kind==='cond'||!n.children?.length) return 1; return 1+Math.max(...n.children.map(treeDepth)); }
+
+function nStyle(n) {
+  if (n.kind==='cond') return { fill:'#fff', stroke:'#D1D5DB', tc:'#374151' };
+  if (n.kind==='root') return { fill:'#7C3AED', stroke:'#6D28D9', tc:'#fff' };
+  if (n.type==='and')  return { fill:'#2563EB', stroke:'#1D4ED8', tc:'#fff' };
+  return                      { fill:'#D97706', stroke:'#B45309', tc:'#fff' };
+}
+
+function renderSVG() {
+  const svg = document.getElementById('treeSVG');
+  const viz = document.getElementById('treeViz');
+  calcW(state);
+  const W = state._sw + 60;
+  const D = treeDepth(state);
+  const H = D*(NH+VG)+60;
+  svg.setAttribute('width',  Math.max(W, viz.clientWidth  || 340));
+  svg.setAttribute('height', Math.max(H, viz.clientHeight || 260));
+  posNode(state, 30, 20);
+
+  const nodes = collectAll(state);
+  let out = `<defs><filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+    <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="rgba(0,0,0,.10)"/>
+  </filter></defs>
+  <g id="svgRoot" transform="translate(${svgOX},${svgOY}) scale(${svgScale})">`;
+
+  // edges
+  nodes.forEach(n => {
+    if (n.kind==='cond'||!n.children) return;
+    const ec = n.kind==='root' ? '#C4B5FD' : (n.type==='and' ? '#93C5FD' : '#FCD34D');
+    n.children.forEach(c => {
+      const x1=n._x+NW/2, y1=n._y+NH, x2=c._x+NW/2, y2=c._y, my=(y1+y2)/2;
+      out += `<path d="M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}" fill="none" stroke="${ec}" stroke-width="1.5"/>`;
+    });
+  });
+
+  // nodes
+  nodes.forEach(n => {
+    const {fill,stroke,tc} = nStyle(n);
+    const x=n._x, y=n._y, sel=n.id===selId;
+    if (n.kind==='cond') {
+      const fl = n.field==='Variable'?(n.varName||'$var'):n.field;
+      const lbl = trunc(`${fl} ${n.op} ${n.value||'…'}`, 20);
+      out += `<g onclick="selNode('${n.id}')" style="cursor:pointer">
+        <rect x="${x}" y="${y}" width="${NW}" height="${NH}" rx="7" fill="${fill}"
+          stroke="${sel?'#2563EB':stroke}" stroke-width="${sel?2:1}" filter="url(#sh)"/>
+        ${sel?`<rect x="${x-2}" y="${y-2}" width="${NW+4}" height="${NH+4}" rx="9" fill="none" stroke="#93C5FD" stroke-width="2.5" opacity=".5"/>`:''}
+        <text x="${x+9}" y="${y+14}" font-size="9" fill="#9CA3AF" font-family="sans-serif" font-weight="700" letter-spacing=".3">${esc(n.field.toUpperCase())}</text>
+        <text x="${x+9}" y="${y+30}" font-size="11.5" fill="#374151" font-family="sans-serif">${esc(lbl)}</text>
+      </g>`;
+    } else {
+      const label = n.kind==='root' ? 'ROOT OR' : n.type.toUpperCase();
+      const sub = (n.children||[]).length;
+      const cx = x+NW/2;
+      out += `<g onclick="selNode('${n.id}')" style="cursor:pointer">
+        <rect x="${x}" y="${y}" width="${NW}" height="${NH}" rx="9" fill="${fill}"
+          stroke="${sel?'#fff':stroke}" stroke-width="${sel?2.5:1}" filter="url(#sh)"/>
+        ${sel?`<rect x="${x-2}" y="${y-2}" width="${NW+4}" height="${NH+4}" rx="11" fill="none" stroke="${fill}" stroke-width="3" opacity=".4"/>`:''}
+        <text x="${cx}" y="${y+18}" font-size="12" font-weight="800" fill="${tc}" font-family="sans-serif" text-anchor="middle" letter-spacing=".4">${esc(label)}</text>
+        <text x="${cx}" y="${y+33}" font-size="10" fill="${tc}" opacity=".75" font-family="sans-serif" text-anchor="middle">${sub} item${sub!==1?'s':''}</text>
+      </g>`;
+    }
+  });
+
+  out += '</g>';
+  svg.innerHTML = out;
+}
+
+function trunc(s, n=24) { return s.length>n ? s.slice(0,n)+'…' : s; }
+function selNode(id) { selId = id; renderSVG(); }
+
+// Pan & zoom
+let dragging=false, dsx=0, dsy=0, dox=0, doy=0;
+document.addEventListener('DOMContentLoaded', () => {
+  const svg = document.getElementById('treeSVG');
+  svg.addEventListener('mousedown', e => { dragging=true; dsx=e.clientX; dsy=e.clientY; dox=svgOX; doy=svgOY; });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    svgOX=dox+(e.clientX-dsx); svgOY=doy+(e.clientY-dsy);
+    document.getElementById('svgRoot')?.setAttribute('transform',`translate(${svgOX},${svgOY}) scale(${svgScale})`);
+  });
+  window.addEventListener('mouseup', () => { dragging=false; });
+  document.getElementById('treeViz').addEventListener('wheel', e => {
+    e.preventDefault();
+    svgScale = Math.max(.25, Math.min(3, svgScale*(e.deltaY<0?1.1:.9)));
+    document.getElementById('svgRoot')?.setAttribute('transform',`translate(${svgOX},${svgOY}) scale(${svgScale})`);
+  }, {passive:false});
+});
+
+function doZoom(f) {
+  svgScale=Math.max(.25, Math.min(3, svgScale*f));
+  document.getElementById('svgRoot')?.setAttribute('transform',`translate(${svgOX},${svgOY}) scale(${svgScale})`);
+}
+function fitView() { svgScale=1; svgOX=20; svgOY=20; renderSVG(); }
+
+// ─────────────────────────────────────────────
+// Misc
+// ─────────────────────────────────────────────
+function openFilterMenu(gid) {
+  alert('Filter menu for group ' + gid + '\n(Hook up to your filter options UI)');
+}
+function resetToExample() { uid=0; state=initState(); selId=null; render(); }
+function saveRules() { alert('Rules saved!\n\n' + plainExpr(state)); }
+
+function render() { renderEditor(); renderSVG(); }
+
+resetToExample();
+</script>
+</body>
+</html>
