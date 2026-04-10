@@ -837,7 +837,7 @@
           <h2 class="section-title">Throttling Rules</h2>
         </div>
         <p class="section-desc" style="margin-bottom:20px;">
-          Control how frequently your contacts can receive surveys. These rules help prevent survey fatigue and keep your audience engaged by spacing out outreach appropriately.
+          Control how frequently your contacts can receive invites. These rules help prevent invite fatigue and keep your audience engaged by spacing out outreach appropriately.
         </p>
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px;">
           <span class="default-rule-badge">
@@ -846,7 +846,7 @@
             </svg>
             Default Rule
           </span>
-          <span style="font-size:12.5px;color:#6b7280;">Applied to all surveys unless overridden by a custom rule</span>
+          <span style="font-size:12.5px;color:#6b7280;">Applied to all invites unless overridden by a custom rule</span>
         </div>
       </div>
 
@@ -859,13 +859,13 @@
             <div class="toggle-thumb"></div>
           </label>
           <div class="rule-text">
-            <div class="rule-title">Limit how many surveys a contact can receive</div>
-            <div class="rule-desc">Prevent the same contact from receiving too many surveys within a set time period.</div>
+            <div class="rule-title">Limit how many invites a contact can receive</div>
+            <div class="rule-desc">Prevent the same contact from receiving too many invites within a set time period.</div>
           </div>
         </div>
         <div class="rule-body" id="rule1-body">
           <div class="rule-control">
-            <div class="rule-control-label">Maximum surveys</div>
+            <div class="rule-control-label">Maximum invites</div>
             <div class="stepper">
               <button class="stepper-btn" onclick="let v=this.nextElementSibling; v.value=Math.max(1,+v.value-1)">
                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
@@ -902,13 +902,13 @@
             <div class="toggle-thumb"></div>
           </label>
           <div class="rule-text">
-            <div class="rule-title">Specify a minimum gap between surveys</div>
-            <div class="rule-desc">Ensure enough time passes after a survey is sent before the same contact receives another one.</div>
+            <div class="rule-title">Specify a minimum gap between invites</div>
+            <div class="rule-desc">Ensure enough time passes after an invite is sent before the same contact receives another one.</div>
           </div>
         </div>
         <div class="rule-body" id="rule2-body">
           <div class="rule-control">
-            <div class="rule-control-label">Days after last survey</div>
+            <div class="rule-control-label">Days after last invite</div>
             <div class="stepper">
               <button class="stepper-btn" onclick="let v=this.nextElementSibling; v.value=Math.max(1,+v.value-1)">
                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
@@ -929,7 +929,7 @@
           </svg>
           Save changes
         </button>
-        <span class="save-hint">Changes apply to all surveys using the default rule</span>
+        <span class="save-hint">Changes apply to all invites using the default rule</span>
       </div>
     </div>
 
@@ -939,7 +939,7 @@
         <div>
           <h2 class="section-title">Custom Rules</h2>
           <p class="section-desc" style="margin-bottom:0; margin-top:5px;">
-            Define targeted throttling or exclusion rules based on specific conditions — surveys, contact segments, channels, and more.
+            Define targeted throttling or exclusion rules based on specific conditions — surveys, smart lists, channels, and more.
           </p>
         </div>
         <button class="btn-add-custom-rule" onclick="openModal()">
@@ -956,7 +956,7 @@
           <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 5h6"/>
           <path d="M12 12v4M12 12l-2-2M12 12l2-2"/>
         </svg>
-        <p><strong style="color:#6b7280;">No custom rules yet.</strong><br/>Add a custom rule to control throttling for specific segments, surveys, or channels.</p>
+        <p><strong style="color:#6b7280;">No custom rules yet.</strong><br/>Add a custom rule to control throttling for specific smart lists, surveys, or channels.</p>
       </div>
 
       <!-- Custom rules list (populated dynamically) -->
@@ -1070,7 +1070,7 @@
           </div>
           <div class="nrs-grid">
             <div class="nrs-field">
-              <label class="nrs-label">Max surveys</label>
+              <label class="nrs-label">Max invites</label>
               <input class="nrs-input" type="number" value="5" min="1" id="nrsMaxSurveys" />
             </div>
             <div class="nrs-field">
@@ -1320,20 +1320,23 @@ function selectRuleType(type) {
 // ── Condition groups ──
 const fieldOptions = [
   { value: 'survey', label: 'Survey' },
-  { value: 'segment', label: 'Contact Segment' },
+  { value: 'segment', label: 'Smart Lists' },
   { value: 'channel', label: 'Channel' },
+  { value: 'echo_agents', label: 'Echo Agents' },
   { value: 'survey_variable', label: 'Survey Variable' },
 ];
 const operatorOptions = {
   survey: ['is', 'is not'],
   segment: ['is in', 'is not in'],
   channel: ['is', 'is not'],
+  echo_agents: ['is', 'is not'],
   survey_variable: ['equals', 'contains', 'does not contain'],
 };
 const valueOptions = {
   survey: ['Org Alignment Survey', 'CSAT Survey', 'Customer Satisfaction Survey', 'NPS Survey'],
   segment: ['VIP Customers', 'Enterprise', 'Trial Users', 'Churned Users', 'New Signups'],
-  channel: ['Email', 'WhatsApp', 'SMS', 'In-App', 'Web'],
+  channel: ['Email', 'WhatsApp', 'SMS', 'Spotchecks'],
+  echo_agents: ['Agent Alpha', 'Agent Beta', 'Agent Gamma', 'Agent Delta'],
   survey_variable: [],
 };
 
@@ -1523,7 +1526,7 @@ function buildReview() {
     const gap = document.getElementById('nrsMinGap')?.value || '1';
     rtHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span class="cri-badge-custom">Custom Throttle</span><span>Overrides default rule for matching contacts.</span></div>
       <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:8px;">
-        <div><div style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Max surveys</div><div style="font-weight:600;font-size:14px;">${max}</div></div>
+        <div><div style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Max invites</div><div style="font-weight:600;font-size:14px;">${max}</div></div>
         <div><div style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Interval</div><div style="font-weight:600;font-size:14px;">${interval}</div></div>
         <div><div style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Min gap</div><div style="font-weight:600;font-size:14px;">${gap} day${gap != 1 ? 's' : ''}</div></div>
       </div>`;
@@ -1630,7 +1633,7 @@ function buildRuleCard(r) {
 
   const limitsHTML = r.type === 'newrule'
     ? `<div class="cri-limits">
-        <div class="cri-limit-item"><div class="cri-limit-label">Max surveys</div><div class="cri-limit-val">${r.maxSurveys}</div></div>
+        <div class="cri-limit-item"><div class="cri-limit-label">Max invites</div><div class="cri-limit-val">${r.maxSurveys}</div></div>
         <div class="cri-limit-item"><div class="cri-limit-label">Interval</div><div class="cri-limit-val">${r.interval}</div></div>
         <div class="cri-limit-item"><div class="cri-limit-label">Min gap</div><div class="cri-limit-val">${r.minGap} day${r.minGap != 1 ? 's' : ''}</div></div>
        </div>` : '';
