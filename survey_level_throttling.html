@@ -240,6 +240,110 @@
       padding: 20px 22px;
     }
 
+    /* Survey condition section */
+    .survey-cond-section {
+      padding: 0 0 4px;
+    }
+    .survey-cond-header {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .survey-cond-header svg { flex-shrink: 0; margin-top: 2px; color: #6b7280; }
+    .survey-cond-title { font-size: 13.5px; font-weight: 600; color: #111827; margin-bottom: 3px; }
+    .survey-cond-desc { font-size: 12px; color: #6b7280; line-height: 1.45; }
+    .survey-cond-divider {
+      height: 1px; background: #e5e7eb; margin: 18px 0;
+    }
+
+    /* Logic pill */
+    .logic-pill {
+      display: inline-flex;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .logic-btn {
+      padding: 4px 10px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase;
+      border: none; background: transparent;
+      color: #6b7280; cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    .logic-btn.active { background: #0d9488; color: #fff; }
+
+    /* Condition group */
+    .cond-group {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .cond-group-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .cond-group-label { font-size: 12.5px; color: #6b7280; }
+    .cond-rows { padding: 0; }
+    .cond-footer {
+      padding: 8px 14px;
+      border-top: 1px solid #f3f4f6;
+      background: #fafafa;
+    }
+    .btn-add-cond {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12.5px; font-weight: 500; color: #0d9488;
+      background: none; border: none; cursor: pointer;
+      padding: 4px 6px; border-radius: 5px;
+      transition: background 0.12s;
+    }
+    .btn-add-cond:hover { background: #f0fdfa; }
+
+    /* Condition rows */
+    .cond-row {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 8px 14px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .cond-row:last-child { border-bottom: none; }
+    .cond-row-logic {
+      font-size: 10px; font-weight: 700; color: #0d9488;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      width: 30px; text-align: center; flex-shrink: 0;
+    }
+    .cond-select {
+      appearance: none;
+      border: 1px solid #e5e7eb; border-radius: 7px;
+      padding: 6px 26px 6px 9px;
+      font-size: 13px; color: #111827; background: #fff;
+      cursor: pointer; outline: none;
+      transition: border-color 0.15s;
+      min-width: 120px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%239ca3af' stroke-width='2.5' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 7px center;
+    }
+    .cond-select:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+    .cond-input {
+      flex: 1; min-width: 100px;
+      border: 1px solid #e5e7eb; border-radius: 7px;
+      padding: 6px 9px;
+      font-size: 13px; color: #111827;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .cond-input:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+    .btn-remove-cond {
+      width: 26px; height: 26px;
+      border: none; background: none; cursor: pointer;
+      color: #d1d5db; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.12s, background 0.12s; flex-shrink: 0;
+    }
+    .btn-remove-cond:hover { color: #ef4444; background: #fef2f2; }
+
     .config-controls {
       display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 20px;
     }
@@ -505,6 +609,38 @@
 
       <!-- Configuration panel (shown when override ON) -->
       <div class="config-panel" id="configPanel" style="display:none">
+
+        <!-- Condition section -->
+        <div class="survey-cond-section">
+          <div class="survey-cond-header">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            <div>
+              <div class="survey-cond-title">Apply to contacts matching</div>
+              <div class="survey-cond-desc">Optional — if no conditions are set, this rule applies to all contacts receiving this survey.</div>
+            </div>
+          </div>
+
+          <div class="cond-group" id="surveyCfgCondGroup">
+            <div class="cond-group-header">
+              <div class="logic-pill" id="surveyCfgLogicPill">
+                <button class="logic-btn active" onclick="setSurveyCondLogic('AND',this)">AND</button>
+                <button class="logic-btn" onclick="setSurveyCondLogic('OR',this)">OR</button>
+              </div>
+              <span class="cond-group-label">Match <span id="surveyCfgLogicLabel">all</span> conditions</span>
+            </div>
+            <div class="cond-rows" id="surveyCfgCondRows"></div>
+            <div class="cond-footer">
+              <button class="btn-add-cond" onclick="addSurveyCfgCondRow()">
+                + Add condition
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="survey-cond-divider"></div>
+
         <div class="config-controls">
           <div class="rule-control">
             <div class="rule-control-label">Max invites</div>
@@ -697,6 +833,11 @@
   function handleOverrideToggle(checkbox) {
     const s = surveys[currentSurveyIdx];
     s.hasOverride = checkbox.checked;
+    if (!checkbox.checked) {
+      // Clear condition rows when override is turned off
+      document.getElementById('surveyCfgCondRows').innerHTML = '';
+      surveyCfgRowCounter = 0;
+    }
     applyOverrideState(checkbox.checked);
   }
 
@@ -789,6 +930,194 @@
     toast.className = 'toast' + (type === 'success' ? ' success' : '') + ' show';
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  // ── Survey condition builder ──────────────────────────
+  let surveyCfgRowCounter = 0;
+  let surveyCfgLogic = 'AND';
+
+  function setSurveyCondLogic(logic, btn) {
+    surveyCfgLogic = logic;
+    const pill = document.getElementById('surveyCfgLogicPill');
+    pill.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('surveyCfgLogicLabel').textContent = logic === 'AND' ? 'all' : 'any';
+    // Update logic labels on non-first rows
+    const rows = document.getElementById('surveyCfgCondRows');
+    Array.from(rows.children).forEach((r, i) => {
+      if (i > 0) {
+        const lbl = r.querySelector('.cond-row-logic');
+        if (lbl) lbl.textContent = logic;
+      }
+    });
+  }
+
+  // Field definitions for survey-level condition builder
+  const surveyCfgFieldDefs = {
+    smart_lists: {
+      label: 'Smart Lists',
+      operators: ['is in', 'is not in'],
+      values: ['VIP Customers', 'Enterprise', 'Trial Users', 'Churned Users', 'New Signups']
+    },
+    channel: {
+      label: 'Channel',
+      operators: ['is', 'is not'],
+      values: ['Email', 'WhatsApp', 'SMS', 'Spotchecks']
+    },
+    survey_var: {
+      label: 'Survey Variable',
+      operators: null, // handled specially
+      values: null
+    }
+  };
+
+  const surveyVarDefs = {
+    text: {
+      icon: '📝',
+      label: 'Text',
+      vars: ['Name', 'Email', 'Company', 'Department', 'Job Title', 'Industry', 'Country', 'City'],
+      operators: ['equals', 'does not equal', 'contains', 'does not contain', 'starts with', 'ends with', 'is empty', 'is not empty'],
+      inputType: 'text'
+    },
+    number: {
+      icon: '🔢',
+      label: 'Number',
+      vars: ['Age', 'Plan Value', 'Employee Count', 'NPS Score', 'CSAT Score', 'Usage Days', 'Subscription Months'],
+      operators: ['equals', 'does not equal', 'greater than', 'less than', 'greater than or equal', 'less than or equal', 'is empty', 'is not empty'],
+      inputType: 'number'
+    },
+    date: {
+      icon: '📅',
+      label: 'Date',
+      vars: ['Signup Date', 'Last Login Date', 'Contract Renewal Date', 'Last Invite Date'],
+      operators: ['is on', 'is not on', 'is before', 'is after', 'is between', 'is empty', 'is not empty'],
+      inputType: 'date'
+    },
+    boolean: {
+      icon: '✓',
+      label: 'Boolean',
+      vars: ['Is Premium', 'Email Verified', 'Opted In', 'Is Trial'],
+      operators: ['is true', 'is false'],
+      inputType: null
+    }
+  };
+
+  // Operators that hide the value input
+  const noValueOps = new Set(['is empty', 'is not empty', 'is true', 'is false']);
+
+  function getVarType(varName) {
+    for (const [type, def] of Object.entries(surveyVarDefs)) {
+      if (def.vars.includes(varName)) return type;
+    }
+    return 'text';
+  }
+
+  function onSurveyFieldChange(sel, rowId) {
+    const field = sel.value;
+    const row = sel.closest('.cond-row');
+    const opCell = document.getElementById('scr-op-' + rowId);
+    const valCell = document.getElementById('scr-val-' + rowId);
+
+    if (field === 'survey_var') {
+      // Build grouped variable selector
+      let groupedOptions = '';
+      for (const [type, def] of Object.entries(surveyVarDefs)) {
+        groupedOptions += `<optgroup label="${def.icon} ${def.label}">`;
+        def.vars.forEach(v => { groupedOptions += `<option value="${v}">${v}</option>`; });
+        groupedOptions += `</optgroup>`;
+      }
+      opCell.innerHTML = `<select class="cond-select" id="scr-var-${rowId}" onchange="onSurveyVarChange(this, ${rowId})">${groupedOptions}</select>`;
+      valCell.innerHTML = ''; // will be filled when var is picked
+      // Trigger for the first var
+      const firstVarSel = document.getElementById('scr-var-' + rowId);
+      if (firstVarSel) onSurveyVarChange(firstVarSel, rowId);
+    } else {
+      const def = surveyCfgFieldDefs[field];
+      if (!def) return;
+      opCell.innerHTML = `<select class="cond-select" id="scr-op2-${rowId}">${def.operators.map(op => `<option value="${op}">${op}</option>`).join('')}</select>`;
+      valCell.innerHTML = `<select class="cond-select" id="scr-val2-${rowId}">${def.values.map(v => `<option value="${v}">${v}</option>`).join('')}</select>`;
+    }
+  }
+
+  function onSurveyVarChange(sel, rowId) {
+    const varName = sel.value;
+    const varType = getVarType(varName);
+    const def = surveyVarDefs[varType];
+    const valCell = document.getElementById('scr-val-' + rowId);
+
+    // Build op select + value input
+    const opSelectId = 'scr-varop-' + rowId;
+    const valInputId = 'scr-varinput-' + rowId;
+
+    const opHtml = `<select class="cond-select" id="${opSelectId}" onchange="onSurveyVarOpChange(this, ${rowId}, '${varType}')">${def.operators.map(op => `<option value="${op}">${op}</option>`).join('')}</select>`;
+
+    let valHtml = '';
+    if (def.inputType) {
+      valHtml = `<input class="cond-input" type="${def.inputType}" id="${valInputId}" placeholder="Value…">`;
+    }
+
+    valCell.innerHTML = opHtml + valHtml;
+
+    // Check if first operator already requires hiding value
+    const firstOp = def.operators[0];
+    onSurveyVarOpChange(document.getElementById(opSelectId), rowId, varType);
+  }
+
+  function onSurveyVarOpChange(sel, rowId, varType) {
+    const op = sel.value;
+    const valInputId = 'scr-varinput-' + rowId;
+    const valInput = document.getElementById(valInputId);
+    if (valInput) {
+      valInput.style.display = noValueOps.has(op) ? 'none' : '';
+    }
+  }
+
+  function addSurveyCfgCondRow() {
+    surveyCfgRowCounter++;
+    const rowId = surveyCfgRowCounter;
+    const rows = document.getElementById('surveyCfgCondRows');
+    const isFirst = rows.children.length === 0;
+
+    const logicLabel = isFirst
+      ? `<span style="width:30px;flex-shrink:0;display:inline-block"></span>`
+      : `<span class="cond-row-logic">${surveyCfgLogic}</span>`;
+
+    const defaultDef = surveyCfgFieldDefs['smart_lists'];
+
+    const row = document.createElement('div');
+    row.className = 'cond-row';
+    row.dataset.rowId = rowId;
+
+    row.innerHTML = `
+      ${logicLabel}
+      <select class="cond-select" id="scr-field-${rowId}" onchange="onSurveyFieldChange(this, ${rowId})">
+        <option value="smart_lists">Smart Lists</option>
+        <option value="channel">Channel</option>
+        <option value="survey_var">Survey Variable</option>
+      </select>
+      <span id="scr-op-${rowId}" style="display:contents"><select class="cond-select" id="scr-op2-${rowId}">${defaultDef.operators.map(op => `<option value="${op}">${op}</option>`).join('')}</select></span>
+      <span id="scr-val-${rowId}" style="display:contents"><select class="cond-select" id="scr-val2-${rowId}">${defaultDef.values.map(v => `<option value="${v}">${v}</option>`).join('')}</select></span>
+      <button class="btn-remove-cond" onclick="removeSurveyCfgCondRow(this)" title="Remove condition">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    `;
+    rows.appendChild(row);
+  }
+
+  function removeSurveyCfgCondRow(btn) {
+    const row = btn.closest('.cond-row');
+    const rows = document.getElementById('surveyCfgCondRows');
+    row.remove();
+    // Re-label first row
+    if (rows.children.length > 0) {
+      const firstRow = rows.children[0];
+      const lbl = firstRow.querySelector('.cond-row-logic');
+      if (lbl) {
+        const placeholder = document.createElement('span');
+        placeholder.style.cssText = 'width:30px;flex-shrink:0;display:inline-block';
+        lbl.replaceWith(placeholder);
+      }
+    }
   }
 
   // ── Init ──────────────────────────────────────────────

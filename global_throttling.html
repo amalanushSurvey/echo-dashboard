@@ -516,6 +516,24 @@
     }
     .btn-modal-save:hover { background: #0f766e; box-shadow: 0 3px 8px rgba(13,148,136,0.3); }
 
+    /* Logic pill (AND/OR toggle) */
+    .logic-pill {
+      display: inline-flex;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .logic-btn {
+      padding: 4px 10px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase;
+      border: none; background: transparent;
+      color: #6b7280; cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    .logic-btn.active { background: #0d9488; color: #fff; }
+
     /* Toast */
     .toast {
       position: fixed; bottom: 28px; right: 28px;
@@ -840,6 +858,13 @@
       <!-- Conditions -->
       <div class="modal-section-title">Conditions</div>
       <div class="cond-group">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f9fafb;border-bottom:1px solid #e5e7eb;">
+          <div class="logic-pill" id="globalLogicPill">
+            <button class="logic-btn active" onclick="setGlobalLogic('AND',this)">AND</button>
+            <button class="logic-btn" onclick="setGlobalLogic('OR',this)">OR</button>
+          </div>
+          <span style="font-size:12.5px;color:#6b7280;">Match <span id="globalLogicLabel">all</span> conditions</span>
+        </div>
         <div class="cond-rows" id="modalCondRows">
           <!-- rows added by JS -->
         </div>
@@ -922,10 +947,16 @@
 
   function openExclModal() {
     modalCondCount = 0;
+    globalCondLogic = 'AND';
     document.getElementById('modalRuleName').value = '';
     document.getElementById('modalRuleName').classList.remove('error');
     document.getElementById('ruleNameError').classList.remove('visible');
     document.getElementById('modalCondRows').innerHTML = '';
+    // Reset AND/OR pill
+    const pill = document.getElementById('globalLogicPill');
+    pill.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
+    pill.querySelector('.logic-btn').classList.add('active');
+    document.getElementById('globalLogicLabel').textContent = 'all';
     addModalCondRow();
     document.getElementById('exclModal').classList.add('open');
   }
@@ -934,25 +965,93 @@
     document.getElementById('exclModal').classList.remove('open');
   }
 
+  // ── Global logic (AND/OR) ─────────────────────────────
+  let globalCondLogic = 'AND';
+
+  function setGlobalLogic(logic, btn) {
+    globalCondLogic = logic;
+    const pill = document.getElementById('globalLogicPill');
+    pill.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('globalLogicLabel').textContent = logic === 'AND' ? 'all' : 'any';
+    // Update logic labels on non-first rows
+    const rows = document.getElementById('modalCondRows');
+    Array.from(rows.children).forEach((r, i) => {
+      if (i > 0) {
+        const lbl = r.querySelector('.cond-row-logic');
+        if (lbl) lbl.textContent = logic;
+      }
+    });
+  }
+
+  // ── Field definitions ─────────────────────────────────
+  const globalFieldDefs = {
+    smart_lists: {
+      label: 'Smart Lists',
+      operators: ['is in', 'is not in'],
+      values: ['VIP Customers', 'Enterprise', 'Trial Users', 'Churned Users', 'New Signups', 'Internal Testers']
+    },
+    channel: {
+      label: 'Channel',
+      operators: ['is', 'is not'],
+      values: ['Email', 'WhatsApp', 'SMS', 'Spotchecks']
+    },
+    survey: {
+      label: 'Survey',
+      operators: ['is', 'is not'],
+      values: ['Org Alignment Survey', 'CSAT Survey', 'Customer Satisfaction Survey', 'NPS Survey']
+    },
+    echo_agents: {
+      label: 'Echo Agents',
+      operators: ['is', 'is not'],
+      values: ['Agent Alpha', 'Agent Beta', 'Agent Gamma', 'Agent Delta']
+    }
+  };
+
+  function onGlobalFieldChange(sel, rowId) {
+    const field = sel.value;
+    const def = globalFieldDefs[field];
+    if (!def) return;
+
+    const opSel = document.getElementById('op-' + rowId);
+    const valSel = document.getElementById('val-' + rowId);
+
+    // Update operators
+    opSel.innerHTML = def.operators.map(op => `<option value="${op}">${op}</option>`).join('');
+
+    // Update values
+    valSel.innerHTML = def.values.map(v => `<option value="${v}">${v}</option>`).join('');
+  }
+
   function addModalCondRow() {
     modalCondCount++;
+    const rowId = modalCondCount;
     const rows = document.getElementById('modalCondRows');
     const isFirst = rows.children.length === 0;
     const row = document.createElement('div');
     row.className = 'cond-row';
-    row.dataset.condId = modalCondCount;
+    row.dataset.condId = rowId;
+
+    const logicLabel = isFirst
+      ? '<span style="width:30px;flex-shrink:0;display:inline-block"></span>'
+      : `<span class="cond-row-logic">${globalCondLogic}</span>`;
+
+    const defaultDef = globalFieldDefs['smart_lists'];
+
     row.innerHTML = `
-      ${!isFirst ? '<span class="cond-row-logic">AND</span>' : '<span style="width:30px;flex-shrink:0"></span>'}
-      <select class="cond-select">
+      ${logicLabel}
+      <select class="cond-select" onchange="onGlobalFieldChange(this, ${rowId})">
         <option value="smart_lists">Smart Lists</option>
         <option value="channel">Channel</option>
-        <option value="survey_var">Survey Variable</option>
+        <option value="survey">Survey</option>
+        <option value="echo_agents">Echo Agents</option>
       </select>
-      <select class="cond-select" style="min-width:100px">
-        <option value="is_in">is in</option>
-        <option value="is_not_in">is not in</option>
+      <select class="cond-select" id="op-${rowId}">
+        ${defaultDef.operators.map(op => `<option value="${op}">${op}</option>`).join('')}
       </select>
-      <input class="cond-input" type="text" placeholder="Enter value…">
+      <select class="cond-select" id="val-${rowId}">
+        ${defaultDef.values.map(v => `<option value="${v}">${v}</option>`).join('')}
+      </select>
       <button class="btn-remove-cond" onclick="removeCondRow(this)" title="Remove condition">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -1006,16 +1105,19 @@
     const conditions = [];
     rows.querySelectorAll('.cond-row').forEach(row => {
       const selects = row.querySelectorAll('.cond-select');
-      const input = row.querySelector('.cond-input');
-      if (selects.length >= 2 && input && input.value.trim()) {
+      // selects[0] = field, selects[1] = operator, selects[2] = value
+      if (selects.length >= 3) {
         const fieldLabel = selects[0].options[selects[0].selectedIndex].text;
         const opLabel = selects[1].options[selects[1].selectedIndex].text;
-        conditions.push(`${fieldLabel} ${opLabel} ${input.value.trim()}`);
+        const valLabel = selects[2].options[selects[2].selectedIndex].text;
+        if (valLabel) {
+          conditions.push(`${fieldLabel} ${opLabel} ${valLabel}`);
+        }
       }
     });
 
     if (conditions.length === 0) {
-      showToast('Please fill in at least one condition value.', 'default');
+      showToast('Please add at least one condition.', 'default');
       return;
     }
 
