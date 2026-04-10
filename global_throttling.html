@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings – Global Throttling</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f6f8;
+      color: #1a1a2e;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* TOP NAV */
+    .topnav {
+      height: 52px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topnav .home-icon {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      color: #6b7280;
+      cursor: pointer;
+    }
+    .topnav .home-icon:hover { background: #f3f4f6; }
+    .topnav .breadcrumb-sep { color: #d1d5db; font-size: 16px; }
+    .topnav .breadcrumb-title { font-weight: 600; font-size: 15px; color: #111827; }
+    .topnav .spacer { flex: 1; }
+    .topnav .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .topnav .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #374151;
+      color: #fff; font-size: 12px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .topnav .bell-wrap {
+      display: flex; align-items: center; gap: 4px;
+      cursor: pointer; padding: 4px 8px; border-radius: 6px;
+    }
+    .topnav .bell-wrap:hover { background: #f3f4f6; }
+
+    /* LAYOUT */
+    .layout { display: flex; min-height: calc(100vh - 52px); }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 220px;
+      background: #fff;
+      border-right: 1px solid #e5e7eb;
+      padding: 16px 0;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+    .sidebar-section-label {
+      font-size: 11px; font-weight: 700;
+      color: #9ca3af;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 12px 20px 6px;
+    }
+    .sidebar-item {
+      display: block;
+      padding: 8px 20px;
+      color: #374151;
+      font-size: 13.5px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      text-decoration: none;
+      transition: background 0.12s;
+    }
+    .sidebar-item:hover { background: #f9fafb; color: #111827; }
+    .sidebar-item.active {
+      background: #f0fdf4;
+      color: #059669;
+      border-left-color: #059669;
+      font-weight: 500;
+    }
+
+    /* MAIN */
+    .main {
+      flex: 1;
+      padding: 32px 40px;
+      max-width: 940px;
+    }
+
+    /* SECTION CARD */
+    .section-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .section-title { font-size: 18px; font-weight: 700; color: #111827; }
+    .section-desc { color: #6b7280; font-size: 13.5px; line-height: 1.5; margin-bottom: 22px; max-width: 680px; }
+
+    /* Global badge */
+    .global-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #f0fdfa; color: #0d9488;
+      border: 1px solid #99f6e4;
+      font-size: 12px; font-weight: 600;
+      border-radius: 999px; padding: 5px 14px;
+      margin-bottom: 20px;
+    }
+
+    /* Toggle */
+    .toggle {
+      position: relative;
+      width: 44px; height: 24px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: #d1d5db;
+      border-radius: 999px;
+      transition: background 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: #0d9488; }
+    .toggle-thumb {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: left 0.2s;
+    }
+    .toggle input:checked ~ .toggle-thumb { left: 23px; }
+
+    /* Rule block */
+    .rule-block {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .rule-block:hover { border-color: #d1d5db; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .rule-block.rule-active { border-color: #99f6e4; background: #f0fdfa; }
+
+    .rule-block-header {
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .rule-text { flex: 1; }
+    .rule-title { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 3px; }
+    .rule-desc { font-size: 12.5px; color: #6b7280; line-height: 1.45; }
+
+    .rule-body {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e9ecf0;
+      display: flex; flex-wrap: wrap; gap: 20px;
+    }
+
+    .rule-control { display: flex; flex-direction: column; gap: 6px; }
+    .rule-control-label {
+      font-size: 12px; font-weight: 600; color: #6b7280;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    /* Stepper */
+    .stepper {
+      display: flex; align-items: center;
+      border: 1px solid #d1d5db; border-radius: 8px;
+      overflow: hidden; background: #fff;
+      height: 36px;
+    }
+    .stepper-btn {
+      width: 36px; height: 36px;
+      border: none; background: none; cursor: pointer;
+      font-size: 16px; color: #6b7280;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.12s, color 0.12s;
+      flex-shrink: 0;
+    }
+    .stepper-btn:hover { background: #f3f4f6; color: #111827; }
+    .stepper-val {
+      width: 52px; text-align: center;
+      border: none; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb;
+      font-size: 14px; font-weight: 600; color: #111827;
+      outline: none; background: #fff; height: 100%;
+    }
+    .stepper-val:focus { background: #f0fdf4; }
+
+    /* Styled select */
+    .select-wrap {
+      position: relative; display: inline-flex; align-items: center;
+    }
+    .select-styled {
+      appearance: none;
+      border: 1px solid #d1d5db; border-radius: 8px;
+      padding: 8px 36px 8px 12px;
+      font-size: 13.5px; color: #111827; background: #fff;
+      cursor: pointer; outline: none; height: 36px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      min-width: 160px;
+    }
+    .select-styled:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.12); }
+    .select-chevron {
+      position: absolute; right: 10px; pointer-events: none; color: #9ca3af;
+    }
+
+    /* Save button */
+    .rules-footer { margin-top: 20px; display: flex; align-items: center; gap: 12px; }
+    .btn-save {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #0d9488; color: #fff;
+      border: none; border-radius: 8px;
+      padding: 10px 22px; font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 3px rgba(13,148,136,0.25);
+    }
+    .btn-save:hover { background: #0f766e; box-shadow: 0 3px 8px rgba(13,148,136,0.3); }
+    .btn-save:active { transform: translateY(1px); }
+    .save-hint { font-size: 12.5px; color: #9ca3af; }
+
+    /* Info note */
+    .info-note {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #fffbeb; border: 1px solid #fcd34d;
+      border-radius: 8px; padding: 12px 14px;
+      margin-bottom: 20px;
+    }
+    .info-note svg { flex-shrink: 0; color: #d97706; margin-top: 1px; }
+    .info-note p { font-size: 12.5px; color: #92400e; line-height: 1.5; }
+
+    /* Custom rule item card */
+    .custom-rule-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-top: 12px;
+      background: #fff;
+      transition: box-shadow 0.15s;
+    }
+    .custom-rule-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .custom-rule-item.rule-disabled { opacity: 0.52; background: #f9fafb; }
+    .custom-rule-item.rule-disabled .cri-name { text-decoration: line-through; color: #9ca3af; }
+
+    .cri-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .cri-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .cri-badge-smart {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #f3e8ff; color: #7c3aed;
+      border: 1px solid #ddd6fe;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      border-radius: 999px; padding: 2px 9px; flex-shrink: 0;
+    }
+    .cri-name {
+      font-size: 14px; font-weight: 600; color: #111827;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .cri-actions { display: flex; align-items: center; gap: 6px; }
+    .cri-conditions {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 10px;
+    }
+    .cri-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #f3f4f6; border: 1px solid #e5e7eb;
+      border-radius: 6px; padding: 3px 10px;
+      font-size: 12px; color: #374151;
+    }
+
+    /* Icon buttons */
+    .btn-icon {
+      display: flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      background: #fff; cursor: pointer; color: #6b7280;
+      transition: background 0.12s, color 0.12s;
+    }
+    .btn-icon:hover { background: #f3f4f6; color: #374151; }
+    .btn-icon.delete:hover { background: #fef2f2; color: #ef4444; border-color: #fca5a5; }
+
+    /* Add exclusion button */
+    .btn-add-exclusion {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #fff;
+      border: 1.5px solid #0d9488;
+      color: #0d9488;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 13.5px; font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+    .btn-add-exclusion:hover { background: #f0fdfa; box-shadow: 0 2px 6px rgba(13,148,136,0.15); }
+
+    /* Overrides table */
+    .overrides-list { margin-top: 4px; }
+    .override-row {
+      display: flex; align-items: center; gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f3f4f6;
+      flex-wrap: wrap;
+    }
+    .override-row:last-child { border-bottom: none; }
+    .override-survey-name { font-size: 14px; font-weight: 600; color: #111827; min-width: 160px; }
+    .override-badge {
+      display: inline-flex; align-items: center;
+      background: #eff6ff; color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      border-radius: 999px; padding: 2px 9px; flex-shrink: 0;
+    }
+    .override-details { flex: 1; display: flex; gap: 12px; flex-wrap: wrap; }
+    .override-detail-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #f3f4f6; border: 1px solid #e5e7eb;
+      border-radius: 6px; padding: 3px 9px;
+      font-size: 12px; color: #374151;
+    }
+    .override-meta { font-size: 12px; color: #9ca3af; white-space: nowrap; }
+    .override-link {
+      font-size: 13px; font-weight: 500; color: #0d9488;
+      text-decoration: none; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .override-link:hover { text-decoration: underline; }
+
+    .overrides-empty {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 40px 20px; gap: 10px;
+      border: 1.5px dashed #e5e7eb;
+      border-radius: 10px; margin-top: 16px;
+      color: #9ca3af; text-align: center;
+    }
+    .overrides-empty p { font-size: 13.5px; line-height: 1.5; max-width: 340px; }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(17,24,39,0.45);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 40px 20px;
+      overflow-y: auto;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: #fff;
+      border-radius: 14px;
+      width: 100%; max-width: 600px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      display: flex; flex-direction: column;
+      transform: translateY(20px);
+      transition: transform 0.25s cubic-bezier(.22,.68,0,1.2);
+      overflow: hidden;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+
+    .modal-header {
+      padding: 22px 28px 18px;
+      border-bottom: 1px solid #f3f4f6;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    }
+    .modal-header-left { display: flex; flex-direction: column; gap: 3px; }
+    .modal-title { font-size: 17px; font-weight: 700; color: #111827; }
+    .modal-subtitle { font-size: 13px; color: #6b7280; }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: 7px;
+      border: none; background: none; cursor: pointer;
+      color: #9ca3af; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.12s, color 0.12s;
+    }
+    .modal-close:hover { background: #f3f4f6; color: #374151; }
+
+    .modal-body {
+      padding: 24px 28px;
+      overflow-y: auto;
+      max-height: 60vh;
+    }
+
+    .rule-name-field { margin-bottom: 20px; }
+    .rule-name-label {
+      font-size: 12px; font-weight: 600; color: #374151;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 6px; display: block;
+    }
+    .rule-name-input {
+      width: 100%;
+      border: 1px solid #d1d5db; border-radius: 8px;
+      padding: 9px 12px; font-size: 14px; color: #111827;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .rule-name-input:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.12); }
+    .rule-name-input.error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+    .field-error { font-size: 12px; color: #ef4444; margin-top: 4px; display: none; }
+    .field-error.visible { display: block; }
+    .field-hint { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+
+    .modal-section-title {
+      font-size: 13px; font-weight: 600; color: #374151;
+      margin-bottom: 12px;
+    }
+
+    /* Condition rows in modal */
+    .cond-group {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .cond-rows { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .cond-row {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .cond-row-logic {
+      font-size: 10px; font-weight: 700; color: #0d9488;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      width: 30px; text-align: center; flex-shrink: 0;
+    }
+    .cond-select {
+      appearance: none;
+      border: 1px solid #e5e7eb; border-radius: 7px;
+      padding: 7px 28px 7px 10px;
+      font-size: 13px; color: #111827; background: #fff;
+      cursor: pointer; outline: none;
+      transition: border-color 0.15s;
+      min-width: 130px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%239ca3af' stroke-width='2.5' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+    .cond-select:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+    .cond-input {
+      flex: 1; min-width: 120px;
+      border: 1px solid #e5e7eb; border-radius: 7px;
+      padding: 7px 10px;
+      font-size: 13px; color: #111827;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .cond-input:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+    .btn-remove-cond {
+      width: 26px; height: 26px;
+      border: none; background: none; cursor: pointer;
+      color: #d1d5db; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.12s, background 0.12s; flex-shrink: 0;
+    }
+    .btn-remove-cond:hover { color: #ef4444; background: #fef2f2; }
+    .cond-footer {
+      padding: 8px 14px;
+      border-top: 1px solid #f3f4f6;
+      background: #fafafa;
+    }
+    .btn-add-cond {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12.5px; font-weight: 500; color: #0d9488;
+      background: none; border: none; cursor: pointer;
+      padding: 4px 6px; border-radius: 5px;
+      transition: background 0.12s;
+    }
+    .btn-add-cond:hover { background: #f0fdfa; }
+
+    .modal-footer {
+      padding: 16px 28px;
+      border-top: 1px solid #f3f4f6;
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 8px; background: #fafafa;
+    }
+    .btn-modal-cancel {
+      padding: 9px 20px;
+      border: 1px solid #e5e7eb; border-radius: 8px;
+      background: #fff; color: #374151;
+      font-size: 13.5px; font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .btn-modal-cancel:hover { background: #f9fafb; border-color: #d1d5db; }
+    .btn-modal-save {
+      padding: 9px 22px;
+      border: none; border-radius: 8px;
+      background: #0d9488; color: #fff;
+      font-size: 13.5px; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+      box-shadow: 0 1px 3px rgba(13,148,136,0.25);
+    }
+    .btn-modal-save:hover { background: #0f766e; box-shadow: 0 3px 8px rgba(13,148,136,0.3); }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #111827; color: #fff;
+      padding: 12px 20px; border-radius: 8px;
+      font-size: 13.5px; font-weight: 500;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none; z-index: 2000;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: #059669; }
+
+    @media (max-width: 700px) {
+      .main { padding: 20px 16px; }
+      .section-card { padding: 20px 16px; }
+      .sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="home-icon">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M3 9.75L12 3l9 6.75V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path d="M9 21V12h6v9"/>
+    </svg>
+  </div>
+  <span class="breadcrumb-sep">/</span>
+  <span style="color:#6b7280;font-size:13.5px;cursor:pointer">Settings</span>
+  <span class="breadcrumb-sep">/</span>
+  <span style="color:#6b7280;font-size:13.5px;cursor:pointer">Survey Settings</span>
+  <span class="breadcrumb-sep">/</span>
+  <span class="breadcrumb-title">Throttling</span>
+  <div class="spacer"></div>
+  <div class="nav-actions">
+    <div class="bell-wrap">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-9.33-5M9 17v1a3 3 0 006 0v-1"/>
+        <circle cx="12" cy="3.5" r="1"/>
+      </svg>
+    </div>
+    <div class="avatar">JD</div>
+  </div>
+</nav>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Email Settings</div>
+    <a class="sidebar-item" href="#">Email</a>
+    <a class="sidebar-item" href="#">Blocked Domains</a>
+
+    <div class="sidebar-section-label">Survey Settings</div>
+    <a class="sidebar-item" href="#">Surveys</a>
+    <a class="sidebar-item active" href="#">Throttling</a>
+
+    <div class="sidebar-section-label">Property Settings</div>
+    <a class="sidebar-item" href="#">Contact Properties</a>
+    <a class="sidebar-item" href="#">Employee Properties</a>
+
+    <div class="sidebar-section-label">Ticket Management</div>
+    <a class="sidebar-item" href="#">Email Notifications</a>
+    <a class="sidebar-item" href="#">Macros</a>
+    <a class="sidebar-item" href="#">Fields &amp; Templates</a>
+    <a class="sidebar-item" href="#">Business Hours</a>
+    <a class="sidebar-item" href="#">SLA Policies</a>
+    <a class="sidebar-item" href="#">Export data</a>
+    <a class="sidebar-item" href="#">Email Signatures</a>
+
+    <div class="sidebar-section-label">Messaging</div>
+    <a class="sidebar-item" href="#">WhatsApp</a>
+    <a class="sidebar-item" href="#">Text</a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PAGE HEADER -->
+    <div style="margin-bottom:28px">
+      <h1 style="font-size:22px;font-weight:700;color:#111827;margin-bottom:4px">Throttling</h1>
+      <p style="color:#6b7280;font-size:13.5px;line-height:1.5">Manage invite frequency limits across your account. Account admins only.</p>
+    </div>
+
+    <!-- SECTION 1: DEFAULT RULE -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">Default Rule</h2>
+      </div>
+      <p class="section-desc">Applies to all surveys across your account unless a survey-level override is configured.</p>
+
+      <div class="global-badge">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+        Applied globally to all surveys
+      </div>
+
+      <!-- Rule Block 1: Invite Frequency Limit -->
+      <div class="rule-block rule-active" id="ruleBlock1">
+        <div class="rule-block-header">
+          <div class="rule-text">
+            <div class="rule-title">Invite Frequency Limit</div>
+            <div class="rule-desc">Prevent the same contact from receiving too many invites within a set time period.</div>
+          </div>
+          <label class="toggle" title="Toggle invite frequency limit">
+            <input type="checkbox" id="toggle1" checked onchange="toggleRuleBlock('ruleBlock1','body1',this)">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="rule-body" id="body1">
+          <div class="rule-control">
+            <div class="rule-control-label">Max invites</div>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="stepperChange('val1',-1)">&#8722;</button>
+              <input class="stepper-val" id="val1" type="number" value="100" min="1">
+              <button class="stepper-btn" onclick="stepperChange('val1',1)">+</button>
+            </div>
+          </div>
+          <div class="rule-control">
+            <div class="rule-control-label">Time interval</div>
+            <div class="select-wrap">
+              <select class="select-styled" id="interval1">
+                <option value="7">Every 7 days</option>
+                <option value="30" selected>Every 30 days</option>
+                <option value="60">Every 60 days</option>
+                <option value="90">Every 90 days</option>
+              </select>
+              <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule Block 2: Minimum Gap -->
+      <div class="rule-block rule-active" id="ruleBlock2">
+        <div class="rule-block-header">
+          <div class="rule-text">
+            <div class="rule-title">Minimum Gap</div>
+            <div class="rule-desc">Ensure enough time passes after an invite is sent before the same contact receives another.</div>
+          </div>
+          <label class="toggle" title="Toggle minimum gap">
+            <input type="checkbox" id="toggle2" checked onchange="toggleRuleBlock('ruleBlock2','body2',this)">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="rule-body" id="body2">
+          <div class="rule-control">
+            <div class="rule-control-label">Days after last invite</div>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="stepperChange('val2',-1)">&#8722;</button>
+              <input class="stepper-val" id="val2" type="number" value="1" min="1">
+              <button class="stepper-btn" onclick="stepperChange('val2',1)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rules-footer">
+        <button class="btn-save" onclick="showToast('Default rule saved successfully.','success')">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          Save changes
+        </button>
+        <span class="save-hint">Changes apply to all surveys without an override.</span>
+      </div>
+    </div>
+
+    <!-- SECTION 2: EXCLUSION RULES -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">Exclusion Rules</h2>
+      </div>
+      <p class="section-desc">Contacts matching these rules bypass <strong>ALL</strong> throttling — including survey-level overrides. Use for VIPs, high-priority contacts, or internal testers.</p>
+
+      <div class="info-note">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>
+        </svg>
+        <p><strong>Exclusion rules take the highest priority</strong> and override everything, including any survey-level throttle configurations.</p>
+      </div>
+
+      <!-- Exclusion rules list -->
+      <div id="exclusionRulesList">
+        <!-- Pre-populated rule 1 -->
+        <div class="custom-rule-item" id="excl-rule-0">
+          <div class="cri-header">
+            <div class="cri-left">
+              <span class="cri-badge-smart">Smart Lists</span>
+              <span class="cri-name">VIP_customers</span>
+            </div>
+            <div class="cri-actions">
+              <label class="toggle" title="Enable/disable rule">
+                <input type="checkbox" checked onchange="toggleRuleItem(this)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+              <button class="btn-icon" title="Edit rule" onclick="editExclRule(0)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-icon delete" title="Delete rule" onclick="deleteExclRule('excl-rule-0')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="cri-conditions">
+            <span class="cri-pill">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
+              Smart Lists is in VIP Customers
+            </span>
+          </div>
+        </div>
+
+        <!-- Pre-populated rule 2 -->
+        <div class="custom-rule-item" id="excl-rule-1">
+          <div class="cri-header">
+            <div class="cri-left">
+              <span class="cri-badge-smart">Smart Lists</span>
+              <span class="cri-name">Internal_testers</span>
+            </div>
+            <div class="cri-actions">
+              <label class="toggle" title="Enable/disable rule">
+                <input type="checkbox" checked onchange="toggleRuleItem(this)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+              <button class="btn-icon" title="Edit rule" onclick="editExclRule(1)">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-icon delete" title="Delete rule" onclick="deleteExclRule('excl-rule-1')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="cri-conditions">
+            <span class="cri-pill">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
+              Smart Lists is in Internal Testers
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-add-exclusion" onclick="openExclModal()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Exclusion Rule
+      </button>
+    </div>
+
+    <!-- SECTION 3: SURVEY THROTTLE OVERRIDES -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">Survey Throttle Overrides</h2>
+      </div>
+      <p class="section-desc">Surveys that have custom throttling configured at the survey level. These override the default rule above.</p>
+
+      <div class="overrides-list">
+        <div class="override-row">
+          <span class="override-survey-name">CSAT Survey</span>
+          <span class="override-badge">Custom Throttle</span>
+          <div class="override-details">
+            <span class="override-detail-chip">Max 3 invites</span>
+            <span class="override-detail-chip">Every 30 days</span>
+            <span class="override-detail-chip">Min gap 7 days</span>
+          </div>
+          <span class="override-meta">Last modified Sep 8, 2024</span>
+          <a class="override-link" href="survey_level_throttling.html">View in Survey <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="override-row">
+          <span class="override-survey-name">Org Alignment Survey</span>
+          <span class="override-badge">Custom Throttle</span>
+          <div class="override-details">
+            <span class="override-detail-chip">Max 1 invite</span>
+            <span class="override-detail-chip">Every 1 day</span>
+            <span class="override-detail-chip">Min gap 1 day</span>
+          </div>
+          <span class="override-meta">Last modified Nov 20, 2024</span>
+          <a class="override-link" href="survey_level_throttling.html">View in Survey <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="override-row">
+          <span class="override-survey-name">NPS Survey</span>
+          <span class="override-badge">Custom Throttle</span>
+          <div class="override-details">
+            <span class="override-detail-chip">Max 5 invites</span>
+            <span class="override-detail-chip">Every 90 days</span>
+            <span class="override-detail-chip">Min gap 14 days</span>
+          </div>
+          <span class="override-meta">Last modified Jan 12, 2025</span>
+          <a class="override-link" href="survey_level_throttling.html">View in Survey <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- EXCLUSION RULE MODAL -->
+<div class="modal-backdrop" id="exclModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-title" id="modalTitle">Add Exclusion Rule</div>
+        <div class="modal-subtitle">Contacts matching this rule will bypass all throttling.</div>
+      </div>
+      <button class="modal-close" onclick="closeExclModal()" aria-label="Close">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Rule name -->
+      <div class="rule-name-field">
+        <label class="rule-name-label" for="modalRuleName">Rule Name</label>
+        <input class="rule-name-input" id="modalRuleName" type="text" placeholder="e.g. VIP_accounts" oninput="validateRuleName(this)">
+        <div class="field-error" id="ruleNameError">Only letters, numbers, and underscores allowed. No spaces.</div>
+        <div class="field-hint">Use underscores instead of spaces (e.g. VIP_customers)</div>
+      </div>
+
+      <!-- Conditions -->
+      <div class="modal-section-title">Conditions</div>
+      <div class="cond-group">
+        <div class="cond-rows" id="modalCondRows">
+          <!-- rows added by JS -->
+        </div>
+        <div class="cond-footer">
+          <button class="btn-add-cond" onclick="addModalCondRow()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add condition
+          </button>
+        </div>
+      </div>
+
+      <div class="info-note" style="margin-top:4px">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <p>Contacts matching <strong>any</strong> of the conditions above will bypass all throttling globally.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeExclModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveExclRule()">Save Rule</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+  // ── Stepper ──────────────────────────────────────────
+  function stepperChange(id, delta) {
+    const input = document.getElementById(id);
+    const val = parseInt(input.value) + delta;
+    if (val >= parseInt(input.min || 1)) input.value = val;
+  }
+
+  // ── Toggle rule block ─────────────────────────────────
+  function toggleRuleBlock(blockId, bodyId, checkbox) {
+    const block = document.getElementById(blockId);
+    const body = document.getElementById(bodyId);
+    if (checkbox.checked) {
+      block.classList.add('rule-active');
+      body.style.display = '';
+    } else {
+      block.classList.remove('rule-active');
+      body.style.display = 'none';
+    }
+  }
+
+  // ── Toggle individual rule item card ──────────────────
+  function toggleRuleItem(checkbox) {
+    const card = checkbox.closest('.custom-rule-item');
+    if (checkbox.checked) {
+      card.classList.remove('rule-disabled');
+    } else {
+      card.classList.add('rule-disabled');
+    }
+  }
+
+  // ── Delete exclusion rule ─────────────────────────────
+  function deleteExclRule(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.transition = 'opacity 0.2s, transform 0.2s';
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(10px)';
+      setTimeout(() => el.remove(), 200);
+      showToast('Exclusion rule removed.', 'default');
+    }
+  }
+
+  // ── Edit rule (stub) ──────────────────────────────────
+  function editExclRule(idx) {
+    showToast('Edit mode — coming soon.', 'default');
+  }
+
+  // ── Modal ─────────────────────────────────────────────
+  let modalCondCount = 0;
+
+  function openExclModal() {
+    modalCondCount = 0;
+    document.getElementById('modalRuleName').value = '';
+    document.getElementById('modalRuleName').classList.remove('error');
+    document.getElementById('ruleNameError').classList.remove('visible');
+    document.getElementById('modalCondRows').innerHTML = '';
+    addModalCondRow();
+    document.getElementById('exclModal').classList.add('open');
+  }
+
+  function closeExclModal() {
+    document.getElementById('exclModal').classList.remove('open');
+  }
+
+  function addModalCondRow() {
+    modalCondCount++;
+    const rows = document.getElementById('modalCondRows');
+    const isFirst = rows.children.length === 0;
+    const row = document.createElement('div');
+    row.className = 'cond-row';
+    row.dataset.condId = modalCondCount;
+    row.innerHTML = `
+      ${!isFirst ? '<span class="cond-row-logic">AND</span>' : '<span style="width:30px;flex-shrink:0"></span>'}
+      <select class="cond-select">
+        <option value="smart_lists">Smart Lists</option>
+        <option value="channel">Channel</option>
+        <option value="survey_var">Survey Variable</option>
+      </select>
+      <select class="cond-select" style="min-width:100px">
+        <option value="is_in">is in</option>
+        <option value="is_not_in">is not in</option>
+      </select>
+      <input class="cond-input" type="text" placeholder="Enter value…">
+      <button class="btn-remove-cond" onclick="removeCondRow(this)" title="Remove condition">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    `;
+    rows.appendChild(row);
+  }
+
+  function removeCondRow(btn) {
+    const row = btn.closest('.cond-row');
+    const rows = document.getElementById('modalCondRows');
+    if (rows.children.length <= 1) {
+      showToast('At least one condition is required.', 'default');
+      return;
+    }
+    row.remove();
+    // Re-label: first row has no logic label
+    Array.from(rows.children).forEach((r, i) => {
+      const logicSpan = r.querySelector('.cond-row-logic, span[style]');
+      if (i === 0) {
+        if (logicSpan) logicSpan.outerHTML = '<span style="width:30px;flex-shrink:0"></span>';
+      }
+    });
+  }
+
+  function validateRuleName(input) {
+    const valid = /^[a-zA-Z0-9_]*$/.test(input.value);
+    const errEl = document.getElementById('ruleNameError');
+    if (!valid || input.value.trim() === '') {
+      input.classList.add('error');
+      errEl.classList.add('visible');
+    } else {
+      input.classList.remove('error');
+      errEl.classList.remove('visible');
+    }
+  }
+
+  function saveExclRule() {
+    const nameInput = document.getElementById('modalRuleName');
+    const name = nameInput.value.trim();
+
+    // Validate name
+    if (!name || !/^[a-zA-Z0-9_]+$/.test(name)) {
+      nameInput.classList.add('error');
+      document.getElementById('ruleNameError').classList.add('visible');
+      nameInput.focus();
+      return;
+    }
+
+    // Gather conditions
+    const rows = document.getElementById('modalCondRows');
+    const conditions = [];
+    rows.querySelectorAll('.cond-row').forEach(row => {
+      const selects = row.querySelectorAll('.cond-select');
+      const input = row.querySelector('.cond-input');
+      if (selects.length >= 2 && input && input.value.trim()) {
+        const fieldLabel = selects[0].options[selects[0].selectedIndex].text;
+        const opLabel = selects[1].options[selects[1].selectedIndex].text;
+        conditions.push(`${fieldLabel} ${opLabel} ${input.value.trim()}`);
+      }
+    });
+
+    if (conditions.length === 0) {
+      showToast('Please fill in at least one condition value.', 'default');
+      return;
+    }
+
+    // Build card
+    const list = document.getElementById('exclusionRulesList');
+    const newId = 'excl-rule-' + Date.now();
+    const card = document.createElement('div');
+    card.className = 'custom-rule-item';
+    card.id = newId;
+
+    const condHtml = conditions.map(c => `
+      <span class="cri-pill">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
+        ${escHtml(c)}
+      </span>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="cri-header">
+        <div class="cri-left">
+          <span class="cri-badge-smart">Smart Lists</span>
+          <span class="cri-name">${escHtml(name)}</span>
+        </div>
+        <div class="cri-actions">
+          <label class="toggle" title="Enable/disable rule">
+            <input type="checkbox" checked onchange="toggleRuleItem(this)">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <button class="btn-icon" title="Edit rule">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="btn-icon delete" title="Delete rule" onclick="deleteExclRule('${newId}')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="cri-conditions">${condHtml}</div>
+    `;
+
+    list.appendChild(card);
+    closeExclModal();
+    showToast('Exclusion rule added.', 'success');
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Toast ─────────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    toastMsg.textContent = msg;
+    toast.className = 'toast' + (type === 'success' ? ' success' : '') + ' show';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 2800);
+  }
+
+  // ── Close modal on backdrop click ─────────────────────
+  document.getElementById('exclModal').addEventListener('click', function(e) {
+    if (e.target === this) closeExclModal();
+  });
+
+  // ── Keyboard close ────────────────────────────────────
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeExclModal();
+  });
+</script>
+</body>
+</html>
