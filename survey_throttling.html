@@ -327,6 +327,8 @@
       transition: box-shadow 0.15s;
     }
     .custom-rule-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .custom-rule-item.rule-disabled { opacity: 0.52; background: #f9fafb; }
+    .custom-rule-item.rule-disabled .cri-name { text-decoration: line-through; color: #9ca3af; }
     .cri-header {
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
     }
@@ -1105,7 +1107,10 @@
       <div class="step-panel" id="stepPanel3">
         <div class="rule-name-field">
           <label class="rule-name-label">Rule name</label>
-          <input class="rule-name-input" type="text" id="ruleNameInput" placeholder="e.g. VIP contacts exclusion, EMEA survey limit…" />
+          <input class="rule-name-input" type="text" id="ruleNameInput"
+            placeholder="e.g. VIP_contacts_exclusion"
+            oninput="validateRuleName(this)" />
+          <div id="ruleNameError" style="display:none;color:#ef4444;font-size:12px;margin-top:6px;font-weight:500;"></div>
         </div>
 
         <div class="modal-section-divider"></div>
@@ -1155,24 +1160,57 @@
 let currentStep = 1;
 let selectedRuleType = null; // 'exclusion' | 'newrule'
 let condGroupCounter = 0;
+let condRowCounter = 0;
 let savedRules = [];
+let editingRuleId = null;
 
 // ── Modal open/close ──
-function openModal() {
+function openModal(ruleId) {
+  editingRuleId = ruleId || null;
   currentStep = 1;
   selectedRuleType = null;
   document.getElementById('modalBackdrop').classList.add('open');
   document.body.style.overflow = 'hidden';
   document.getElementById('conditionsContainer').innerHTML = '';
   condGroupCounter = 0;
-  addConditionGroup();
-  document.getElementById('ruleNameInput').value = '';
-  selectRuleType(null);   // reset card visuals before updateModalUI
-  updateModalUI();         // updateModalUI sets btn.disabled correctly for step 1
+  condRowCounter = 0;
+
+  // Update title
+  const titleEl = document.querySelector('.modal-title');
+  if (titleEl) titleEl.textContent = editingRuleId ? 'Edit Custom Rule' : 'Add Custom Rule';
+
+  // Clear name error
+  const errEl = document.getElementById('ruleNameError');
+  if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+
+  if (editingRuleId) {
+    const rule = savedRules.find(r => r.id === editingRuleId);
+    if (rule) {
+      populateModalWithRule(rule);
+      selectRuleType(rule.type);
+      if (rule.type === 'newrule') {
+        document.getElementById('nrsMaxSurveys').value = rule.maxSurveys || 5;
+        document.getElementById('nrsInterval').value = rule.interval || 'Every 30 days';
+        document.getElementById('nrsMinGap').value = rule.minGap || 1;
+      }
+      document.getElementById('ruleNameInput').value = rule.name;
+    } else {
+      addConditionGroup();
+      selectRuleType(null);
+      document.getElementById('ruleNameInput').value = '';
+    }
+  } else {
+    addConditionGroup();
+    document.getElementById('ruleNameInput').value = '';
+    selectRuleType(null);
+  }
+  updateModalUI();
 }
+
 function closeModal() {
   document.getElementById('modalBackdrop').classList.remove('open');
   document.body.style.overflow = '';
+  editingRuleId = null;
 }
 function handleBackdropClick(e) {
   if (e.target === document.getElementById('modalBackdrop')) closeModal();
@@ -1187,7 +1225,7 @@ function nextStep() {
     buildReview();
     currentStep = 3;
   } else if (currentStep === 3) {
-    saveRule();
+    if (!validateAndSave()) return;
     closeModal();
     return;
   }
@@ -1198,29 +1236,26 @@ function prevStep() {
 }
 
 function updateModalUI() {
-  // Panels
   document.querySelectorAll('.step-panel').forEach((p, i) => {
     p.classList.toggle('active', i + 1 === currentStep);
   });
-  // Step indicators
   [1,2,3].forEach(n => {
     const el = document.getElementById('step-ind-' + n);
     el.classList.remove('active','done');
     if (n < currentStep) el.classList.add('done');
     if (n === currentStep) el.classList.add('active');
   });
-  // Subtitle
   const subtitles = ['Define when this rule should apply', 'Choose what happens to matching contacts', 'Review and name your rule'];
   document.getElementById('modalSubtitle').textContent = subtitles[currentStep - 1];
-  // Back button
   document.getElementById('btnBack').style.display = currentStep > 1 ? 'flex' : 'none';
-  // Next button
   const btn = document.getElementById('btnNext');
   if (currentStep === 3) {
-    btn.innerHTML = `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Rule`;
+    const label = editingRuleId ? 'Update Rule' : 'Save Rule';
+    btn.innerHTML = `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> ${label}`;
     btn.style.gap = '6px';
   } else {
     btn.innerHTML = `Next <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+    btn.style.gap = '';
   }
   if (currentStep === 2) {
     btn.disabled = !selectedRuleType;
@@ -1229,25 +1264,53 @@ function updateModalUI() {
   }
 }
 
+// ── Rule name validation ──
+function validateRuleName(input) {
+  // Auto-replace spaces with underscores
+  const pos = input.selectionStart;
+  input.value = input.value.replace(/ /g, '_');
+  try { input.setSelectionRange(pos, pos); } catch(e) {}
+  checkNameUniqueness(input.value);
+}
+
+function checkNameUniqueness(name) {
+  const errEl = document.getElementById('ruleNameError');
+  if (!name) { if (errEl) errEl.style.display = 'none'; return true; }
+  const isDuplicate = savedRules.some(r => r.name === name && r.id !== editingRuleId);
+  if (isDuplicate) {
+    if (errEl) { errEl.style.display = 'block'; errEl.textContent = 'A rule with this name already exists. Please choose a unique name.'; }
+    return false;
+  }
+  if (errEl) errEl.style.display = 'none';
+  return true;
+}
+
+function validateAndSave() {
+  const nameInput = document.getElementById('ruleNameInput');
+  const name = nameInput.value.trim();
+  const errEl = document.getElementById('ruleNameError');
+  if (!name) {
+    if (errEl) { errEl.style.display = 'block'; errEl.textContent = 'Rule name is required.'; }
+    nameInput.focus();
+    return false;
+  }
+  if (!checkNameUniqueness(name)) { nameInput.focus(); return false; }
+  saveRule(name);
+  return true;
+}
+
 // ── Rule type selection ──
 function selectRuleType(type) {
   selectedRuleType = type;
   ['exclusion','newrule'].forEach(t => {
     const card = document.getElementById(t === 'exclusion' ? 'typeExclusion' : 'typeNewRule');
-    const check = document.getElementById(t === 'exclusion' ? 'checkExclusion' : 'checkNewRule');
     const icon = document.getElementById(t === 'exclusion' ? 'checkIconExclusion' : 'checkIconNewRule');
-    if (type === t) {
-      card.classList.add('selected');
-      icon.style.display = 'block';
-    } else {
-      card.classList.remove('selected');
-      icon.style.display = 'none';
-    }
+    if (type === t) { card.classList.add('selected'); icon.style.display = 'block'; }
+    else { card.classList.remove('selected'); icon.style.display = 'none'; }
   });
   document.getElementById('newRuleSettings').classList.toggle('visible', type === 'newrule');
   document.getElementById('exclusionNote').style.display = type === 'exclusion' ? 'flex' : 'none';
   document.getElementById('newRuleNote').style.display = type === 'newrule' ? 'flex' : 'none';
-  // Only gate the Next button on step 2 where a type selection is required
   if (currentStep === 2) {
     const btn = document.getElementById('btnNext');
     if (btn) btn.disabled = !type;
@@ -1278,8 +1341,6 @@ function addConditionGroup() {
   condGroupCounter++;
   const groupId = 'cg-' + condGroupCounter;
   const container = document.getElementById('conditionsContainer');
-
-  // Insert a between-group connector before every group except the first
   if (condGroupCounter > 1) {
     const separatorId = 'sep-' + condGroupCounter;
     const sep = document.createElement('div');
@@ -1295,7 +1356,6 @@ function addConditionGroup() {
     `;
     container.appendChild(sep);
   }
-
   const div = document.createElement('div');
   div.className = 'cond-group';
   div.id = groupId;
@@ -1335,23 +1395,17 @@ function setGroupLogic(groupId, logic, btn) {
   document.querySelectorAll(`#logicPill-${groupId} .logic-btn`).forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('logicLabel-' + groupId).textContent = logic === 'AND' ? 'all' : 'any';
-  // Update all non-first row connector labels in this group
   const rows = document.querySelectorAll(`#rows-${groupId} .cond-row`);
   rows.forEach((row, i) => {
-    if (i > 0) {
-      const label = row.querySelector('.cond-row-logic');
-      if (label) label.textContent = logic;
-    }
+    if (i > 0) { const label = row.querySelector('.cond-row-logic'); if (label) label.textContent = logic; }
   });
 }
 
-let condRowCounter = 0;
 function addConditionRow(groupId) {
   condRowCounter++;
   const rowId = 'cr-' + condRowCounter;
   const rows = document.getElementById('rows-' + groupId);
   const isFirst = rows.children.length === 0;
-  // Read the current active logic for this group
   const activeLogicBtn = document.querySelector(`#logicPill-${groupId} .logic-btn.active`);
   const currentLogic = activeLogicBtn ? activeLogicBtn.textContent.trim() : 'AND';
   const div = document.createElement('div');
@@ -1378,17 +1432,14 @@ function addConditionRow(groupId) {
 function onFieldChange(sel, rowId) {
   const field = sel.value;
   const opSel = document.getElementById('op-' + rowId);
-  const valSel = document.getElementById('val-' + rowId);
   opSel.innerHTML = operatorOptions[field].map(o => `<option>${o}</option>`).join('');
   if (valueOptions[field] && valueOptions[field].length) {
-    valSel.outerHTML = `<select class="cond-select cond-value-select" id="val-${rowId}">${valueOptions[field].map(v => `<option>${v}</option>`).join('')}</select>`;
+    document.getElementById('val-' + rowId).outerHTML =
+      `<select class="cond-select cond-value-select" id="val-${rowId}">${valueOptions[field].map(v => `<option>${v}</option>`).join('')}</select>`;
   } else {
-    // free text for survey_variable
     const old = document.getElementById('val-' + rowId);
     const inp = document.createElement('input');
-    inp.className = 'cond-input';
-    inp.id = 'val-' + rowId;
-    inp.placeholder = 'Enter value…';
+    inp.className = 'cond-input'; inp.id = 'val-' + rowId; inp.placeholder = 'Enter value…';
     old.parentNode.replaceChild(inp, old);
   }
 }
@@ -1399,9 +1450,52 @@ function removeCondRow(rowId) {
   if (rows.children.length > 1) row.remove();
 }
 
+// ── Populate modal for editing ──
+function populateModalWithRule(rule) {
+  if (!rule.groups || rule.groups.length === 0) { addConditionGroup(); return; }
+  rule.groups.forEach((grp, gi) => {
+    addConditionGroup();
+    const gNum = condGroupCounter;
+    const groupId = 'cg-' + gNum;
+    // Set group logic
+    if (grp.logic === 'OR') {
+      const orBtn = document.querySelector(`#logicPill-${groupId} .logic-btn:last-child`);
+      if (orBtn) setGroupLogic(groupId, 'OR', orBtn);
+    }
+    // Clear auto-added first row
+    const rowsEl = document.getElementById('rows-' + groupId);
+    rowsEl.innerHTML = '';
+    // Re-add rows from saved data
+    grp.rows.forEach(rowData => {
+      addConditionRow(groupId);
+      const rowId = 'cr-' + condRowCounter;
+      const fieldSel = document.querySelector(`#${rowId} .cond-select`);
+      if (fieldSel) {
+        fieldSel.value = rowData.field;
+        onFieldChange(fieldSel, rowId);
+        const opSel = document.getElementById('op-' + rowId);
+        if (opSel) opSel.value = rowData.op;
+        // value might render async after onFieldChange outerHTML swap — use setTimeout
+        setTimeout(() => {
+          const valEl = document.getElementById('val-' + rowId);
+          if (valEl) valEl.value = rowData.val;
+        }, 0);
+      }
+    });
+    // Set group connector
+    if (gi > 0 && rule.groupConnectors && rule.groupConnectors[gi - 1] === 'AND') {
+      const sep = document.getElementById('sep-' + gNum);
+      if (sep) {
+        sep.querySelectorAll('.group-sep-btn').forEach(b => b.classList.remove('active'));
+        const andBtn = sep.querySelector('.group-sep-btn:last-child');
+        if (andBtn) andBtn.classList.add('active');
+      }
+    }
+  });
+}
+
 // ── Review builder ──
 function buildReview() {
-  // Conditions
   let condHTML = '';
   document.querySelectorAll('.cond-group').forEach((grp, gi) => {
     const rows = grp.querySelectorAll('.cond-row');
@@ -1409,7 +1503,7 @@ function buildReview() {
     if (gi > 0) condHTML += `<div style="margin:6px 0;font-size:11px;font-weight:700;color:#0d9488;letter-spacing:.06em;">— OR GROUP —</div>`;
     rows.forEach((row, ri) => {
       const sels = row.querySelectorAll('select');
-      const inp = row.querySelector('input');
+      const inp = row.querySelector('input.cond-input');
       if (!sels[0]) return;
       const field = sels[0].options[sels[0].selectedIndex]?.text || '';
       const op = sels[1]?.options[sels[1].selectedIndex]?.text || '';
@@ -1420,7 +1514,6 @@ function buildReview() {
   });
   document.getElementById('reviewConditions').innerHTML = condHTML || '<span style="color:#9ca3af;">No conditions defined.</span>';
 
-  // Rule type
   let rtHTML = '';
   if (selectedRuleType === 'exclusion') {
     rtHTML = `<div style="display:flex;align-items:center;gap:8px;"><span class="cri-badge-exclusion">Exclusion Rule</span><span>Matching contacts will bypass all throttling rules.</span></div>`;
@@ -1438,38 +1531,71 @@ function buildReview() {
   document.getElementById('reviewRuleType').innerHTML = rtHTML;
 }
 
-// ── Save rule ──
-function saveRule() {
-  const name = document.getElementById('ruleNameInput').value.trim() || 'Untitled Rule';
-
-  // gather conditions
-  const conditions = [];
+// ── Save / update rule ──
+function saveRule(name) {
+  // Gather groups with structured data
+  const groups = [];
+  const groupConnectors = [];
   document.querySelectorAll('.cond-group').forEach(grp => {
     const logicLabel = grp.querySelector('[id^="logicLabel-"]')?.textContent || 'all';
     const logic = logicLabel === 'any' ? 'OR' : 'AND';
+    const rows = [];
     grp.querySelectorAll('.cond-row').forEach(row => {
       const sels = row.querySelectorAll('select');
-      const inp = row.querySelector('input');
+      const inp = row.querySelector('input.cond-input');
       if (!sels[0]) return;
-      conditions.push({
-        field: sels[0].options[sels[0].selectedIndex]?.text,
-        op: sels[1]?.options[sels[1].selectedIndex]?.text,
-        val: sels[2] ? sels[2].options[sels[2].selectedIndex]?.text : (inp?.value || ''),
-        logic
+      rows.push({
+        field: sels[0].value,
+        fieldLabel: sels[0].options[sels[0].selectedIndex]?.text || '',
+        op: sels[1]?.options[sels[1].selectedIndex]?.text || '',
+        val: sels[2] ? (sels[2].options[sels[2].selectedIndex]?.text || '') : (inp?.value || ''),
       });
     });
+    groups.push({ logic, rows });
+  });
+  document.querySelectorAll('.group-separator').forEach(sep => {
+    const activeBtn = sep.querySelector('.group-sep-btn.active');
+    groupConnectors.push(activeBtn?.textContent.trim() || 'OR');
   });
 
-  const rule = {
-    id: Date.now(),
-    name,
-    type: selectedRuleType,
-    conditions,
-    maxSurveys: document.getElementById('nrsMaxSurveys')?.value,
-    interval: document.getElementById('nrsInterval')?.value,
-    minGap: document.getElementById('nrsMinGap')?.value,
-  };
-  savedRules.push(rule);
+  if (editingRuleId) {
+    const idx = savedRules.findIndex(r => r.id === editingRuleId);
+    if (idx !== -1) {
+      savedRules[idx] = {
+        ...savedRules[idx],
+        name,
+        type: selectedRuleType,
+        groups,
+        groupConnectors,
+        maxSurveys: document.getElementById('nrsMaxSurveys')?.value,
+        interval: document.getElementById('nrsInterval')?.value,
+        minGap: document.getElementById('nrsMinGap')?.value,
+      };
+    }
+  } else {
+    savedRules.push({
+      id: Date.now(),
+      name,
+      type: selectedRuleType,
+      enabled: true,
+      groups,
+      groupConnectors,
+      maxSurveys: document.getElementById('nrsMaxSurveys')?.value,
+      interval: document.getElementById('nrsInterval')?.value,
+      minGap: document.getElementById('nrsMinGap')?.value,
+    });
+  }
+  renderCustomRules();
+}
+
+// ── Toggle / Edit / Delete ──
+function toggleRule(id) {
+  const rule = savedRules.find(r => r.id === id);
+  if (rule) { rule.enabled = !rule.enabled; renderCustomRules(); }
+}
+function editRule(id) { openModal(id); }
+function deleteRule(id) {
+  savedRules = savedRules.filter(r => r.id !== id);
   renderCustomRules();
 }
 
@@ -1485,13 +1611,22 @@ function buildRuleCard(r) {
     ? `<span class="cri-badge-exclusion">Exclusion</span>`
     : `<span class="cri-badge-custom">Custom Throttle</span>`;
 
-  const pillsHTML = r.conditions.map((c, i) =>
-    `${i > 0 ? `<span class="cri-pill-op">${c.logic}</span>` : ''}
-     <span class="cri-pill">
-       <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>
-       <strong>${c.field}</strong>&nbsp;${c.op}&nbsp;<em>${c.val}</em>
-     </span>`
-  ).join('');
+  let pillsHTML = '';
+  if (r.groups) {
+    r.groups.forEach((grp, gi) => {
+      if (gi > 0) {
+        const conn = r.groupConnectors?.[gi - 1] || 'OR';
+        pillsHTML += `<span class="cri-pill-op" style="background:#f3f4f6;color:#374151;">${conn} GROUP</span>`;
+      }
+      grp.rows.forEach((c, ri) => {
+        if (ri > 0) pillsHTML += `<span class="cri-pill-op">${grp.logic}</span>`;
+        pillsHTML += `<span class="cri-pill">
+          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>
+          <strong>${c.fieldLabel}</strong>&nbsp;${c.op}&nbsp;<em>${c.val}</em>
+        </span>`;
+      });
+    });
+  }
 
   const limitsHTML = r.type === 'newrule'
     ? `<div class="cri-limits">
@@ -1500,15 +1635,22 @@ function buildRuleCard(r) {
         <div class="cri-limit-item"><div class="cri-limit-label">Min gap</div><div class="cri-limit-val">${r.minGap} day${r.minGap != 1 ? 's' : ''}</div></div>
        </div>` : '';
 
+  const isEnabled = r.enabled !== false;
+
   return `
-    <div class="custom-rule-item">
+    <div class="custom-rule-item${isEnabled ? '' : ' rule-disabled'}">
       <div class="cri-header">
         <div class="cri-left">
           ${badgeHTML}
           <div class="cri-name">${r.name}</div>
         </div>
         <div class="cri-actions">
-          <button class="btn-edit" title="Edit rule">
+          <label class="toggle" title="${isEnabled ? 'Disable rule' : 'Enable rule'}" style="margin-right:4px;">
+            <input type="checkbox" ${isEnabled ? 'checked' : ''} onchange="toggleRule(${r.id})" />
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+          <button class="btn-edit" title="Edit rule" onclick="editRule(${r.id})">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
               <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -1521,14 +1663,9 @@ function buildRuleCard(r) {
           </button>
         </div>
       </div>
-      <div class="cri-conditions">${pillsHTML}</div>
+      <div class="cri-conditions">${pillsHTML || '<span style="color:#9ca3af;font-size:12.5px;">No conditions</span>'}</div>
       ${limitsHTML}
     </div>`;
-}
-
-function deleteRule(id) {
-  savedRules = savedRules.filter(r => r.id !== id);
-  renderCustomRules();
 }
 
 // Init
