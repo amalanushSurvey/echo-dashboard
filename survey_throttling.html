@@ -549,6 +549,19 @@
       transition: border-color 0.15s;
     }
     .cond-input:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+    /* Variable type badges inside the variable selector */
+    .var-type-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 9.5px; font-weight: 700; letter-spacing: .04em;
+      padding: 1px 6px; border-radius: 4px; text-transform: uppercase;
+      margin-left: 5px; vertical-align: middle;
+    }
+    .var-type-text    { background: #eff6ff; color: #2563eb; }
+    .var-type-number  { background: #fef3c7; color: #d97706; }
+    .var-type-date    { background: #f3e8ff; color: #7c3aed; }
+    .var-type-boolean { background: #f0fdf4; color: #059669; }
+    /* Variable sub-row: wraps the var-op + var-val when Survey Variable is picked */
+    .cond-var-rest { display: contents; }
     .btn-remove-cond {
       width: 26px; height: 26px;
       border: none; background: none; cursor: pointer;
@@ -1319,26 +1332,107 @@ function selectRuleType(type) {
 
 // ── Condition groups ──
 const fieldOptions = [
-  { value: 'survey', label: 'Survey' },
-  { value: 'segment', label: 'Smart Lists' },
-  { value: 'channel', label: 'Channel' },
-  { value: 'echo_agents', label: 'Echo Agents' },
+  { value: 'survey',          label: 'Survey' },
+  { value: 'segment',         label: 'Smart Lists' },
+  { value: 'channel',         label: 'Channel' },
+  { value: 'echo_agents',     label: 'Echo Agents' },
   { value: 'survey_variable', label: 'Survey Variable' },
 ];
 const operatorOptions = {
-  survey: ['is', 'is not'],
-  segment: ['is in', 'is not in'],
-  channel: ['is', 'is not'],
+  survey:      ['is', 'is not'],
+  segment:     ['is in', 'is not in'],
+  channel:     ['is', 'is not'],
   echo_agents: ['is', 'is not'],
-  survey_variable: ['equals', 'contains', 'does not contain'],
 };
 const valueOptions = {
-  survey: ['Org Alignment Survey', 'CSAT Survey', 'Customer Satisfaction Survey', 'NPS Survey'],
-  segment: ['VIP Customers', 'Enterprise', 'Trial Users', 'Churned Users', 'New Signups'],
-  channel: ['Email', 'WhatsApp', 'SMS', 'Spotchecks'],
+  survey:      ['Org Alignment Survey', 'CSAT Survey', 'Customer Satisfaction Survey', 'NPS Survey'],
+  segment:     ['VIP Customers', 'Enterprise', 'Trial Users', 'Churned Users', 'New Signups'],
+  channel:     ['Email', 'WhatsApp', 'SMS', 'Spotchecks'],
   echo_agents: ['Agent Alpha', 'Agent Beta', 'Agent Gamma', 'Agent Delta'],
-  survey_variable: [],
 };
+
+// ── Survey Variable definitions ──
+const surveyVariables = [
+  // Text
+  { name: 'name',         label: 'Name',         type: 'text' },
+  { name: 'email',        label: 'Email',         type: 'text' },
+  { name: 'company',      label: 'Company',       type: 'text' },
+  { name: 'department',   label: 'Department',    type: 'text' },
+  { name: 'job_title',    label: 'Job Title',     type: 'text' },
+  { name: 'industry',     label: 'Industry',      type: 'text' },
+  { name: 'country',      label: 'Country',       type: 'text' },
+  { name: 'city',         label: 'City',          type: 'text' },
+  // Number
+  { name: 'age',                  label: 'Age',                  type: 'number' },
+  { name: 'plan_value',           label: 'Plan Value',           type: 'number' },
+  { name: 'employee_count',       label: 'Employee Count',       type: 'number' },
+  { name: 'nps_score',            label: 'NPS Score',            type: 'number' },
+  { name: 'csat_score',           label: 'CSAT Score',           type: 'number' },
+  { name: 'usage_days',           label: 'Usage Days',           type: 'number' },
+  { name: 'subscription_months',  label: 'Subscription Months',  type: 'number' },
+  // Date
+  { name: 'signup_date',           label: 'Signup Date',           type: 'date' },
+  { name: 'last_login_date',       label: 'Last Login Date',       type: 'date' },
+  { name: 'contract_renewal_date', label: 'Contract Renewal Date', type: 'date' },
+  { name: 'last_invite_date',      label: 'Last Invite Date',      type: 'date' },
+  // Boolean
+  { name: 'is_premium',     label: 'Is Premium',     type: 'boolean' },
+  { name: 'email_verified', label: 'Email Verified', type: 'boolean' },
+  { name: 'opted_in',       label: 'Opted In',       type: 'boolean' },
+  { name: 'is_trial',       label: 'Is Trial',       type: 'boolean' },
+];
+
+const variableTypeOperators = {
+  text:    ['equals', 'does not equal', 'contains', 'does not contain', 'starts with', 'ends with', 'is empty', 'is not empty'],
+  number:  ['equals', 'does not equal', 'greater than', 'less than', 'greater than or equal', 'less than or equal', 'is empty', 'is not empty'],
+  date:    ['is on', 'is not on', 'is before', 'is after', 'is between', 'is empty', 'is not empty'],
+  boolean: ['is true', 'is false'],
+};
+
+// Build the grouped <optgroup> HTML for the variable selector
+function buildVarSelectorHTML(rowId) {
+  const types = ['text','number','date','boolean'];
+  const typeLabels = { text: '📝 Text', number: '🔢 Number', date: '📅 Date', boolean: '✓ Boolean' };
+  let html = `<select class="cond-select cond-var-name-sel" id="op-${rowId}" onchange="onVariableChange(this,'${rowId}')">`;
+  types.forEach(t => {
+    const vars = surveyVariables.filter(v => v.type === t);
+    html += `<optgroup label="${typeLabels[t]}">`;
+    vars.forEach(v => {
+      html += `<option value="${v.name}:${v.type}">${v.label}</option>`;
+    });
+    html += `</optgroup>`;
+  });
+  html += `</select>`;
+  return html;
+}
+
+// Build the operator + value cells for a given variable type
+function buildVarOpValHTML(rowId, varType, currentOp, currentVal) {
+  const ops = variableTypeOperators[varType] || [];
+  const opsHTML = ops.map(o => `<option${currentOp === o ? ' selected' : ''}>${o}</option>`).join('');
+
+  let valHTML = '';
+  const noValOps = ['is empty', 'is not empty', 'is true', 'is false'];
+  const needsVal = currentOp ? !noValOps.includes(currentOp) : varType !== 'boolean';
+
+  if (varType === 'boolean') {
+    valHTML = ''; // no value needed — operator is self-contained
+  } else if (varType === 'number') {
+    valHTML = `<input type="number" class="cond-input cond-var-val" id="sub-val-${rowId}" placeholder="Enter number…" value="${currentVal || ''}" style="max-width:110px;" />`;
+  } else if (varType === 'date') {
+    valHTML = `<input type="date" class="cond-input cond-var-val" id="sub-val-${rowId}" value="${currentVal || ''}" style="max-width:150px;" />`;
+  } else {
+    // text
+    valHTML = `<input type="text" class="cond-input cond-var-val" id="sub-val-${rowId}" placeholder="Enter value…" value="${currentVal || ''}" />`;
+  }
+
+  return `
+    <select class="cond-select cond-var-op-sel" id="sub-op-${rowId}"
+      onchange="onVarOpChange(this,'${rowId}','${varType}')">
+      ${opsHTML}
+    </select>
+    ${valHTML}`;
+}
 
 function addConditionGroup() {
   condGroupCounter++;
@@ -1434,17 +1528,59 @@ function addConditionRow(groupId) {
 
 function onFieldChange(sel, rowId) {
   const field = sel.value;
+
+  if (field === 'survey_variable') {
+    // Replace op cell with grouped variable name selector
+    document.getElementById('op-' + rowId).outerHTML = buildVarSelectorHTML(rowId);
+    // Replace val cell with a wrapper div (display:contents) holding op + val
+    const firstVar = surveyVariables[0];
+    const firstType = firstVar.type;
+    document.getElementById('val-' + rowId).outerHTML =
+      `<div class="cond-var-rest" id="val-${rowId}">${buildVarOpValHTML(rowId, firstType, '', '')}</div>`;
+    return;
+  }
+
+  // For non-variable fields, restore normal op select if it was replaced by a var selector
+  const existingOp = document.getElementById('op-' + rowId);
+  if (existingOp && existingOp.classList.contains('cond-var-name-sel')) {
+    existingOp.outerHTML = `<select class="cond-select" id="op-${rowId}"></select>`;
+  }
   const opSel = document.getElementById('op-' + rowId);
-  opSel.innerHTML = operatorOptions[field].map(o => `<option>${o}</option>`).join('');
-  if (valueOptions[field] && valueOptions[field].length) {
+  opSel.className = 'cond-select';
+  opSel.innerHTML = (operatorOptions[field] || []).map(o => `<option>${o}</option>`).join('');
+
+  // Restore val cell if it was a var-rest wrapper
+  const existingVal = document.getElementById('val-' + rowId);
+  const needsDropdown = valueOptions[field] && valueOptions[field].length;
+  if (existingVal && existingVal.tagName === 'DIV') {
+    existingVal.outerHTML = needsDropdown
+      ? `<select class="cond-select cond-value-select" id="val-${rowId}">${valueOptions[field].map(v => `<option>${v}</option>`).join('')}</select>`
+      : `<input class="cond-input" id="val-${rowId}" placeholder="Enter value…" />`;
+  } else if (needsDropdown) {
     document.getElementById('val-' + rowId).outerHTML =
       `<select class="cond-select cond-value-select" id="val-${rowId}">${valueOptions[field].map(v => `<option>${v}</option>`).join('')}</select>`;
   } else {
     const old = document.getElementById('val-' + rowId);
-    const inp = document.createElement('input');
-    inp.className = 'cond-input'; inp.id = 'val-' + rowId; inp.placeholder = 'Enter value…';
-    old.parentNode.replaceChild(inp, old);
+    if (old && old.tagName === 'SELECT') {
+      const inp = document.createElement('input');
+      inp.className = 'cond-input'; inp.id = 'val-' + rowId; inp.placeholder = 'Enter value…';
+      old.parentNode.replaceChild(inp, old);
+    }
   }
+}
+
+// Called when user picks a variable name — update op + val cells to match type
+function onVariableChange(sel, rowId) {
+  const [varName, varType] = sel.value.split(':');
+  const valWrapper = document.getElementById('val-' + rowId);
+  if (valWrapper) valWrapper.innerHTML = buildVarOpValHTML(rowId, varType, '', '');
+}
+
+// Called when user picks an operator for a variable — show/hide the val input
+function onVarOpChange(sel, rowId, varType) {
+  const noValOps = ['is empty', 'is not empty', 'is true', 'is false'];
+  const subVal = document.getElementById('sub-val-' + rowId);
+  if (subVal) subVal.style.display = noValOps.includes(sel.value) ? 'none' : '';
 }
 
 function removeCondRow(rowId) {
@@ -1497,6 +1633,33 @@ function populateModalWithRule(rule) {
   });
 }
 
+// ── Helper: read one condition row's data ──
+function getRowData(row) {
+  const fieldSel = row.querySelector('.cond-select:not(.cond-var-name-sel):not(.cond-var-op-sel)');
+  if (!fieldSel) return null;
+  const field = fieldSel.value;
+  const fieldLabel = fieldSel.options[fieldSel.selectedIndex]?.text || '';
+
+  if (field === 'survey_variable') {
+    const varSel   = row.querySelector('.cond-var-name-sel');
+    const varOpSel = row.querySelector('.cond-var-op-sel');
+    const varVal   = row.querySelector('.cond-var-val');
+    const [varName, varType] = (varSel?.value || ':text').split(':');
+    const varLabel = varSel?.options[varSel.selectedIndex]?.text || varName;
+    const op  = varOpSel?.value || '';
+    const val = varVal?.value || '';
+    return { field, fieldLabel: `${fieldLabel} › ${varLabel}`, varName, varType, op, val };
+  }
+
+  const opSel = row.querySelector('#op-' + row.id.replace('cr-','') + ', .cond-select:nth-of-type(2)');
+  // Grab the 2nd select (op) and 3rd select/input (val) by querying directly
+  const allSels = row.querySelectorAll('select');
+  const inp = row.querySelector('input.cond-input');
+  const op  = allSels[1]?.options[allSels[1].selectedIndex]?.text || '';
+  const val = allSels[2] ? (allSels[2].options[allSels[2].selectedIndex]?.text || '') : (inp?.value || '');
+  return { field, fieldLabel, op, val };
+}
+
 // ── Review builder ──
 function buildReview() {
   let condHTML = '';
@@ -1505,14 +1668,10 @@ function buildReview() {
     const logicLabel = grp.querySelector('[id^="logicLabel-"]')?.textContent || 'all';
     if (gi > 0) condHTML += `<div style="margin:6px 0;font-size:11px;font-weight:700;color:#0d9488;letter-spacing:.06em;">— OR GROUP —</div>`;
     rows.forEach((row, ri) => {
-      const sels = row.querySelectorAll('select');
-      const inp = row.querySelector('input.cond-input');
-      if (!sels[0]) return;
-      const field = sels[0].options[sels[0].selectedIndex]?.text || '';
-      const op = sels[1]?.options[sels[1].selectedIndex]?.text || '';
-      const val = sels[2] ? (sels[2].options[sels[2].selectedIndex]?.text || '') : (inp?.value || '');
+      const d = getRowData(row);
+      if (!d) return;
       const connector = ri === 0 ? '' : `<span style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;margin-right:4px;">${logicLabel === 'any' ? 'OR' : 'AND'}</span>`;
-      condHTML += `<div style="margin-bottom:5px;">${connector}<span style="background:#f3f4f6;border:1px solid #e5e7eb;border-radius:5px;padding:2px 8px;font-size:12.5px;">${field}</span> <span style="color:#6b7280;font-size:12px;">${op}</span> <span style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:5px;padding:2px 8px;font-size:12.5px;color:#059669;">${val || '—'}</span></div>`;
+      condHTML += `<div style="margin-bottom:5px;">${connector}<span style="background:#f3f4f6;border:1px solid #e5e7eb;border-radius:5px;padding:2px 8px;font-size:12.5px;">${d.fieldLabel}</span> <span style="color:#6b7280;font-size:12px;">${d.op}</span>${d.val ? ` <span style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:5px;padding:2px 8px;font-size:12.5px;color:#059669;">${d.val}</span>` : ''}</div>`;
     });
   });
   document.getElementById('reviewConditions').innerHTML = condHTML || '<span style="color:#9ca3af;">No conditions defined.</span>';
@@ -1544,15 +1703,9 @@ function saveRule(name) {
     const logic = logicLabel === 'any' ? 'OR' : 'AND';
     const rows = [];
     grp.querySelectorAll('.cond-row').forEach(row => {
-      const sels = row.querySelectorAll('select');
-      const inp = row.querySelector('input.cond-input');
-      if (!sels[0]) return;
-      rows.push({
-        field: sels[0].value,
-        fieldLabel: sels[0].options[sels[0].selectedIndex]?.text || '',
-        op: sels[1]?.options[sels[1].selectedIndex]?.text || '',
-        val: sels[2] ? (sels[2].options[sels[2].selectedIndex]?.text || '') : (inp?.value || ''),
-      });
+      const d = getRowData(row);
+      if (!d) return;
+      rows.push(d);
     });
     groups.push({ logic, rows });
   });
