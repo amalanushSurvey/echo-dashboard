@@ -316,54 +316,125 @@
     }
     .btn-add-exclusion:hover { background: #f0fdfa; box-shadow: 0 2px 6px rgba(13,148,136,0.15); }
 
-    /* Overrides table */
-    .overrides-list { margin-top: 4px; }
-    .override-row {
-      display: flex; align-items: center; gap: 16px;
-      padding: 14px 0;
-      border-bottom: 1px solid #f3f4f6;
-      flex-wrap: wrap;
+    /* ── Throttle Overrides Accordion ── */
+    .overrides-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+    .override-tab {
+      padding: 6px 16px;
+      border: 1px solid #e5e7eb; border-radius: 8px;
+      font-size: 13px; font-weight: 500; color: #6b7280;
+      background: #fff; cursor: pointer;
+      transition: all 0.15s;
     }
-    .override-row:last-child { border-bottom: none; }
-    .override-survey-name { font-size: 14px; font-weight: 600; color: #111827; min-width: 160px; }
-    .override-badge {
+    .override-tab.active { background: #f0fdfa; border-color: #0d9488; color: #0d9488; font-weight: 600; }
+    .override-tab:hover:not(.active) { background: #f9fafb; }
+
+    .accordion-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .acc-item {
+      border: 1px solid #e5e7eb; border-radius: 10px;
+      overflow: hidden; background: #fff;
+      transition: box-shadow 0.15s;
+    }
+    .acc-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .acc-item.open { box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-color: #d1d5db; }
+
+    .acc-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 16px; cursor: pointer; user-select: none;
+    }
+    .acc-chevron {
+      width: 16px; height: 16px; color: #9ca3af;
+      flex-shrink: 0; transition: transform 0.2s;
+    }
+    .acc-item.open .acc-chevron { transform: rotate(90deg); color: #0d9488; }
+
+    .acc-name { font-size: 14px; font-weight: 600; color: #111827; flex: 1; }
+
+    .acc-type-badge {
       display: inline-flex; align-items: center;
-      background: #eff6ff; color: #1d4ed8;
-      border: 1px solid #bfdbfe;
       font-size: 10px; font-weight: 700;
       letter-spacing: 0.07em; text-transform: uppercase;
       border-radius: 999px; padding: 2px 9px; flex-shrink: 0;
     }
-    .override-details { flex: 1; display: flex; gap: 12px; flex-wrap: wrap; }
-    .override-detail-chip {
+    .acc-type-badge.survey { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .acc-type-badge.echo_agent { background: #fdf4ff; color: #7c3aed; border: 1px solid #e9d5ff; }
+
+    .acc-rule-count {
+      font-size: 11.5px; color: #9ca3af;
+      background: #f3f4f6; border-radius: 999px;
+      padding: 1px 8px; flex-shrink: 0;
+    }
+    .acc-meta { font-size: 12px; color: #9ca3af; white-space: nowrap; }
+    .acc-view-link {
+      font-size: 12.5px; font-weight: 500; color: #0d9488;
+      text-decoration: none; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 4px 8px; border-radius: 6px; transition: background 0.12s;
+    }
+    .acc-view-link:hover { background: #f0fdfa; }
+
+    .acc-body {
+      display: none; padding: 0 16px 16px 16px;
+      border-top: 1px solid #f3f4f6;
+      animation: fadeSlideIn 0.15s ease;
+    }
+    .acc-item.open .acc-body { display: block; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .acc-rule-section-label {
+      font-size: 11px; font-weight: 600; color: #9ca3af;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      margin: 14px 0 8px 0; display: flex; align-items: center; gap: 6px;
+    }
+    .acc-rule-section-label::after {
+      content: ''; flex: 1; height: 1px; background: #f3f4f6;
+    }
+
+    .acc-default-rule {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      background: #f9fafb; border: 1px solid #e5e7eb;
+      border-radius: 8px; padding: 10px 14px;
+    }
+    .acc-default-chip {
       display: inline-flex; align-items: center; gap: 4px;
-      background: #f3f4f6; border: 1px solid #e5e7eb;
-      border-radius: 6px; padding: 3px 9px;
+      background: #fff; border: 1px solid #e5e7eb;
+      border-radius: 6px; padding: 3px 10px;
       font-size: 12px; color: #374151;
     }
-    .override-meta { font-size: 12px; color: #9ca3af; white-space: nowrap; }
-    .override-link {
-      font-size: 13px; font-weight: 500; color: #0d9488;
-      text-decoration: none; white-space: nowrap;
-      display: inline-flex; align-items: center; gap: 4px;
-    }
-    .override-link:hover { text-decoration: underline; }
 
-    .overrides-empty {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 40px 20px; gap: 10px;
-      border: 1.5px dashed #e5e7eb;
-      border-radius: 10px; margin-top: 16px;
-      color: #9ca3af; text-align: center;
+    .acc-custom-rules { display: flex; flex-direction: column; gap: 6px; }
+    .acc-custom-rule {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      background: #fff; border: 1px solid #e5e7eb;
+      border-radius: 8px; padding: 10px 14px;
     }
-    .overrides-empty p { font-size: 13.5px; line-height: 1.5; max-width: 340px; }
+    .acc-cr-name { font-size: 13px; font-weight: 600; color: #111827; min-width: 160px; flex-shrink: 0; }
+    .acc-cr-type {
+      display: inline-flex; align-items: center;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; border-radius: 999px; padding: 2px 8px; flex-shrink: 0;
+    }
+    .acc-cr-type.exclude { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .acc-cr-type.custom  { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .acc-cr-conditions { flex: 1; display: flex; flex-wrap: wrap; gap: 6px; }
+    .acc-cond-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #f0fdfa; border: 1px solid #99f6e4;
+      border-radius: 6px; padding: 3px 9px;
+      font-size: 12px; color: #0f766e;
+    }
+    .acc-no-custom { font-size: 12.5px; color: #9ca3af; font-style: italic; padding: 4px 0; }
 
     /* MODAL */
     .modal-backdrop {
       position: fixed; inset: 0;
-      background: rgba(17,24,39,0.45);
-      backdrop-filter: blur(3px);
-      z-index: 1000;
+      background: rgba(17,24,39,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
       display: flex; align-items: flex-start; justify-content: center;
       padding: 40px 20px;
       overflow-y: auto;
@@ -787,48 +858,22 @@
       </button>
     </div>
 
-    <!-- SECTION 3: SURVEY THROTTLE OVERRIDES -->
+    <!-- SECTION 3: THROTTLE OVERRIDES (Surveys + Echo Agents) -->
     <div class="section-card">
       <div class="section-header">
-        <h2 class="section-title">Survey Throttle Overrides</h2>
+        <h2 class="section-title">Throttle Overrides</h2>
       </div>
-      <p class="section-desc">Surveys that have custom throttling configured at the survey level. These override the default rule above.</p>
+      <p class="section-desc">Surveys and Echo Agents with custom throttling configured. Each can have a default rule and multiple custom rules that override the account default above.</p>
 
-      <div class="overrides-list">
-        <div class="override-row">
-          <span class="override-survey-name">CSAT Survey</span>
-          <span class="override-badge">Custom Throttle</span>
-          <div class="override-details">
-            <span class="override-detail-chip">Max 3 invites</span>
-            <span class="override-detail-chip">Every 30 days</span>
-            <span class="override-detail-chip">Min gap 7 days</span>
-          </div>
-          <span class="override-meta">Last modified Sep 8, 2024</span>
-          <a class="override-link" href="survey_level_throttling.html">View in Survey <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="override-row">
-          <span class="override-survey-name">Org Alignment Survey</span>
-          <span class="override-badge">Custom Throttle</span>
-          <div class="override-details">
-            <span class="override-detail-chip">Max 1 invite</span>
-            <span class="override-detail-chip">Every 1 day</span>
-            <span class="override-detail-chip">Min gap 1 day</span>
-          </div>
-          <span class="override-meta">Last modified Nov 20, 2024</span>
-          <a class="override-link" href="survey_level_throttling.html">View in Survey <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="override-row">
-          <span class="override-survey-name">NPS Survey</span>
-          <span class="override-badge">Custom Throttle</span>
-          <div class="override-details">
-            <span class="override-detail-chip">Max 5 invites</span>
-            <span class="override-detail-chip">Every 90 days</span>
-            <span class="override-detail-chip">Min gap 14 days</span>
-          </div>
-          <span class="override-meta">Last modified Jan 12, 2025</span>
-          <a class="override-link" href="survey_level_throttling.html">View in Survey <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
+      <!-- Type filter tabs -->
+      <div class="overrides-tabs">
+        <button class="override-tab active" onclick="filterOverrides('all',this)">All</button>
+        <button class="override-tab" onclick="filterOverrides('survey',this)">Surveys</button>
+        <button class="override-tab" onclick="filterOverrides('echo_agent',this)">Echo Agents</button>
       </div>
+
+      <!-- Accordion list (rendered by JS) -->
+      <div id="accordionList" class="accordion-list"></div>
     </div>
 
   </main>
@@ -1187,6 +1232,124 @@
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeExclModal();
   });
+
+  // ── Throttle Overrides Accordion ──────────────────────
+  const overridesData = [
+    {
+      id: 'csat', name: 'CSAT Survey', type: 'survey',
+      link: 'survey_level_throttling.html', modified: 'Sep 8, 2024',
+      defaultRule: { maxInvites: 3, interval: '30 days', minGap: '7 days' },
+      customRules: [
+        { name: 'No_recent_bounce', type: 'exclude', conditions: ['Channel is Email'] },
+        { name: 'Enterprise_boost', type: 'custom', conditions: ['Smart Lists is in Enterprise'] }
+      ]
+    },
+    {
+      id: 'org', name: 'Org Alignment Survey', type: 'survey',
+      link: 'survey_level_throttling.html', modified: 'Nov 20, 2024',
+      defaultRule: { maxInvites: 1, interval: '1 day', minGap: '1 day' },
+      customRules: [
+        { name: 'Skip_trial_users', type: 'exclude', conditions: ['Smart Lists is in Trial Users'] }
+      ]
+    },
+    {
+      id: 'nps', name: 'NPS Survey', type: 'survey',
+      link: 'survey_level_throttling.html', modified: 'Jan 12, 2025',
+      defaultRule: { maxInvites: 5, interval: '90 days', minGap: '14 days' },
+      customRules: []
+    },
+    {
+      id: 'agent-alpha', name: 'Agent Alpha', type: 'echo_agent',
+      link: 'survey_level_throttling.html', modified: 'Dec 1, 2024',
+      defaultRule: { maxInvites: 2, interval: '14 days', minGap: '3 days' },
+      customRules: [
+        { name: 'VIP_bypass', type: 'exclude', conditions: ['Smart Lists is in VIP Customers'] }
+      ]
+    },
+    {
+      id: 'agent-beta', name: 'Agent Beta', type: 'echo_agent',
+      link: 'survey_level_throttling.html', modified: 'Feb 5, 2025',
+      defaultRule: { maxInvites: 10, interval: '7 days', minGap: '2 days' },
+      customRules: []
+    }
+  ];
+
+  let activeOverrideFilter = 'all';
+
+  function filterOverrides(type, btn) {
+    activeOverrideFilter = type;
+    document.querySelectorAll('.override-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAccordion();
+  }
+
+  function renderAccordion() {
+    const list = document.getElementById('accordionList');
+    const filtered = activeOverrideFilter === 'all'
+      ? overridesData
+      : overridesData.filter(d => d.type === activeOverrideFilter);
+
+    list.innerHTML = filtered.map(item => {
+      const typeBadgeClass = item.type === 'survey' ? 'survey' : 'echo_agent';
+      const typeBadgeLabel = item.type === 'survey' ? 'Survey' : 'Echo Agent';
+      const totalRules = 1 + item.customRules.length;
+
+      const defaultChips = [
+        `<span class="acc-default-chip">Max ${item.defaultRule.maxInvites} invite${item.defaultRule.maxInvites > 1 ? 's' : ''}</span>`,
+        `<span class="acc-default-chip">Every ${item.defaultRule.interval}</span>`,
+        `<span class="acc-default-chip">Min gap ${item.defaultRule.minGap}</span>`
+      ].join('');
+
+      const customRulesHtml = item.customRules.length === 0
+        ? `<div class="acc-no-custom">No custom rules configured</div>`
+        : item.customRules.map(cr => `
+            <div class="acc-custom-rule">
+              <span class="acc-cr-name">${escHtml(cr.name)}</span>
+              <span class="acc-cr-type ${cr.type}">${cr.type === 'exclude' ? 'Exclude' : 'Custom'}</span>
+              <div class="acc-cr-conditions">
+                ${cr.conditions.map(c => `
+                  <span class="acc-cond-pill">
+                    <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                    ${escHtml(c)}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+          `).join('');
+
+      return `
+        <div class="acc-item" id="acc-${item.id}">
+          <div class="acc-header" onclick="toggleAccordion('acc-${item.id}')">
+            <svg class="acc-chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+            <span class="acc-name">${escHtml(item.name)}</span>
+            <span class="acc-type-badge ${typeBadgeClass}">${typeBadgeLabel}</span>
+            <span class="acc-rule-count">${totalRules} rule${totalRules !== 1 ? 's' : ''}</span>
+            <span class="acc-meta">Last modified ${item.modified}</span>
+            <a class="acc-view-link" href="${item.link}" onclick="event.stopPropagation()">
+              View
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+          <div class="acc-body">
+            <div class="acc-rule-section-label">Default Rule</div>
+            <div class="acc-default-rule">${defaultChips}</div>
+            <div class="acc-rule-section-label">Custom Rules (${item.customRules.length})</div>
+            <div class="acc-custom-rules">${customRulesHtml}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleAccordion(id) {
+    const item = document.getElementById(id);
+    item.classList.toggle('open');
+  }
+
+  // Initial render on page load
+  renderAccordion();
 </script>
 </body>
 </html>
