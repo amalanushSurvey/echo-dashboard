@@ -651,43 +651,6 @@
 
     </div>
 
-    <!-- PRIORITY EXPLANATION -->
-    <div class="section-card">
-      <div class="section-title" style="margin-bottom:6px">How throttling priority works for this survey</div>
-      <p class="section-desc">Rules are evaluated in this order. Within survey-level rules, the most inclusive one applies.</p>
-      <div class="priority-stack">
-        <div class="priority-tier tier-1">
-          <div class="priority-number">1</div>
-          <div class="priority-content">
-            <div class="priority-title">Exclusion Rules (Admin)</div>
-            <div class="priority-subtitle">Contacts in exclusion lists bypass all throttling — invites always go through.</div>
-          </div>
-          <span class="priority-badge badge-highest">Always Wins</span>
-        </div>
-        <div class="priority-connector">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-        </div>
-        <div class="priority-tier tier-2">
-          <div class="priority-number">2</div>
-          <div class="priority-content">
-            <div class="priority-title">Survey Custom Rules (most inclusive)</div>
-            <div class="priority-subtitle">If multiple custom rules match, the one with the highest invite limit applies.</div>
-          </div>
-          <span class="priority-badge badge-inclusive">Most Inclusive</span>
-        </div>
-        <div class="priority-connector">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-        </div>
-        <div class="priority-tier tier-3">
-          <div class="priority-number">3</div>
-          <div class="priority-content">
-            <div class="priority-title">Survey Default Rule / Account Default</div>
-            <div class="priority-subtitle">Applies if no custom rule matches the contact.</div>
-          </div>
-          <span class="priority-badge badge-default">Fallback</span>
-        </div>
-      </div>
-    </div>
 
   </main>
 </div>
