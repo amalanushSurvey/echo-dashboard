@@ -283,11 +283,20 @@
       display: flex; flex-wrap: wrap; gap: 6px;
       margin-top: 10px;
     }
+    .cri-body { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .cri-conditions-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .cri-limits-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .cri-section-label { font-size: 11px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin-right: 4px; }
     .cri-pill {
       display: inline-flex; align-items: center; gap: 5px;
-      background: #f3f4f6; border: 1px solid #e5e7eb;
+      background: #f0fdfa; border: 1px solid #99f6e4;
       border-radius: 6px; padding: 3px 10px;
-      font-size: 12px; color: #374151;
+      font-size: 12px; color: #0f766e;
+    }
+    .cri-limit-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #f9fafb; border: 1px solid #e5e7eb;
+      border-radius: 6px; padding: 3px 10px; font-size: 12px; color: #374151;
     }
 
     /* Icon buttons */
@@ -777,91 +786,10 @@
       </div>
     </div>
 
-    <!-- SECTION 2: EXCLUSION RULES -->
+    <!-- SECTION 2: SURVEY/ECHO LEVEL THROTTLING -->
     <div class="section-card">
       <div class="section-header">
-        <h2 class="section-title">Exclusion Rules</h2>
-      </div>
-      <p class="section-desc">Contacts matching these rules bypass <strong>ALL</strong> throttling — including survey-level overrides. Use for VIPs, high-priority contacts, or internal testers.</p>
-
-      <div class="info-note">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/>
-        </svg>
-        <p><strong>Exclusion rules take the highest priority</strong> and override everything, including any survey-level throttle configurations.</p>
-      </div>
-
-      <!-- Exclusion rules list -->
-      <div id="exclusionRulesList">
-        <!-- Pre-populated rule 1 -->
-        <div class="custom-rule-item" id="excl-rule-0">
-          <div class="cri-header">
-            <div class="cri-left">
-              <span class="cri-badge-smart">Smart Lists</span>
-              <span class="cri-name">VIP_customers</span>
-            </div>
-            <div class="cri-actions">
-              <label class="toggle" title="Enable/disable rule">
-                <input type="checkbox" checked onchange="toggleRuleItem(this)">
-                <div class="toggle-track"></div>
-                <div class="toggle-thumb"></div>
-              </label>
-              <button class="btn-icon" title="Edit rule" onclick="editExclRule(0)">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              </button>
-              <button class="btn-icon delete" title="Delete rule" onclick="deleteExclRule('excl-rule-0')">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="cri-conditions">
-            <span class="cri-pill">
-              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
-              Smart Lists is in VIP Customers
-            </span>
-          </div>
-        </div>
-
-        <!-- Pre-populated rule 2 -->
-        <div class="custom-rule-item" id="excl-rule-1">
-          <div class="cri-header">
-            <div class="cri-left">
-              <span class="cri-badge-smart">Smart Lists</span>
-              <span class="cri-name">Internal_testers</span>
-            </div>
-            <div class="cri-actions">
-              <label class="toggle" title="Enable/disable rule">
-                <input type="checkbox" checked onchange="toggleRuleItem(this)">
-                <div class="toggle-track"></div>
-                <div class="toggle-thumb"></div>
-              </label>
-              <button class="btn-icon" title="Edit rule" onclick="editExclRule(1)">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              </button>
-              <button class="btn-icon delete" title="Delete rule" onclick="deleteExclRule('excl-rule-1')">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="cri-conditions">
-            <span class="cri-pill">
-              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
-              Smart Lists is in Internal Testers
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <button class="btn-add-exclusion" onclick="openExclModal()">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Exclusion Rule
-      </button>
-    </div>
-
-    <!-- SECTION 3: THROTTLE OVERRIDES (Surveys + Echo Agents) -->
-    <div class="section-card">
-      <div class="section-header">
-        <h2 class="section-title">Throttle Overrides</h2>
+        <h2 class="section-title">Survey/Echo Level Throttling</h2>
       </div>
       <p class="section-desc">Surveys and Echo Agents with custom throttling configured. Each can have a default rule and multiple custom rules that override the account default above.</p>
 
@@ -877,60 +805,6 @@
     </div>
 
   </main>
-</div>
-
-<!-- EXCLUSION RULE MODAL -->
-<div class="modal-backdrop" id="exclModal">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-header">
-      <div class="modal-header-left">
-        <div class="modal-title" id="modalTitle">Add Exclusion Rule</div>
-        <div class="modal-subtitle">Contacts matching this rule will bypass all throttling.</div>
-      </div>
-      <button class="modal-close" onclick="closeExclModal()" aria-label="Close">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <!-- Rule name -->
-      <div class="rule-name-field">
-        <label class="rule-name-label" for="modalRuleName">Rule Name</label>
-        <input class="rule-name-input" id="modalRuleName" type="text" placeholder="e.g. VIP_accounts" oninput="validateRuleName(this)">
-        <div class="field-error" id="ruleNameError">Only letters, numbers, and underscores allowed. No spaces.</div>
-        <div class="field-hint">Use underscores instead of spaces (e.g. VIP_customers)</div>
-      </div>
-
-      <!-- Conditions -->
-      <div class="modal-section-title">Conditions</div>
-      <div class="cond-group">
-        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f9fafb;border-bottom:1px solid #e5e7eb;">
-          <div class="logic-pill" id="globalLogicPill">
-            <button class="logic-btn active" onclick="setGlobalLogic('AND',this)">AND</button>
-            <button class="logic-btn" onclick="setGlobalLogic('OR',this)">OR</button>
-          </div>
-          <span style="font-size:12.5px;color:#6b7280;">Match <span id="globalLogicLabel">all</span> conditions</span>
-        </div>
-        <div class="cond-rows" id="modalCondRows">
-          <!-- rows added by JS -->
-        </div>
-        <div class="cond-footer">
-          <button class="btn-add-cond" onclick="addModalCondRow()">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add condition
-          </button>
-        </div>
-      </div>
-
-      <div class="info-note" style="margin-top:4px">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <p>Contacts matching <strong>any</strong> of the conditions above will bypass all throttling globally.</p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-modal-cancel" onclick="closeExclModal()">Cancel</button>
-      <button class="btn-modal-save" onclick="saveExclRule()">Save Rule</button>
-    </div>
-  </div>
 </div>
 
 <!-- TOAST -->
@@ -970,244 +844,6 @@
     }
   }
 
-  // ── Delete exclusion rule ─────────────────────────────
-  function deleteExclRule(id) {
-    const el = document.getElementById(id);
-    if (el) {
-      el.style.transition = 'opacity 0.2s, transform 0.2s';
-      el.style.opacity = '0';
-      el.style.transform = 'translateX(10px)';
-      setTimeout(() => el.remove(), 200);
-      showToast('Exclusion rule removed.', 'default');
-    }
-  }
-
-  // ── Edit rule (stub) ──────────────────────────────────
-  function editExclRule(idx) {
-    showToast('Edit mode — coming soon.', 'default');
-  }
-
-  // ── Modal ─────────────────────────────────────────────
-  let modalCondCount = 0;
-
-  function openExclModal() {
-    modalCondCount = 0;
-    globalCondLogic = 'AND';
-    document.getElementById('modalRuleName').value = '';
-    document.getElementById('modalRuleName').classList.remove('error');
-    document.getElementById('ruleNameError').classList.remove('visible');
-    document.getElementById('modalCondRows').innerHTML = '';
-    // Reset AND/OR pill
-    const pill = document.getElementById('globalLogicPill');
-    pill.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
-    pill.querySelector('.logic-btn').classList.add('active');
-    document.getElementById('globalLogicLabel').textContent = 'all';
-    addModalCondRow();
-    document.getElementById('exclModal').classList.add('open');
-  }
-
-  function closeExclModal() {
-    document.getElementById('exclModal').classList.remove('open');
-  }
-
-  // ── Global logic (AND/OR) ─────────────────────────────
-  let globalCondLogic = 'AND';
-
-  function setGlobalLogic(logic, btn) {
-    globalCondLogic = logic;
-    const pill = document.getElementById('globalLogicPill');
-    pill.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('globalLogicLabel').textContent = logic === 'AND' ? 'all' : 'any';
-    // Update logic labels on non-first rows
-    const rows = document.getElementById('modalCondRows');
-    Array.from(rows.children).forEach((r, i) => {
-      if (i > 0) {
-        const lbl = r.querySelector('.cond-row-logic');
-        if (lbl) lbl.textContent = logic;
-      }
-    });
-  }
-
-  // ── Field definitions ─────────────────────────────────
-  const globalFieldDefs = {
-    smart_lists: {
-      label: 'Smart Lists',
-      operators: ['is in', 'is not in'],
-      values: ['VIP Customers', 'Enterprise', 'Trial Users', 'Churned Users', 'New Signups', 'Internal Testers']
-    },
-    channel: {
-      label: 'Channel',
-      operators: ['is', 'is not'],
-      values: ['Email', 'WhatsApp', 'SMS', 'Spotchecks']
-    },
-    survey: {
-      label: 'Survey',
-      operators: ['is', 'is not'],
-      values: ['Org Alignment Survey', 'CSAT Survey', 'Customer Satisfaction Survey', 'NPS Survey']
-    },
-    echo_agents: {
-      label: 'Echo Agents',
-      operators: ['is', 'is not'],
-      values: ['Agent Alpha', 'Agent Beta', 'Agent Gamma', 'Agent Delta']
-    }
-  };
-
-  function onGlobalFieldChange(sel, rowId) {
-    const field = sel.value;
-    const def = globalFieldDefs[field];
-    if (!def) return;
-
-    const opSel = document.getElementById('op-' + rowId);
-    const valSel = document.getElementById('val-' + rowId);
-
-    // Update operators
-    opSel.innerHTML = def.operators.map(op => `<option value="${op}">${op}</option>`).join('');
-
-    // Update values
-    valSel.innerHTML = def.values.map(v => `<option value="${v}">${v}</option>`).join('');
-  }
-
-  function addModalCondRow() {
-    modalCondCount++;
-    const rowId = modalCondCount;
-    const rows = document.getElementById('modalCondRows');
-    const isFirst = rows.children.length === 0;
-    const row = document.createElement('div');
-    row.className = 'cond-row';
-    row.dataset.condId = rowId;
-
-    const logicLabel = isFirst
-      ? '<span style="width:30px;flex-shrink:0;display:inline-block"></span>'
-      : `<span class="cond-row-logic">${globalCondLogic}</span>`;
-
-    const defaultDef = globalFieldDefs['smart_lists'];
-
-    row.innerHTML = `
-      ${logicLabel}
-      <select class="cond-select" onchange="onGlobalFieldChange(this, ${rowId})">
-        <option value="smart_lists">Smart Lists</option>
-        <option value="channel">Channel</option>
-        <option value="survey">Survey</option>
-        <option value="echo_agents">Echo Agents</option>
-      </select>
-      <select class="cond-select" id="op-${rowId}">
-        ${defaultDef.operators.map(op => `<option value="${op}">${op}</option>`).join('')}
-      </select>
-      <select class="cond-select" id="val-${rowId}">
-        ${defaultDef.values.map(v => `<option value="${v}">${v}</option>`).join('')}
-      </select>
-      <button class="btn-remove-cond" onclick="removeCondRow(this)" title="Remove condition">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    `;
-    rows.appendChild(row);
-  }
-
-  function removeCondRow(btn) {
-    const row = btn.closest('.cond-row');
-    const rows = document.getElementById('modalCondRows');
-    if (rows.children.length <= 1) {
-      showToast('At least one condition is required.', 'default');
-      return;
-    }
-    row.remove();
-    // Re-label: first row has no logic label
-    Array.from(rows.children).forEach((r, i) => {
-      const logicSpan = r.querySelector('.cond-row-logic, span[style]');
-      if (i === 0) {
-        if (logicSpan) logicSpan.outerHTML = '<span style="width:30px;flex-shrink:0"></span>';
-      }
-    });
-  }
-
-  function validateRuleName(input) {
-    const valid = /^[a-zA-Z0-9_]*$/.test(input.value);
-    const errEl = document.getElementById('ruleNameError');
-    if (!valid || input.value.trim() === '') {
-      input.classList.add('error');
-      errEl.classList.add('visible');
-    } else {
-      input.classList.remove('error');
-      errEl.classList.remove('visible');
-    }
-  }
-
-  function saveExclRule() {
-    const nameInput = document.getElementById('modalRuleName');
-    const name = nameInput.value.trim();
-
-    // Validate name
-    if (!name || !/^[a-zA-Z0-9_]+$/.test(name)) {
-      nameInput.classList.add('error');
-      document.getElementById('ruleNameError').classList.add('visible');
-      nameInput.focus();
-      return;
-    }
-
-    // Gather conditions
-    const rows = document.getElementById('modalCondRows');
-    const conditions = [];
-    rows.querySelectorAll('.cond-row').forEach(row => {
-      const selects = row.querySelectorAll('.cond-select');
-      // selects[0] = field, selects[1] = operator, selects[2] = value
-      if (selects.length >= 3) {
-        const fieldLabel = selects[0].options[selects[0].selectedIndex].text;
-        const opLabel = selects[1].options[selects[1].selectedIndex].text;
-        const valLabel = selects[2].options[selects[2].selectedIndex].text;
-        if (valLabel) {
-          conditions.push(`${fieldLabel} ${opLabel} ${valLabel}`);
-        }
-      }
-    });
-
-    if (conditions.length === 0) {
-      showToast('Please add at least one condition.', 'default');
-      return;
-    }
-
-    // Build card
-    const list = document.getElementById('exclusionRulesList');
-    const newId = 'excl-rule-' + Date.now();
-    const card = document.createElement('div');
-    card.className = 'custom-rule-item';
-    card.id = newId;
-
-    const condHtml = conditions.map(c => `
-      <span class="cri-pill">
-        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
-        ${escHtml(c)}
-      </span>
-    `).join('');
-
-    card.innerHTML = `
-      <div class="cri-header">
-        <div class="cri-left">
-          <span class="cri-badge-smart">Smart Lists</span>
-          <span class="cri-name">${escHtml(name)}</span>
-        </div>
-        <div class="cri-actions">
-          <label class="toggle" title="Enable/disable rule">
-            <input type="checkbox" checked onchange="toggleRuleItem(this)">
-            <div class="toggle-track"></div>
-            <div class="toggle-thumb"></div>
-          </label>
-          <button class="btn-icon" title="Edit rule">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          <button class="btn-icon delete" title="Delete rule" onclick="deleteExclRule('${newId}')">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="cri-conditions">${condHtml}</div>
-    `;
-
-    list.appendChild(card);
-    closeExclModal();
-    showToast('Exclusion rule added.', 'success');
-  }
-
   function escHtml(str) {
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
@@ -1223,53 +859,43 @@
     toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 2800);
   }
 
-  // ── Close modal on backdrop click ─────────────────────
-  document.getElementById('exclModal').addEventListener('click', function(e) {
-    if (e.target === this) closeExclModal();
-  });
-
-  // ── Keyboard close ────────────────────────────────────
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeExclModal();
-  });
-
-  // ── Throttle Overrides Accordion ──────────────────────
+  // ── Survey/Echo Level Throttling Accordion ────────────
   const overridesData = [
     {
       id: 'csat', name: 'CSAT Survey', type: 'survey',
       link: 'survey_level_throttling.html', modified: 'Sep 8, 2024',
-      defaultRule: { maxInvites: 3, interval: '30 days', minGap: '7 days' },
+      defaultRule: { maxInvites: 3, interval: '30 days', minGap: 7 },
       customRules: [
-        { name: 'No_recent_bounce', type: 'exclude', conditions: ['Channel is Email'] },
-        { name: 'Enterprise_boost', type: 'custom', conditions: ['Smart Lists is in Enterprise'] }
+        { name: 'No_recent_bounce', ruleType: 'exclude', conditions: ['Channel is Email'] },
+        { name: 'Enterprise_boost', ruleType: 'limit', maxInvites: 8, interval: '30 days', minGap: null, conditions: ['Smart Lists is in Enterprise'] }
       ]
     },
     {
       id: 'org', name: 'Org Alignment Survey', type: 'survey',
       link: 'survey_level_throttling.html', modified: 'Nov 20, 2024',
-      defaultRule: { maxInvites: 1, interval: '1 day', minGap: '1 day' },
+      defaultRule: { maxInvites: 1, interval: '1 day', minGap: 1 },
       customRules: [
-        { name: 'Skip_trial_users', type: 'exclude', conditions: ['Smart Lists is in Trial Users'] }
+        { name: 'Skip_trial_users', ruleType: 'exclude', conditions: ['Smart Lists is in Trial Users'] }
       ]
     },
     {
       id: 'nps', name: 'NPS Survey', type: 'survey',
       link: 'survey_level_throttling.html', modified: 'Jan 12, 2025',
-      defaultRule: { maxInvites: 5, interval: '90 days', minGap: '14 days' },
+      defaultRule: { maxInvites: 5, interval: '90 days', minGap: 14 },
       customRules: []
     },
     {
       id: 'agent-alpha', name: 'Agent Alpha', type: 'echo_agent',
       link: 'survey_level_throttling.html', modified: 'Dec 1, 2024',
-      defaultRule: { maxInvites: 2, interval: '14 days', minGap: '3 days' },
+      defaultRule: { maxInvites: 2, interval: '14 days', minGap: 3 },
       customRules: [
-        { name: 'VIP_bypass', type: 'exclude', conditions: ['Smart Lists is in VIP Customers'] }
+        { name: 'VIP_bypass', ruleType: 'exclude', conditions: ['Smart Lists is in VIP Customers'] }
       ]
     },
     {
       id: 'agent-beta', name: 'Agent Beta', type: 'echo_agent',
       link: 'survey_level_throttling.html', modified: 'Feb 5, 2025',
-      defaultRule: { maxInvites: 10, interval: '7 days', minGap: '2 days' },
+      defaultRule: { maxInvites: 10, interval: '7 days', minGap: null },
       customRules: []
     }
   ];
@@ -1294,28 +920,56 @@
       const typeBadgeLabel = item.type === 'survey' ? 'Survey' : 'Echo Agent';
       const totalRules = 1 + item.customRules.length;
 
+      // Default rule chips
+      const dr = item.defaultRule;
       const defaultChips = [
-        `<span class="acc-default-chip">Max ${item.defaultRule.maxInvites} invite${item.defaultRule.maxInvites > 1 ? 's' : ''}</span>`,
-        `<span class="acc-default-chip">Every ${item.defaultRule.interval}</span>`,
-        `<span class="acc-default-chip">Min gap ${item.defaultRule.minGap}</span>`
+        `<span class="acc-default-chip">Max ${dr.maxInvites} invite${dr.maxInvites !== 1 ? 's' : ''}</span>`,
+        `<span class="acc-default-chip">Every ${dr.interval}</span>`,
+        dr.minGap != null ? `<span class="acc-default-chip">Min gap ${dr.minGap} day${dr.minGap !== 1 ? 's' : ''}</span>` : ''
       ].join('');
 
+      // Custom rule cards (IF/THEN style)
       const customRulesHtml = item.customRules.length === 0
-        ? `<div class="acc-no-custom">No custom rules configured</div>`
-        : item.customRules.map(cr => `
-            <div class="acc-custom-rule">
-              <span class="acc-cr-name">${escHtml(cr.name)}</span>
-              <span class="acc-cr-type ${cr.type}">${cr.type === 'exclude' ? 'Exclude' : 'Custom'}</span>
-              <div class="acc-cr-conditions">
-                ${cr.conditions.map(c => `
-                  <span class="acc-cond-pill">
-                    <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-                    ${escHtml(c)}
-                  </span>
-                `).join('')}
-              </div>
-            </div>
-          `).join('');
+        ? `<div style="font-size:12.5px;color:#9ca3af;font-style:italic;padding:8px 0;">No custom rules configured</div>`
+        : item.customRules.map(cr => {
+            const isExcl = cr.ruleType === 'exclude';
+            const typeBadge = isExcl
+              ? `<span style="display:inline-flex;align-items:center;gap:4px;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;flex-shrink:0;">
+                  <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>Exclusion</span>`
+              : `<span style="display:inline-flex;align-items:center;gap:4px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;flex-shrink:0;">
+                  <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>Custom Limit</span>`;
+
+            const condPills = cr.conditions.map(c =>
+              `<span class="cri-pill">
+                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                ${escHtml(c)}
+              </span>`
+            ).join('');
+
+            const thenRow = isExcl
+              ? `<span style="font-size:12px;color:#92400e;font-weight:500;">
+                  <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>
+                  Excluded — can receive invites freely
+                </span>`
+              : `<span class="cri-limit-chip">Max ${cr.maxInvites} invite${cr.maxInvites !== 1 ? 's' : ''}</span>
+                 <span class="cri-limit-chip">Every ${cr.interval}</span>
+                 ${cr.minGap != null ? `<span class="cri-limit-chip">Min gap ${cr.minGap} days</span>` : ''}`;
+
+            return `
+              <div class="custom-rule-item" style="margin-bottom:8px;">
+                <div class="cri-header">
+                  <div class="cri-left">${typeBadge}<span class="cri-name">${escHtml(cr.name)}</span></div>
+                </div>
+                <div class="cri-body">
+                  <div class="cri-conditions-row">
+                    <span class="cri-section-label">If</span>${condPills}
+                  </div>
+                  <div class="cri-limits-row">
+                    <span class="cri-section-label">Then</span>${thenRow}
+                  </div>
+                </div>
+              </div>`;
+          }).join('');
 
       return `
         <div class="acc-item" id="acc-${item.id}">
@@ -1334,9 +988,9 @@
           </div>
           <div class="acc-body">
             <div class="acc-rule-section-label">Default Rule</div>
-            <div class="acc-default-rule">${defaultChips}</div>
+            <div class="acc-default-rule" style="margin-bottom:16px;">${defaultChips}</div>
             <div class="acc-rule-section-label">Custom Rules (${item.customRules.length})</div>
-            <div class="acc-custom-rules">${customRulesHtml}</div>
+            <div class="acc-custom-rules" style="margin-top:8px;">${customRulesHtml}</div>
           </div>
         </div>
       `;
