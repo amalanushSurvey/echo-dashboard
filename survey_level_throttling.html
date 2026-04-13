@@ -468,6 +468,18 @@
 
     /* MODAL LIMITS SECTION */
     .modal-limits { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 4px; }
+    .modal-limits-row1 { display: flex; gap: 20px; flex-wrap: wrap; }
+    .modal-mingap-section { margin-top: 16px; padding: 14px 16px; border: 1px solid #e5e7eb; border-radius: 10px; background: #f9fafb; }
+    .modal-mingap-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .modal-mingap-header-left { display: flex; flex-direction: column; gap: 2px; }
+    .optional-badge { display: inline-block; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: #f3f4f6; color: #9ca3af; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 6px; vertical-align: middle; margin-left: 6px; }
+    .modal-mingap-hint { font-size: 12px; color: #9ca3af; margin-top: 3px; line-height: 1.5; }
+    .modal-mingap-stepper { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+    .modal-mingap-unit { font-size: 13px; color: #6b7280; }
+    .custom-interval-wrap { display: none; align-items: center; gap: 6px; margin-top: 8px; }
+    .custom-interval-wrap input { width: 80px; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 10px; font-size: 14px; color: #111827; outline: none; text-align: center; }
+    .custom-interval-wrap input:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.12); }
+    .custom-interval-unit { font-size: 13px; color: #6b7280; }
 
     /* TOAST */
     .toast {
@@ -751,32 +763,62 @@
         <div class="modal-divider"></div>
         <div class="modal-section-label">Throttle Limits for Matching Contacts</div>
         <div class="modal-limits">
-          <div class="rule-control">
-            <div class="rule-control-label">Max Invites</div>
-            <div class="stepper">
-              <button class="stepper-btn" onclick="stepperChange('mMaxInvites',-1)">&#8722;</button>
-              <input class="stepper-val" id="mMaxInvites" type="number" value="5" min="1">
-              <button class="stepper-btn" onclick="stepperChange('mMaxInvites',1)">+</button>
+          <div class="modal-limits-row1">
+            <!-- Max Invites -->
+            <div class="rule-control">
+              <div class="rule-control-label">Max Invites</div>
+              <div class="stepper">
+                <button class="stepper-btn" onclick="stepperChange('mMaxInvites',-1)">&#8722;</button>
+                <input class="stepper-val" id="mMaxInvites" type="number" value="5" min="1">
+                <button class="stepper-btn" onclick="stepperChange('mMaxInvites',1)">+</button>
+              </div>
+              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Maximum number of invites</div>
+            </div>
+            <!-- Time Interval -->
+            <div class="rule-control">
+              <div class="rule-control-label">Time Interval</div>
+              <div class="select-wrap">
+                <select class="select-styled" id="mInterval" onchange="handleIntervalChange(this)">
+                  <option value="7">Every 7 days</option>
+                  <option value="30" selected>Every 30 days</option>
+                  <option value="60">Every 60 days</option>
+                  <option value="90">Every 90 days</option>
+                  <option value="custom">Custom days...</option>
+                </select>
+                <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div id="customIntervalWrap" class="custom-interval-wrap">
+                <input type="number" id="mIntervalCustom" min="1" value="45" placeholder="Days">
+                <span class="custom-interval-unit">days</span>
+              </div>
+              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Time window to count invites</div>
             </div>
           </div>
-          <div class="rule-control">
-            <div class="rule-control-label">Time Interval</div>
-            <div class="select-wrap">
-              <select class="select-styled" id="mInterval">
-                <option value="7">Every 7 days</option>
-                <option value="30" selected>Every 30 days</option>
-                <option value="60">Every 60 days</option>
-                <option value="90">Every 90 days</option>
-              </select>
-              <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+
+          <!-- Min Gap — optional -->
+          <div class="modal-mingap-section" style="width:100%;">
+            <div class="modal-mingap-header">
+              <div class="modal-mingap-header-left">
+                <div class="rule-control-label" style="display:flex;align-items:center;">
+                  Minimum Gap Between Invites
+                  <span class="optional-badge">Optional</span>
+                </div>
+                <div class="modal-mingap-hint">Minimum days that must pass between two invites sent to the same contact — regardless of how many invites are left in the time window.</div>
+              </div>
+              <label class="toggle" style="flex-shrink:0;margin-top:2px;">
+                <input type="checkbox" id="mMinGapEnabled" onchange="handleMinGapToggle(this)">
+                <span class="toggle-track"></span>
+              </label>
             </div>
-          </div>
-          <div class="rule-control">
-            <div class="rule-control-label">Min Gap (days)</div>
-            <div class="stepper">
-              <button class="stepper-btn" onclick="stepperChange('mMinGap',-1)">&#8722;</button>
-              <input class="stepper-val" id="mMinGap" type="number" value="3" min="0">
-              <button class="stepper-btn" onclick="stepperChange('mMinGap',1)">+</button>
+            <div id="mMinGapSection" style="display:none; margin-top:12px;">
+              <div class="modal-mingap-stepper">
+                <div class="stepper">
+                  <button class="stepper-btn" onclick="stepperChange('mMinGap',-1)">&#8722;</button>
+                  <input class="stepper-val" id="mMinGap" type="number" value="3" min="1">
+                  <button class="stepper-btn" onclick="stepperChange('mMinGap',1)">+</button>
+                </div>
+                <span class="modal-mingap-unit">days</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1003,7 +1045,7 @@
            </span>`
         : `<span class="cri-limit-chip">Max ${r.maxInvites} invite${r.maxInvites !== 1 ? 's' : ''}</span>
            <span class="cri-limit-chip">Every ${intervalLabel}</span>
-           <span class="cri-limit-chip">Min gap ${r.minGap} day${r.minGap !== 1 ? 's' : ''}</span>`;
+           ${r.minGap != null ? `<span class="cri-limit-chip">Min gap ${r.minGap} day${r.minGap !== 1 ? 's' : ''}</span>` : ''}`;
 
       return `
         <div class="custom-rule-item ${disabledClass}" id="cr-${r.id}">
@@ -1105,8 +1147,24 @@
 
     // Set limits
     document.getElementById('mMaxInvites').value = prefill ? (prefill.maxInvites || 5) : 5;
-    setSelectValue('mInterval', prefill ? (prefill.interval || '30 days').replace('Every ', '').replace(' days', '').replace(' day', '') : '30');
-    document.getElementById('mMinGap').value = prefill ? (prefill.minGap ?? 3) : 3;
+
+    // Interval — handle custom
+    const rawInterval = prefill ? (prefill.interval || '30 days').replace('Every ', '').replace(' days', '').replace(' day', '') : '30';
+    const stdOptions = ['7','30','60','90'];
+    if (stdOptions.includes(rawInterval)) {
+      setSelectValue('mInterval', rawInterval);
+      document.getElementById('customIntervalWrap').style.display = 'none';
+    } else {
+      setSelectValue('mInterval', 'custom');
+      document.getElementById('customIntervalWrap').style.display = 'flex';
+      document.getElementById('mIntervalCustom').value = rawInterval || 45;
+    }
+
+    // Min gap — optional toggle
+    const hasMinGap = prefill && prefill.minGap != null && prefill.minGap > 0;
+    document.getElementById('mMinGapEnabled').checked = hasMinGap;
+    document.getElementById('mMinGapSection').style.display = hasMinGap ? 'block' : 'none';
+    document.getElementById('mMinGap').value = hasMinGap ? prefill.minGap : 3;
 
     // Pre-fill conditions
     if (prefill && prefill.conditions.length > 0) {
@@ -1122,6 +1180,17 @@
   function closeCustomRuleModal() {
     document.getElementById('customRuleModal').classList.remove('open');
     editingRuleId = null;
+  }
+
+  // ── Interval custom days toggle ────────────────────────
+  function handleIntervalChange(sel) {
+    const wrap = document.getElementById('customIntervalWrap');
+    wrap.style.display = sel.value === 'custom' ? 'flex' : 'none';
+  }
+
+  // ── Min gap optional toggle ─────────────────────────────
+  function handleMinGapToggle(cb) {
+    document.getElementById('mMinGapSection').style.display = cb.checked ? 'block' : 'none';
   }
 
   // ── AND/OR logic ───────────────────────────────────────
@@ -1368,10 +1437,17 @@
 
     if (selectedModalRuleType === 'limit') {
       const intervalSel = document.getElementById('mInterval');
-      const intervalText = intervalSel.options[intervalSel.selectedIndex].text.replace('Every ', '');
+      let intervalText;
+      if (intervalSel.value === 'custom') {
+        const customDays = parseInt(document.getElementById('mIntervalCustom').value) || 45;
+        intervalText = customDays + ' days';
+      } else {
+        intervalText = intervalSel.options[intervalSel.selectedIndex].text.replace('Every ', '');
+      }
       ruleData.maxInvites = parseInt(document.getElementById('mMaxInvites').value) || 5;
       ruleData.interval = intervalText;
-      ruleData.minGap = parseInt(document.getElementById('mMinGap').value) || 0;
+      const minGapEnabled = document.getElementById('mMinGapEnabled').checked;
+      ruleData.minGap = minGapEnabled ? (parseInt(document.getElementById('mMinGap').value) || 1) : null;
     }
 
     if (!surveyCustomRules[currentSurveyIdx]) surveyCustomRules[currentSurveyIdx] = [];
