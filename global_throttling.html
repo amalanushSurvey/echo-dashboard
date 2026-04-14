@@ -92,9 +92,165 @@
     /* MAIN */
     .main {
       flex: 1;
-      padding: 32px 40px;
-      max-width: 940px;
+      padding: 32px 40px 32px 40px;
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+      min-width: 0;
     }
+    .main-content {
+      flex: 1;
+      min-width: 0;
+      max-width: 720px;
+    }
+
+    /* RIGHT AWARENESS PANEL */
+    .awareness-panel {
+      width: 260px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 72px;
+    }
+    .awareness-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .awareness-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 14px;
+    }
+    .aw-block {
+      margin-bottom: 14px;
+    }
+    .aw-block:last-child { margin-bottom: 0; }
+    .aw-block-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+    .aw-icon-shield { color: #0d9488; }
+    .aw-icon-bolt { color: #f59e0b; }
+    .aw-block-desc {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+      padding-left: 22px;
+    }
+    .aw-divider { border: none; border-top: 1px solid #f3f4f6; margin: 14px 0; }
+    .aw-list-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 7px;
+    }
+    .aw-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .aw-list li {
+      font-size: 12px;
+      color: #374151;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.4;
+    }
+    .aw-dot-teal { width: 5px; height: 5px; border-radius: 50%; background: #0d9488; flex-shrink: 0; margin-top: 5px; }
+    .aw-dot-amber { width: 5px; height: 5px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; margin-top: 5px; }
+    .aw-tip-card {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .aw-tip-head {
+      font-size: 12px;
+      font-weight: 700;
+      color: #92400e;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .aw-tip-body {
+      font-size: 12px;
+      color: #78350f;
+      line-height: 1.5;
+    }
+
+    /* PRECEDENCE BANNER */
+    .precedence-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #f8faff;
+      border: 1px solid #c7d2fe;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+    .precedence-banner-icon {
+      flex-shrink: 0;
+      color: #6366f1;
+      margin-top: 1px;
+    }
+    .precedence-banner-text { flex: 1; }
+    .precedence-banner-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #3730a3;
+      margin-bottom: 3px;
+    }
+    .precedence-banner-desc {
+      font-size: 12px;
+      color: #4338ca;
+      line-height: 1.5;
+    }
+
+    /* OVERRIDE BADGE in accordion */
+    .acc-override-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-radius: 999px;
+      padding: 2px 8px;
+      flex-shrink: 0;
+    }
+    .acc-override-toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .acc-override-toggle-label {
+      font-size: 11.5px;
+      color: #6b7280;
+      white-space: nowrap;
+    }
+    .acc-override-toggle-label.active { color: #92400e; font-weight: 600; }
 
     /* SECTION CARD */
     .section-card {
@@ -703,6 +859,10 @@
     .toast.show { opacity: 1; transform: translateY(0); }
     .toast.success { background: #059669; }
 
+    @media (max-width: 1100px) {
+      .awareness-panel { display: none; }
+      .main-content { max-width: 100%; }
+    }
     @media (max-width: 700px) {
       .main { padding: 20px 16px; }
       .section-card { padding: 20px 16px; }
@@ -768,6 +928,7 @@
 
   <!-- MAIN -->
   <main class="main">
+  <div class="main-content">
 
     <!-- PAGE HEADER -->
     <div style="margin-bottom:28px">
@@ -883,7 +1044,16 @@
       <div class="section-header">
         <h2 class="section-title">Survey/Echo Level Throttling</h2>
       </div>
-      <p class="section-desc">Surveys and Echo Agents with custom throttling configured. Each can have a default rule and multiple custom rules that override the account default above.</p>
+      <p class="section-desc">Surveys and Echo Agents with custom throttling configured. Each can have a default rule and multiple custom rules.</p>
+
+      <!-- Precedence banner -->
+      <div class="precedence-banner">
+        <svg class="precedence-banner-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="precedence-banner-text">
+          <div class="precedence-banner-title">Global throttling takes precedence by default</div>
+          <div class="precedence-banner-desc">Account-level limits apply first across all surveys. Toggle <strong>Override Global</strong> on a survey or Echo Agent below to let its rules take priority instead.</div>
+        </div>
+      </div>
 
       <!-- Type filter tabs -->
       <div class="overrides-tabs">
@@ -895,6 +1065,57 @@
       <!-- Accordion list (rendered by JS) -->
       <div id="accordionList" class="accordion-list"></div>
     </div>
+
+  </div><!-- /main-content -->
+
+  <!-- RIGHT AWARENESS PANEL -->
+  <aside class="awareness-panel">
+    <div class="awareness-card">
+      <div class="awareness-card-title">How Throttling Works</div>
+
+      <div class="aw-block">
+        <div class="aw-block-head">
+          <svg class="aw-icon-shield" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Global First
+        </div>
+        <div class="aw-block-desc">Account-level rules run first. Protects customers from multi-team over-surveying.</div>
+      </div>
+
+      <div class="aw-block">
+        <div class="aw-block-head">
+          <svg class="aw-icon-bolt" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Survey Override
+        </div>
+        <div class="aw-block-desc">Selected surveys bypass global limits. Use for transactional or urgent feedback only.</div>
+      </div>
+
+      <hr class="aw-divider">
+
+      <div class="aw-list-title">When Global Wins</div>
+      <ul class="aw-list" style="margin-bottom:12px;">
+        <li><span class="aw-dot-teal"></span>Customer fatigue — max surveys across all teams</li>
+        <li><span class="aw-dot-teal"></span>VIP / high-value account protection</li>
+        <li><span class="aw-dot-teal"></span>Compliance &amp; legal limits</li>
+        <li><span class="aw-dot-teal"></span>Cross-channel saturation control</li>
+        <li><span class="aw-dot-teal"></span>Negative experience cooldown</li>
+      </ul>
+
+      <div class="aw-list-title">When Survey Wins</div>
+      <ul class="aw-list">
+        <li><span class="aw-dot-amber"></span>Post-purchase or support CSAT</li>
+        <li><span class="aw-dot-amber"></span>User-initiated feedback</li>
+        <li><span class="aw-dot-amber"></span>Explicit exceptions (premium users)</li>
+      </ul>
+    </div>
+
+    <div class="aw-tip-card">
+      <div class="aw-tip-head">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Good to know
+      </div>
+      <div class="aw-tip-body">Only account-level throttling has visibility across all touchpoints — email, WhatsApp, SMS. Survey rules only see their own channel.</div>
+    </div>
+  </aside>
 
   </main>
 </div>
@@ -1091,6 +1312,7 @@
     {
       id: 'csat', name: 'CSAT Survey', type: 'survey',
       link: 'survey_level_throttling.html', modified: 'Sep 8, 2024',
+      overridesGlobal: true,
       defaultRule: { maxInvites: 3, interval: '30 days', minGap: 7 },
       customRules: [
         { id: 1, name: 'No_recent_bounce', ruleType: 'exclude', enabled: true, conditions: ['Channel is Email'] },
@@ -1100,6 +1322,7 @@
     {
       id: 'org', name: 'Org Alignment Survey', type: 'survey',
       link: 'survey_level_throttling.html', modified: 'Nov 20, 2024',
+      overridesGlobal: false,
       defaultRule: { maxInvites: 1, interval: '1 day', minGap: 1 },
       customRules: [
         { id: 3, name: 'Skip_trial_users', ruleType: 'exclude', enabled: true, conditions: ['Smart Lists is in Trial Users'] }
@@ -1108,12 +1331,14 @@
     {
       id: 'nps', name: 'NPS Survey', type: 'survey',
       link: 'survey_level_throttling.html', modified: 'Jan 12, 2025',
+      overridesGlobal: false,
       defaultRule: { maxInvites: 5, interval: '90 days', minGap: 14 },
       customRules: []
     },
     {
       id: 'agent-alpha', name: 'Agent Alpha', type: 'echo_agent',
       link: 'survey_level_throttling.html', modified: 'Dec 1, 2024',
+      overridesGlobal: false,
       defaultRule: { maxInvites: 2, interval: '14 days', minGap: 3 },
       customRules: [
         { id: 4, name: 'VIP_bypass', ruleType: 'exclude', enabled: true, conditions: ['Smart Lists is in VIP Customers'] }
@@ -1122,6 +1347,7 @@
     {
       id: 'agent-beta', name: 'Agent Beta', type: 'echo_agent',
       link: 'survey_level_throttling.html', modified: 'Feb 5, 2025',
+      overridesGlobal: false,
       defaultRule: { maxInvites: 10, interval: '7 days', minGap: null },
       customRules: []
     }
@@ -1201,14 +1427,27 @@
               </div>`;
           }).join('');
 
+      const overrideBadge = item.overridesGlobal
+        ? `<span class="acc-override-badge"><svg width="8" height="8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Overrides Global</span>`
+        : '';
+
       return `
         <div class="acc-item" id="acc-${item.id}">
           <div class="acc-header" onclick="toggleAccordion('acc-${item.id}')">
             <svg class="acc-chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
             <span class="acc-name">${escHtml(item.name)}</span>
             <span class="acc-type-badge ${typeBadgeClass}">${typeBadgeLabel}</span>
+            ${overrideBadge}
             <span class="acc-rule-count">${totalRules} rule${totalRules !== 1 ? 's' : ''}</span>
             <span class="acc-meta">Last modified ${item.modified}</span>
+            <div class="acc-override-toggle-wrap" onclick="event.stopPropagation()">
+              <span class="acc-override-toggle-label${item.overridesGlobal ? ' active' : ''}">Override Global</span>
+              <label class="toggle" title="Allow this survey's rules to override global throttling">
+                <input type="checkbox" ${item.overridesGlobal ? 'checked' : ''} onchange="toggleOverrideGlobal('${item.id}',this)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
             <a class="acc-view-link" href="${item.link}" onclick="event.stopPropagation()">
               View <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -1225,6 +1464,21 @@
 
   function toggleAccordion(id) {
     document.getElementById(id).classList.toggle('open');
+  }
+
+  function toggleOverrideGlobal(itemId, cb) {
+    const item = overridesData.find(d => d.id === itemId);
+    if (!item) return;
+    item.overridesGlobal = cb.checked;
+    const wasOpen = document.getElementById('acc-' + itemId).classList.contains('open');
+    renderAccordion();
+    if (wasOpen) document.getElementById('acc-' + itemId).classList.add('open');
+    showToast(
+      cb.checked
+        ? `${item.name} will now override global throttling.`
+        : `${item.name} now follows global throttling.`,
+      'success'
+    );
   }
 
   // ── Global Custom rule CRUD ───────────────────────────
