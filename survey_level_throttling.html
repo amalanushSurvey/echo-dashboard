@@ -582,7 +582,7 @@
     <!-- SURVEY-LEVEL THROTTLING SECTION -->
     <div class="section-card">
       <div class="section-title">Survey-Level Throttling</div>
-      <p class="section-desc">Configure custom throttling rules for this survey. When multiple rules match a contact, the <strong>most inclusive rule</strong> (highest invite limit) takes effect.</p>
+      <p class="section-desc">Configure custom throttling rules for this survey. When multiple rules match a contact, the <strong>most specific rule</strong> (the one with the most targeted conditions) takes effect.</p>
 
       <!-- Override toggle -->
       <div class="toggle-row">
@@ -656,7 +656,7 @@
           <div class="custom-rules-header">
             <div class="custom-rules-title">Custom Rules</div>
           </div>
-          <p class="custom-rules-desc">Rules that target specific segments via conditions. When a contact matches, the rule with the <strong>highest max invites</strong> wins.</p>
+          <p class="custom-rules-desc">Rules that target specific segments via conditions. When a contact matches multiple rules, the <strong>most specific rule</strong> (with the most targeted conditions) takes priority.</p>
 
           <div id="customRulesList">
             <!-- Rendered by JS -->
@@ -671,7 +671,7 @@
         <!-- MOST INCLUSIVE NOTE -->
         <div class="info-note" style="margin-top:20px">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-          <p>When multiple rules match a contact, the <strong>most inclusive rule</strong> (the one allowing the most invites) is used. This ensures contacts aren't over-throttled by more restrictive rules.</p>
+          <p>When multiple rules match a contact, the <strong>most specific rule</strong> (the one with the most targeted conditions) is applied. More targeted rules always take precedence over broader ones.</p>
         </div>
 
       </div><!-- /overridePanel -->
