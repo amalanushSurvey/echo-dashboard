@@ -172,16 +172,29 @@
     }
     .aw-dot-teal { width: 5px; height: 5px; border-radius: 50%; background: #0d9488; flex-shrink: 0; margin-top: 5px; }
     .aw-dot-amber { width: 5px; height: 5px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; margin-top: 5px; }
-    .aw-priority-step { display: flex; align-items: flex-start; gap: 10px; }
-    .aw-priority-badge { width: 26px; height: 26px; border-radius: 8px; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: 0.02em; }
-    .aw-p1 { background: #fef3c7; color: #92400e; }
-    .aw-p2 { background: #dbeafe; color: #1e40af; }
-    .aw-p3 { background: #f0fdf4; color: #166534; }
-    .aw-priority-content { flex: 1; }
-    .aw-priority-title { font-size: 12px; font-weight: 600; color: #111827; margin-bottom: 2px; }
-    .aw-priority-desc { font-size: 11px; color: #6b7280; line-height: 1.4; }
-    .aw-priority-arrow { font-size: 14px; color: #d1d5db; text-align: center; padding: 2px 0 2px 5px; }
-    .aw-priority-note { margin-top: 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 9px 11px; font-size: 11px; color: #6b7280; line-height: 1.5; }
+    /* Exclude from Global Throttling multiselect */
+    .exclude-from-global { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+    .exclude-from-global-label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 3px; }
+    .exclude-from-global-desc { font-size: 12px; color: #6b7280; margin-bottom: 10px; line-height: 1.5; }
+    .exclude-trigger { display: flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 8px; padding: 9px 12px; cursor: pointer; user-select: none; font-size: 13px; color: #374151; transition: border-color .15s; position: relative; }
+    .exclude-trigger:hover { border-color: #0d9488; }
+    .exclude-trigger.open { border-color: #0d9488; box-shadow: 0 0 0 2px rgba(13,148,136,0.12); }
+    .exclude-trigger-text { flex: 1; }
+    .exclude-trigger-count { background: #0d9488; color: #fff; border-radius: 999px; font-size: 10px; font-weight: 700; padding: 1px 7px; }
+    .exclude-trigger-chevron { color: #9ca3af; transition: transform .2s; flex-shrink: 0; }
+    .exclude-trigger.open .exclude-trigger-chevron { transform: rotate(180deg); }
+    .exclude-dropdown { position: relative; background: #fff; border: 1.5px solid #d1d5db; border-top: none; border-radius: 0 0 8px 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); z-index: 50; margin-top: -2px; }
+    .exclude-tabs { display: flex; border-bottom: 1px solid #e5e7eb; padding: 0 8px; gap: 0; }
+    .exclude-tab { flex: 1; background: none; border: none; border-bottom: 2px solid transparent; padding: 8px 4px; font-size: 12px; font-weight: 500; color: #6b7280; cursor: pointer; margin-bottom: -1px; transition: color .15s, border-color .15s; }
+    .exclude-tab.active { color: #0d9488; border-bottom-color: #0d9488; font-weight: 600; }
+    .exclude-list { max-height: 200px; overflow-y: auto; padding: 6px 0; }
+    .exclude-item { display: flex; align-items: center; gap: 9px; padding: 7px 14px; cursor: pointer; transition: background .1s; font-size: 12.5px; color: #374151; }
+    .exclude-item:hover { background: #f9fafb; }
+    .exclude-item-check { width: 16px; height: 16px; border: 1.5px solid #d1d5db; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, border-color .15s; }
+    .exclude-item.checked .exclude-item-check { background: #0d9488; border-color: #0d9488; }
+    .exclude-item-all { font-weight: 600; color: #111827; border-bottom: 1px solid #f3f4f6; margin-bottom: 2px; }
+    .exclude-item-all .exclude-item-check { border-radius: 4px; }
+    .exclude-item-type { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: #9ca3af; margin-left: auto; }
     .aw-tip-card {
       background: #fffbeb;
       border: 1px solid #fde68a;
@@ -1161,6 +1174,25 @@
         </button>
       </div>
 
+      <!-- Exclude from Global Throttling -->
+      <div class="exclude-from-global">
+        <div class="exclude-from-global-label">Exclude from Global Throttling</div>
+        <div class="exclude-from-global-desc">Surveys and agents listed here bypass global limits entirely. Their own throttling rules apply — or none if not configured.</div>
+        <div class="exclude-trigger" id="excludeTrigger" onclick="toggleExcludeDropdown()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <span class="exclude-trigger-text" id="excludeTriggerText">No exclusions — global throttling applies to all</span>
+          <svg class="exclude-trigger-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="exclude-dropdown" id="excludeDropdown" style="display:none;">
+          <div class="exclude-tabs">
+            <button class="exclude-tab active" id="etab-surveys" onclick="switchExcludeTab('surveys',this)">Surveys</button>
+            <button class="exclude-tab" id="etab-agents" onclick="switchExcludeTab('agents',this)">Agents</button>
+          </div>
+          <div class="exclude-list" id="excludeListSurveys"></div>
+          <div class="exclude-list" id="excludeListAgents" style="display:none;"></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- SECTION 2: SURVEY/ECHO LEVEL THROTTLING -->
@@ -1168,52 +1200,7 @@
       <div class="section-header">
         <h2 class="section-title">Survey/Echo Level Throttling</h2>
       </div>
-      <p class="section-desc">Surveys and Echo Agents with custom throttling configured. Each can have a default rule and multiple custom rules.</p>
-
-      <!-- Precedence banner -->
-      <div class="precedence-banner" style="margin-bottom:20px;">
-        <svg class="precedence-banner-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <div class="precedence-banner-text">
-          <div class="precedence-banner-title">Global throttling takes precedence by default</div>
-          <div class="precedence-banner-desc">Account-level limits apply first. Choose below whether survey-level rules should override — for all surveys, or specific ones only.</div>
-        </div>
-      </div>
-
-      <!-- Override mode selector -->
-      <div class="override-mode-selector">
-        <div class="override-mode-label">Survey-level rules override global throttling for:</div>
-        <div class="override-mode-options">
-          <div class="override-mode-opt" id="omo-all" onclick="setOverrideMode('all')">
-            <div class="omo-radio"><div class="omo-radio-dot"></div></div>
-            <div class="omo-icon omo-icon-all">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-            </div>
-            <div class="omo-text">
-              <div class="omo-title">All surveys &amp; Echo Agents</div>
-              <div class="omo-desc">Any survey or Echo Agent with survey-level throttling configured will automatically override global limits.</div>
-            </div>
-          </div>
-          <div class="override-mode-opt selected" id="omo-specific" onclick="setOverrideMode('specific')">
-            <div class="omo-radio"><div class="omo-radio-dot"></div></div>
-            <div class="omo-icon omo-icon-specific">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-            </div>
-            <div class="omo-text">
-              <div class="omo-title">Specific surveys &amp; Echo Agents only</div>
-              <div class="omo-desc">Manually select which surveys and Echo Agents are allowed to override global throttling.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Selected count (shown in specific mode) -->
-      <div id="overrideSelectionSummary" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <span id="overrideSelectionCount" style="font-size:12.5px;color:#6b7280;"></span>
-        <div style="display:flex;gap:8px;">
-          <button class="btn-text-sm" id="btnSelectAll" onclick="selectAllOverrides(true)" style="display:none;">Select all</button>
-          <button class="btn-text-sm" id="btnClearAll" onclick="selectAllOverrides(false)" style="display:none;">Clear all</button>
-        </div>
-      </div>
+      <p class="section-desc">When a survey or Echo Agent has its own throttling rules enabled, those rules take over — global limits no longer apply to it.</p>
 
       <!-- Type filter tabs -->
       <div class="overrides-tabs">
@@ -1246,7 +1233,7 @@
           <svg class="aw-icon-bolt" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           Survey Override
         </div>
-        <div class="aw-block-desc">Selected surveys bypass global limits. Use for transactional or urgent feedback only.</div>
+        <div class="aw-block-desc">If a survey or Echo Agent has its own throttling rules enabled, it automatically overrides global limits. No extra setup needed.</div>
       </div>
 
       <hr class="aw-divider">
@@ -1266,41 +1253,6 @@
         <li><span class="aw-dot-amber"></span>User-initiated feedback</li>
         <li><span class="aw-dot-amber"></span>Explicit exceptions (premium users)</li>
       </ul>
-    </div>
-
-    <div class="awareness-card">
-      <div class="awareness-card-title">How Rules Are Evaluated</div>
-      <p style="font-size:12px;color:#6b7280;margin-bottom:14px;line-height:1.5;">When a survey invite is triggered, rules are checked in priority order. The first match wins.</p>
-
-      <div class="aw-priority-step">
-        <div class="aw-priority-badge aw-p1">P1</div>
-        <div class="aw-priority-content">
-          <div class="aw-priority-title">Exclusion Rule</div>
-          <div class="aw-priority-desc">Contact is exempt — invite sent freely, no limits apply.</div>
-        </div>
-      </div>
-      <div class="aw-priority-arrow">↓</div>
-
-      <div class="aw-priority-step">
-        <div class="aw-priority-badge aw-p2">P2</div>
-        <div class="aw-priority-content">
-          <div class="aw-priority-title">Custom Limit Rule</div>
-          <div class="aw-priority-desc">Contact-specific limits override the default rule.</div>
-        </div>
-      </div>
-      <div class="aw-priority-arrow">↓</div>
-
-      <div class="aw-priority-step">
-        <div class="aw-priority-badge aw-p3">P3</div>
-        <div class="aw-priority-content">
-          <div class="aw-priority-title">Default Rule</div>
-          <div class="aw-priority-desc">Fallback limits apply if no custom rule matches.</div>
-        </div>
-      </div>
-
-      <div class="aw-priority-note">
-        When multiple custom rules match, the <strong>most specific rule</strong> wins.
-      </div>
     </div>
 
   </aside>
@@ -1562,7 +1514,6 @@
   ];
 
   let activeOverrideFilter = 'all';
-  let overrideMode = 'specific'; // 'all' | 'specific'
   let glbRuleIdCounter = 100;
   let glbEditingRuleId = null;
   let glbCondCount = 0;
@@ -1581,41 +1532,118 @@
     renderAccordion();
   }
 
-  function setOverrideMode(mode) {
-    overrideMode = mode;
-    document.getElementById('omo-all').classList.toggle('selected', mode === 'all');
-    document.getElementById('omo-specific').classList.toggle('selected', mode === 'specific');
-    if (mode === 'all') {
-      overridesData.forEach(d => d.overridesGlobal = true);
+  // ── Exclude from Global Throttling ────────────────────
+  let excludedSurveys = [];  // survey IDs excluded from global
+  let excludedAgents = [];   // agent IDs excluded from global
+  let excludedAllSurveys = false;
+  let excludedAllAgents = false;
+  let excludeDropdownOpen = false;
+  let excludeActiveTab = 'surveys';
+
+  function toggleExcludeDropdown() {
+    excludeDropdownOpen = !excludeDropdownOpen;
+    const dd = document.getElementById('excludeDropdown');
+    const trigger = document.getElementById('excludeTrigger');
+    dd.style.display = excludeDropdownOpen ? '' : 'none';
+    trigger.classList.toggle('open', excludeDropdownOpen);
+    if (excludeDropdownOpen) renderExcludeLists();
+  }
+
+  function switchExcludeTab(tab, btn) {
+    excludeActiveTab = tab;
+    document.querySelectorAll('.exclude-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('excludeListSurveys').style.display = tab === 'surveys' ? '' : 'none';
+    document.getElementById('excludeListAgents').style.display = tab === 'agents' ? '' : 'none';
+  }
+
+  function renderExcludeLists() {
+    const surveys = overridesData.filter(d => d.type === 'survey');
+    const agents  = overridesData.filter(d => d.type === 'echo_agent');
+
+    function buildList(items, allFlag, selectedArr, type) {
+      const allChecked = allFlag;
+      let html = `<div class="exclude-item exclude-item-all ${allChecked ? 'checked' : ''}" onclick="toggleExcludeAll('${type}')">
+        <div class="exclude-item-check"><svg width="9" height="9" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <span>All ${type === 'surveys' ? 'Surveys' : 'Agents'}</span>
+      </div>`;
+      items.forEach(item => {
+        const checked = allFlag || selectedArr.includes(item.id);
+        html += `<div class="exclude-item ${checked ? 'checked' : ''}" onclick="toggleExcludeItem('${item.id}','${type}')">
+          <div class="exclude-item-check"><svg width="9" height="9" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <span>${escHtml(item.name)}</span>
+        </div>`;
+      });
+      return html;
     }
-    updateSelectionSummary();
-    renderAccordion();
+
+    document.getElementById('excludeListSurveys').innerHTML = buildList(surveys, excludedAllSurveys, excludedSurveys, 'surveys');
+    document.getElementById('excludeListAgents').innerHTML  = buildList(agents,  excludedAllAgents,  excludedAgents,  'agents');
   }
 
-  function selectAllOverrides(val) {
-    overridesData.forEach(d => d.overridesGlobal = val);
-    updateSelectionSummary();
-    renderAccordion();
-  }
-
-  function updateSelectionSummary() {
-    const summary = document.getElementById('overrideSelectionSummary');
-    const countEl = document.getElementById('overrideSelectionCount');
-    const btnSelect = document.getElementById('btnSelectAll');
-    const btnClear = document.getElementById('btnClearAll');
-    if (!summary) return;
-    if (overrideMode === 'specific') {
-      summary.style.display = 'flex';
-      const selected = overridesData.filter(d => d.overridesGlobal).length;
-      countEl.textContent = selected === 0
-        ? 'No surveys selected — global throttling applies to all'
-        : `${selected} of ${overridesData.length} surveys/agents will override global throttling`;
-      btnSelect.style.display = selected < overridesData.length ? '' : 'none';
-      btnClear.style.display = selected > 0 ? '' : 'none';
+  function toggleExcludeAll(type) {
+    if (type === 'surveys') {
+      excludedAllSurveys = !excludedAllSurveys;
+      if (excludedAllSurveys) excludedSurveys = [];
     } else {
-      summary.style.display = 'none';
+      excludedAllAgents = !excludedAllAgents;
+      if (excludedAllAgents) excludedAgents = [];
+    }
+    renderExcludeLists();
+    updateExcludeTrigger();
+    renderAccordion();
+  }
+
+  function toggleExcludeItem(id, type) {
+    if (type === 'surveys') {
+      if (excludedAllSurveys) { excludedAllSurveys = false; excludedSurveys = overridesData.filter(d => d.type === 'survey').map(d => d.id).filter(i => i !== id); }
+      else { const idx = excludedSurveys.indexOf(id); idx === -1 ? excludedSurveys.push(id) : excludedSurveys.splice(idx, 1); }
+    } else {
+      if (excludedAllAgents) { excludedAllAgents = false; excludedAgents = overridesData.filter(d => d.type === 'echo_agent').map(d => d.id).filter(i => i !== id); }
+      else { const idx = excludedAgents.indexOf(id); idx === -1 ? excludedAgents.push(id) : excludedAgents.splice(idx, 1); }
+    }
+    renderExcludeLists();
+    updateExcludeTrigger();
+    renderAccordion();
+  }
+
+  function updateExcludeTrigger() {
+    const trigger = document.getElementById('excludeTrigger');
+    const textEl  = document.getElementById('excludeTriggerText');
+    const totalSurveys = overridesData.filter(d => d.type === 'survey').length;
+    const totalAgents  = overridesData.filter(d => d.type === 'echo_agent').length;
+    const sCnt = excludedAllSurveys ? totalSurveys : excludedSurveys.length;
+    const aCnt = excludedAllAgents  ? totalAgents  : excludedAgents.length;
+    const total = sCnt + aCnt;
+
+    // Remove old count badge if any
+    const old = trigger.querySelector('.exclude-trigger-count');
+    if (old) old.remove();
+
+    if (total === 0) {
+      textEl.textContent = 'No exclusions — global throttling applies to all';
+    } else {
+      const parts = [];
+      if (sCnt > 0) parts.push(`${sCnt} survey${sCnt !== 1 ? 's' : ''}`);
+      if (aCnt > 0) parts.push(`${aCnt} agent${aCnt !== 1 ? 's' : ''}`);
+      textEl.textContent = parts.join(', ') + ' excluded';
+      const badge = document.createElement('span');
+      badge.className = 'exclude-trigger-count';
+      badge.textContent = total;
+      textEl.after(badge);
     }
   }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    const trigger = document.getElementById('excludeTrigger');
+    const dd = document.getElementById('excludeDropdown');
+    if (excludeDropdownOpen && trigger && !trigger.contains(e.target) && dd && !dd.contains(e.target)) {
+      excludeDropdownOpen = false;
+      dd.style.display = 'none';
+      trigger.classList.remove('open');
+    }
+  });
 
   function renderAccordion() {
     const list = document.getElementById('accordionList');
@@ -1666,30 +1694,26 @@
               </div>`;
           }).join('');
 
-      const overrideClass = item.overridesGlobal ? ' overrides-global' : '';
-
-      // Override indicator: checkbox in specific mode, amber badge in all mode
-      const overrideControl = overrideMode === 'specific'
-        ? `<div class="acc-override-toggle-wrap" onclick="toggleOverrideGlobal('${item.id}');event.stopPropagation()" title="${item.overridesGlobal ? 'Click to remove override' : 'Click to allow override'}">
-             <div class="acc-select-checkbox ${item.overridesGlobal ? 'checked' : ''}">
-               <svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-             </div>
-             <span class="acc-override-toggle-label${item.overridesGlobal ? ' active' : ''}">
-               ${item.overridesGlobal ? '⚡ Overrides Global' : 'Override Global'}
-             </span>
-           </div>`
-        : `<span style="display:inline-flex;align-items:center;gap:5px;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;padding:2px 9px;flex-shrink:0;">
-             <svg width="8" height="8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Overrides Global
-           </span>`;
+      // Show excluded badge if this item is in the exclude list
+      const surveys = overridesData.filter(d => d.type === 'survey');
+      const agents = overridesData.filter(d => d.type === 'echo_agent');
+      const isExcluded = item.type === 'survey'
+        ? (excludedAllSurveys || excludedSurveys.includes(item.id))
+        : (excludedAllAgents || excludedAgents.includes(item.id));
+      const excludedBadge = isExcluded
+        ? `<span style="display:inline-flex;align-items:center;gap:5px;background:#fef9c3;color:#854d0e;border:1px solid #fde047;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:999px;padding:2px 9px;flex-shrink:0;">
+             <svg width="8" height="8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>Skips Global
+           </span>`
+        : '';
 
       return `
-        <div class="acc-item${overrideClass}" id="acc-${item.id}">
+        <div class="acc-item" id="acc-${item.id}">
           <div class="acc-header" onclick="toggleAccordion('acc-${item.id}')">
             <svg class="acc-chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
             <span class="acc-name">${escHtml(item.name)}</span>
             <span class="acc-type-badge ${typeBadgeClass}">${typeBadgeLabel}</span>
             <span class="acc-rule-count">${totalRules} rule${totalRules !== 1 ? 's' : ''}</span>
-            ${overrideControl}
+            ${excludedBadge}
             <a class="acc-view-link" href="${item.link}" onclick="event.stopPropagation()">
               View <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -1708,21 +1732,6 @@
     document.getElementById(id).classList.toggle('open');
   }
 
-  function toggleOverrideGlobal(itemId) {
-    const item = overridesData.find(d => d.id === itemId);
-    if (!item) return;
-    item.overridesGlobal = !item.overridesGlobal;
-    const wasOpen = document.getElementById('acc-' + itemId).classList.contains('open');
-    updateSelectionSummary();
-    renderAccordion();
-    if (wasOpen) document.getElementById('acc-' + itemId).classList.add('open');
-    showToast(
-      item.overridesGlobal
-        ? `${item.name} will now override global throttling.`
-        : `${item.name} now follows global throttling.`,
-      'success'
-    );
-  }
 
   // ── Global Custom rule CRUD ───────────────────────────
   function editGlbCustomRule(ruleId) {
