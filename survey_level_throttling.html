@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Survey – Throttling</title>
+  <title>Survey Level Throttling</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -622,87 +622,28 @@
   <main class="main">
   <div class="main-content">
 
-    <!-- SCENARIO SELECTOR -->
-    <div class="scenario-bar">
-      <span class="scenario-bar-label">View as:</span>
-      <div class="scenario-tabs">
-        <button class="scenario-tab active" id="stab-1" onclick="setScenario(1)">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Admin · Survey Overrides
-        </button>
-        <button class="scenario-tab" id="stab-2" onclick="setScenario(2)">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Admin · Global Priority
-        </button>
-        <button class="scenario-tab" id="stab-3" onclick="setScenario(3)">
-          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
-          Member · Global Priority
-        </button>
-      </div>
-    </div>
-
     <!-- PAGE HEADING -->
     <div class="page-heading">
-      <h1>Throttling — <span id="headingSurveyName">CSAT Survey</span></h1>
+      <h1>Survey Level Throttling — <span id="headingSurveyName">CSAT Survey</span></h1>
       <p>Configure how often contacts receive invites for this survey.</p>
-    </div>
-
-    <!-- ACCOUNT DEFAULT CARD -->
-    <div class="account-default-card">
-      <div class="adc-icon">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
-        </svg>
-      </div>
-      <div class="adc-content">
-        <div class="adc-label">Account Default (set by Admin)</div>
-        <div class="adc-values">
-          <span class="adc-chip">Max 100 invites</span>
-          <span class="adc-chip">Every 30 days</span>
-          <span class="adc-chip">Min gap 1 day</span>
-        </div>
-        <div class="adc-note">Global fallback applied when no survey-level rule matches a contact.</div>
-      </div>
-    </div>
-
-    <!-- PRIORITY BANNER (changes per scenario) -->
-    <div id="priorityBanner" class="priority-banner priority-survey" style="margin-bottom:20px;">
-      <div id="priorityBannerIcon" class="priority-banner-icon"></div>
-      <div class="priority-banner-text">
-        <div id="priorityBannerTitle" class="priority-banner-title"></div>
-        <div id="priorityBannerDesc" class="priority-banner-desc"></div>
-      </div>
-      <div id="priorityBannerAction"></div>
-    </div>
-
-    <!-- Locked overlay note (shown in scenario 2) -->
-    <div id="lockedOverlayNote" class="locked-overlay-note" style="display:none;">
-      <svg width="14" height="14" fill="none" stroke="#9ca3af" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      Your rules are saved but currently inactive — global throttling takes precedence. Enable survey override in Global Settings to activate them.
     </div>
 
     <!-- SURVEY-LEVEL THROTTLING SECTION -->
     <div class="section-card">
-      <div class="section-title">Survey-Level Throttling</div>
-      <p class="section-desc">Configure custom throttling rules for this survey. When multiple rules match a contact, the <strong>most specific rule</strong> (the one with the most targeted conditions) takes effect.</p>
-
-      <!-- Override toggle -->
-      <div class="toggle-row">
-        <label class="toggle" title="Override account default">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <div class="section-title">Survey Level Throttling</div>
+        <label class="toggle" title="Enable survey-level throttling">
           <input type="checkbox" id="overrideToggle" checked onchange="handleOverrideToggle(this)">
           <div class="toggle-track"></div>
           <div class="toggle-thumb"></div>
         </label>
-        <div>
-          <div class="toggle-row-label">Override account default for this survey</div>
-          <div class="toggle-row-desc" id="toggleSubDesc">Custom throttling active for this survey</div>
-        </div>
       </div>
+      <p class="section-desc">Configure custom throttling rules for this survey. When multiple rules match a contact, the <strong>most specific rule</strong> (the one with the most targeted conditions) takes effect.</p>
 
-      <!-- Using default block (shown when override OFF) -->
+      <!-- Using default block (shown when toggle OFF) -->
       <div class="using-default-block" id="usingDefaultBlock" style="display:none">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-        <span>This survey uses the account default throttling <strong>(Max 100 invites / Every 30 days / Min gap 1 day)</strong>. Enable the override to configure custom rules.</span>
+        <span>Survey-level throttling is off — global account throttling rules apply to this survey. Enable the toggle to configure custom rules.</span>
       </div>
 
       <!-- Override panel (shown when override ON) -->
@@ -785,44 +726,6 @@
 
   <!-- RIGHT AWARENESS PANEL -->
   <aside class="awareness-panel">
-    <div class="awareness-card">
-      <div class="awareness-card-title">How Throttling Works</div>
-
-      <div class="aw-block">
-        <div class="aw-block-head">
-          <svg class="aw-icon-shield" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Global First
-        </div>
-        <div class="aw-block-desc">Account-level rules run first. Protects customers from multi-team over-surveying.</div>
-      </div>
-
-      <div class="aw-block">
-        <div class="aw-block-head">
-          <svg class="aw-icon-bolt" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          Survey Override
-        </div>
-        <div class="aw-block-desc">When override is enabled by an admin, survey rules take priority over global limits.</div>
-      </div>
-
-      <hr class="aw-divider">
-
-      <div class="aw-list-title">When Global Wins</div>
-      <ul class="aw-list" style="margin-bottom:12px;">
-        <li><span class="aw-dot-teal"></span>Customer fatigue — max surveys across all teams</li>
-        <li><span class="aw-dot-teal"></span>VIP / high-value account protection</li>
-        <li><span class="aw-dot-teal"></span>Compliance &amp; legal limits</li>
-        <li><span class="aw-dot-teal"></span>Cross-channel saturation control</li>
-        <li><span class="aw-dot-teal"></span>Negative experience cooldown</li>
-      </ul>
-
-      <div class="aw-list-title">When Survey Wins</div>
-      <ul class="aw-list">
-        <li><span class="aw-dot-amber"></span>Post-purchase or support CSAT</li>
-        <li><span class="aw-dot-amber"></span>User-initiated feedback</li>
-        <li><span class="aw-dot-amber"></span>Explicit exceptions (premium users)</li>
-      </ul>
-    </div>
-
     <div class="awareness-card">
       <div class="awareness-card-title">How Rules Are Evaluated</div>
       <p style="font-size:12px;color:#6b7280;margin-bottom:14px;line-height:1.5;">When a survey invite is triggered, rules are checked in priority order. The first match wins.</p>
@@ -1147,66 +1050,12 @@
   // ── Scenario switcher ─────────────────────────────────
   let currentScenario = 1;
 
-  function setScenario(n) {
-    currentScenario = n;
-    // Update tab active states
-    [1,2,3].forEach(i => {
-      document.getElementById('stab-' + i).classList.toggle('active', i === n);
-    });
-
-    const banner = document.getElementById('priorityBanner');
-    const bannerTitle = document.getElementById('priorityBannerTitle');
-    const bannerDesc = document.getElementById('priorityBannerDesc');
-    const bannerIcon = document.getElementById('priorityBannerIcon');
-    const bannerAction = document.getElementById('priorityBannerAction');
-    const mainContent = document.querySelector('.main-content');
-    const lockedNote = document.getElementById('lockedOverlayNote');
-
-    // Remove all banner classes
-    banner.classList.remove('priority-banner-survey','priority-banner-global-admin','priority-banner-global-member');
-
-    if (n === 1) {
-      // Admin + Survey Overrides Global
-      banner.classList.add('priority-banner-survey');
-      bannerIcon.innerHTML = `<svg width="18" height="18" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>`;
-      bannerTitle.textContent = 'Survey rules take priority for this survey';
-      bannerDesc.textContent = 'An admin has enabled override — these rules run before global throttling.';
-      bannerAction.innerHTML = '';
-      mainContent.classList.remove('editing-locked');
-      if (lockedNote) lockedNote.style.display = 'none';
-    } else if (n === 2) {
-      // Admin + Global Takes Priority
-      banner.classList.add('priority-banner-global-admin');
-      bannerIcon.innerHTML = `<svg width="18" height="18" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
-      bannerTitle.textContent = 'Global throttling takes precedence for this survey';
-      bannerDesc.textContent = 'These rules exist but are currently inactive. Go to Global Throttling to allow this survey to override.';
-      bannerAction.innerHTML = `<a class="btn-go-global" href="global_throttling.html">Go to Global Settings <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>`;
-      mainContent.classList.remove('editing-locked');
-      if (lockedNote) lockedNote.style.display = 'flex';
-    } else {
-      // Non-Admin + Global Takes Priority
-      banner.classList.add('priority-banner-global-member');
-      bannerIcon.innerHTML = `<svg width="18" height="18" fill="none" stroke="#ea580c" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>`;
-      bannerTitle.textContent = 'Global throttling is in effect — editing restricted';
-      bannerDesc.textContent = "You don't have permission to override global limits. Contact your account admin to allow survey-level override.";
-      bannerAction.innerHTML = `<button class="btn-contact-admin" onclick="showToast('Admin notification sent.','success')"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 3a4 4 0 100 8 4 4 0 000-8z"/></svg>Contact Admin</button>`;
-      mainContent.classList.add('editing-locked');
-      if (lockedNote) lockedNote.style.display = 'none';
-    }
-  }
-
-  // ── Override toggle ────────────────────────────────────
+  // ── Survey-level throttling toggle ────────────────────
   function handleOverrideToggle(checkbox) {
     surveys[currentSurveyIdx].hasOverride = checkbox.checked;
-    applyOverrideState(checkbox.checked);
-  }
-
-  function applyOverrideState(isOverride) {
-    document.getElementById('overridePanel').style.display = isOverride ? '' : 'none';
-    document.getElementById('usingDefaultBlock').style.display = isOverride ? 'none' : '';
-    document.getElementById('toggleSubDesc').textContent = isOverride
-      ? 'Custom throttling active for this survey'
-      : 'Using account default throttling';
+    document.getElementById('overridePanel').style.display = checkbox.checked ? '' : 'none';
+    document.getElementById('usingDefaultBlock').style.display = checkbox.checked ? 'none' : '';
+    showToast(checkbox.checked ? 'Survey-level throttling enabled.' : 'Survey-level throttling disabled.', 'success');
   }
 
   // ── Default rule toggle ────────────────────────────────
