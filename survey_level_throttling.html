@@ -656,11 +656,6 @@
               <div class="rule-title">Default Rule</div>
               <div class="rule-desc">Applied to all contacts for this survey when no custom rule matches.</div>
             </div>
-            <label class="toggle" title="Toggle default rule">
-              <input type="checkbox" id="defaultRuleToggle" checked onchange="toggleDefaultRule(this)">
-              <div class="toggle-track"></div>
-              <div class="toggle-thumb"></div>
-            </label>
           </div>
           <div class="rule-body" id="defaultRuleBody">
             <div class="rule-control">
@@ -683,11 +678,28 @@
                 <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- MINIMUM GAP BLOCK -->
+        <div class="rule-block rule-active" id="minGapBlock">
+          <div class="rule-block-header">
+            <div class="rule-text">
+              <div class="rule-title">Minimum Gap</div>
+              <div class="rule-desc">Ensure enough time passes after an invite is sent before the same contact receives another.</div>
+            </div>
+            <label class="toggle" title="Toggle minimum gap">
+              <input type="checkbox" id="minGapToggle" checked onchange="toggleMinGap(this)">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+          <div class="rule-body" id="minGapBody">
             <div class="rule-control">
-              <div class="rule-control-label">Min Gap (days)</div>
+              <div class="rule-control-label">Days after last invite</div>
               <div class="stepper">
                 <button class="stepper-btn" onclick="stepperChange('defMinGap',-1)">&#8722;</button>
-                <input class="stepper-val" id="defMinGap" type="number" value="7" min="0">
+                <input class="stepper-val" id="defMinGap" type="number" value="7" min="1">
                 <button class="stepper-btn" onclick="stepperChange('defMinGap',1)">+</button>
               </div>
             </div>
@@ -1059,16 +1071,11 @@
   }
 
   // ── Default rule toggle ────────────────────────────────
-  function toggleDefaultRule(checkbox) {
-    const block = document.getElementById('defaultRuleBlock');
-    const body = document.getElementById('defaultRuleBody');
-    if (checkbox.checked) {
-      block.classList.add('rule-active');
-      body.style.display = '';
-    } else {
-      block.classList.remove('rule-active');
-      body.style.display = 'none';
-    }
+  function toggleMinGap(checkbox) {
+    const block = document.getElementById('minGapBlock');
+    const body = document.getElementById('minGapBody');
+    block.classList.toggle('rule-active', checkbox.checked);
+    body.style.display = checkbox.checked ? '' : 'none';
   }
 
   // ── Stepper ────────────────────────────────────────────
