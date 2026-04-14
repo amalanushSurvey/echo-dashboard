@@ -851,6 +851,24 @@
         </div>
       </div>
 
+      <!-- CUSTOM RULES SECTION -->
+      <div class="custom-rules-section" style="margin-top:24px;">
+        <div class="custom-rules-header">
+          <div class="custom-rules-title">Custom Rules</div>
+        </div>
+        <p class="custom-rules-desc">Rules that target specific contact segments. When a contact matches multiple rules, the <strong>most specific rule</strong> (with the most targeted conditions) takes priority.</p>
+        <div id="glbCustomRulesList"><!-- rendered by JS --></div>
+        <button class="btn-add-custom-rule" onclick="openGlbCustomRuleModal()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Custom Rule
+        </button>
+      </div>
+
+      <div class="info-note" style="margin-top:20px;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <p>When multiple rules match a contact, the <strong>most specific rule</strong> (the one with the most targeted conditions) is applied. More targeted rules always take precedence over broader ones.</p>
+      </div>
+
       <div class="rules-footer">
         <button class="btn-save" onclick="showToast('Default rule saved successfully.','success')">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
@@ -1109,10 +1127,15 @@
     }
   ];
 
+  // ── Global-level custom rules ─────────────────────────
+  let glbCustomRules = [
+    { id: 1, name: 'No_bounce_email', ruleType: 'exclude', enabled: true, conditions: [{ fieldLabel: 'Channel', op: 'is', val: 'Email' }] },
+    { id: 2, name: 'VIP_boost', ruleType: 'limit', enabled: true, maxInvites: 8, interval: '30 days', minGap: null, conditions: [{ fieldLabel: 'Smart Lists', op: 'is in', val: 'VIP Customers' }] }
+  ];
+
   let activeOverrideFilter = 'all';
   let glbRuleIdCounter = 100;
   let glbEditingRuleId = null;
-  let glbActiveItemId = null;
   let glbCondCount = 0;
   let glbCondLogic = 'AND';
   let glbSelectedRuleType = 'limit';
@@ -1148,7 +1171,7 @@
       ].join('');
 
       const customRulesHtml = item.customRules.length === 0
-        ? `<div style="font-size:12.5px;color:#9ca3af;font-style:italic;padding:8px 0;">No custom rules yet.</div>`
+        ? `<div style="font-size:12.5px;color:#9ca3af;font-style:italic;padding:4px 0;">No custom rules configured.</div>`
         : item.customRules.map(cr => {
             const isExcl = cr.ruleType === 'exclude';
             const disabledClass = cr.enabled === false ? 'rule-disabled' : '';
@@ -1167,22 +1190,9 @@
                  ${cr.minGap != null ? `<span class="cri-limit-chip">Min gap ${cr.minGap} days</span>` : ''}`;
 
             return `
-              <div class="custom-rule-item ${disabledClass}" id="glb-cr-${item.id}-${cr.id}" style="margin-bottom:8px;">
+              <div class="custom-rule-item ${disabledClass}" style="margin-bottom:8px;">
                 <div class="cri-header">
                   <div class="cri-left">${typeBadge}<span class="cri-name">${escHtml(cr.name)}</span></div>
-                  <div class="cri-actions">
-                    <label class="toggle" title="Enable/disable rule">
-                      <input type="checkbox" ${cr.enabled !== false ? 'checked' : ''} onchange="toggleGlbCustomRule('${item.id}',${cr.id},this)">
-                      <div class="toggle-track"></div>
-                      <div class="toggle-thumb"></div>
-                    </label>
-                    <button class="btn-icon" title="Edit rule" onclick="editGlbCustomRule('${item.id}',${cr.id});event.stopPropagation()">
-                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                    <button class="btn-icon delete" title="Delete rule" onclick="deleteGlbCustomRule('${item.id}',${cr.id});event.stopPropagation()">
-                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-                    </button>
-                  </div>
                 </div>
                 <div class="cri-body">
                   <div class="cri-conditions-row"><span class="cri-section-label">If</span>${condPills}</div>
@@ -1208,10 +1218,6 @@
             <div class="acc-default-rule" style="margin-bottom:16px;">${defaultChips}</div>
             <div class="acc-rule-section-label">Custom Rules (${item.customRules.length})</div>
             <div style="margin-top:8px;">${customRulesHtml}</div>
-            <button class="btn-add-custom-rule" onclick="openGlbCustomRuleModal('${item.id}');event.stopPropagation()">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Add Custom Rule
-            </button>
           </div>
         </div>`;
     }).join('');
@@ -1221,40 +1227,80 @@
     document.getElementById(id).classList.toggle('open');
   }
 
-  // ── Custom rule CRUD ──────────────────────────────────
-  function getOverrideItem(itemId) {
-    return overridesData.find(d => d.id === itemId);
-  }
-
-  function toggleGlbCustomRule(itemId, ruleId, cb) {
-    const item = getOverrideItem(itemId);
-    const rule = item && item.customRules.find(r => r.id === ruleId);
-    if (rule) { rule.enabled = cb.checked; renderAccordion(); document.getElementById('acc-' + itemId).classList.add('open'); }
-  }
-
-  function deleteGlbCustomRule(itemId, ruleId) {
-    const item = getOverrideItem(itemId);
-    if (!item) return;
-    const idx = item.customRules.findIndex(r => r.id === ruleId);
-    if (idx >= 0) {
-      const el = document.getElementById('glb-cr-' + itemId + '-' + ruleId);
-      if (el) { el.style.transition = 'opacity 0.2s, transform 0.2s'; el.style.opacity = '0'; el.style.transform = 'translateX(10px)'; }
-      setTimeout(() => { item.customRules.splice(idx, 1); renderAccordion(); document.getElementById('acc-' + itemId).classList.add('open'); }, 200);
-      showToast('Custom rule removed.', 'default');
-    }
-  }
-
-  function editGlbCustomRule(itemId, ruleId) {
-    const item = getOverrideItem(itemId);
-    const rule = item && item.customRules.find(r => r.id === ruleId);
+  // ── Global Custom rule CRUD ───────────────────────────
+  function editGlbCustomRule(ruleId) {
+    const rule = glbCustomRules.find(r => r.id === ruleId);
     if (!rule) return;
     glbEditingRuleId = ruleId;
-    openGlbCustomRuleModal(itemId, rule);
+    openGlbCustomRuleModal(rule);
+  }
+
+  function deleteGlbCustomRule(ruleId) {
+    const idx = glbCustomRules.findIndex(r => r.id === ruleId);
+    if (idx < 0) return;
+    glbCustomRules.splice(idx, 1);
+    renderGlbCustomRules();
+    showToast('Custom rule deleted.', 'success');
+  }
+
+  function toggleGlbCustomRule(ruleId, cb) {
+    const rule = glbCustomRules.find(r => r.id === ruleId);
+    if (rule) { rule.enabled = cb.checked; renderGlbCustomRules(); }
+  }
+
+  // ── Render global-level custom rules ──────────────────
+  function renderGlbCustomRules() {
+    const list = document.getElementById('glbCustomRulesList');
+    if (!list) return;
+    if (glbCustomRules.length === 0) {
+      list.innerHTML = `<div style="font-size:12.5px;color:#9ca3af;font-style:italic;padding:8px 0;">No custom rules yet.</div>`;
+      return;
+    }
+    list.innerHTML = glbCustomRules.map(cr => {
+      const isExcl = cr.ruleType === 'exclude';
+      const disabledClass = cr.enabled === false ? 'rule-disabled' : '';
+      const typeBadge = isExcl
+        ? `<span style="display:inline-flex;align-items:center;gap:4px;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;flex-shrink:0;"><svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>Exclusion</span>`
+        : `<span style="display:inline-flex;align-items:center;gap:4px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;flex-shrink:0;"><svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>Custom Limit</span>`;
+
+      const condPills = cr.conditions.map(c =>
+        `<span class="cri-pill"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>${escHtml(typeof c === 'string' ? c : `${c.fieldLabel} ${c.op} ${c.val}`)}</span>`
+      ).join('');
+
+      const thenRow = isExcl
+        ? `<span style="font-size:12px;color:#92400e;font-weight:500;"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>Excluded — can receive invites freely</span>`
+        : `<span class="cri-limit-chip">Max ${cr.maxInvites} invite${cr.maxInvites !== 1 ? 's' : ''}</span>
+           <span class="cri-limit-chip">Every ${cr.interval}</span>
+           ${cr.minGap != null ? `<span class="cri-limit-chip">Min gap ${cr.minGap} days</span>` : ''}`;
+
+      return `
+        <div class="custom-rule-item ${disabledClass}" style="margin-bottom:8px;">
+          <div class="cri-header">
+            <div class="cri-left">${typeBadge}<span class="cri-name">${escHtml(cr.name)}</span></div>
+            <div class="cri-actions">
+              <label class="toggle" title="Enable/disable rule">
+                <input type="checkbox" ${cr.enabled !== false ? 'checked' : ''} onchange="toggleGlbCustomRule(${cr.id},this)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+              <button class="btn-icon" title="Edit rule" onclick="editGlbCustomRule(${cr.id})">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-icon delete" title="Delete rule" onclick="deleteGlbCustomRule(${cr.id})">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="cri-body">
+            <div class="cri-conditions-row"><span class="cri-section-label">If</span>${condPills}</div>
+            <div class="cri-limits-row"><span class="cri-section-label">Then</span>${thenRow}</div>
+          </div>
+        </div>`;
+    }).join('');
   }
 
   // ── Modal open/close ──────────────────────────────────
-  function openGlbCustomRuleModal(itemId, prefill) {
-    glbActiveItemId = itemId;
+  function openGlbCustomRuleModal(prefill) {
     glbCondCount = 0;
     glbCondLogic = prefill ? (prefill.logic || 'AND') : 'AND';
     if (!prefill) glbEditingRuleId = null;
@@ -1394,9 +1440,8 @@
   // ── Validate rule name ────────────────────────────────
   function validateGlbRuleName(input) {
     input.value = input.value.replace(/ /g, '_');
-    const item = getOverrideItem(glbActiveItemId);
     const valid = /^[a-zA-Z0-9_]+$/.test(input.value);
-    const isUnique = !item || !item.customRules.some(r => r.name === input.value && r.id !== glbEditingRuleId);
+    const isUnique = !glbCustomRules.some(r => r.name === input.value && r.id !== glbEditingRuleId);
     const errEl = document.getElementById('glbRuleNameError');
     if (!valid || !isUnique) {
       input.classList.add('error'); errEl.classList.add('visible');
@@ -1411,8 +1456,7 @@
     if (!name || !/^[a-zA-Z0-9_]+$/.test(name)) {
       nameInput.classList.add('error'); document.getElementById('glbRuleNameError').classList.add('visible'); nameInput.focus(); return;
     }
-    const item = getOverrideItem(glbActiveItemId);
-    if (item && item.customRules.some(r => r.name === name && r.id !== glbEditingRuleId)) {
+    if (glbCustomRules.some(r => r.name === name && r.id !== glbEditingRuleId)) {
       nameInput.classList.add('error'); document.getElementById('glbRuleNameError').classList.add('visible');
       document.getElementById('glbRuleNameError').textContent = 'A rule with this name already exists.'; nameInput.focus(); return;
     }
@@ -1441,20 +1485,18 @@
       ruleData.minGap = minGapEnabled ? (parseInt(document.getElementById('glbMinGap').value) || 1) : null;
     }
 
-    if (!item) return;
     if (glbEditingRuleId !== null) {
-      const idx = item.customRules.findIndex(r => r.id === glbEditingRuleId);
-      if (idx >= 0) item.customRules[idx] = { id: glbEditingRuleId, ...ruleData, enabled: item.customRules[idx].enabled };
+      const idx = glbCustomRules.findIndex(r => r.id === glbEditingRuleId);
+      if (idx >= 0) glbCustomRules[idx] = { id: glbEditingRuleId, ...ruleData, enabled: glbCustomRules[idx].enabled };
       showToast('Custom rule updated.', 'success');
     } else {
       ruleData.id = ++glbRuleIdCounter;
-      item.customRules.push(ruleData);
+      glbCustomRules.push(ruleData);
       showToast('Custom rule added.', 'success');
     }
 
     closeGlbCustomRuleModal();
-    renderAccordion();
-    document.getElementById('acc-' + glbActiveItemId).classList.add('open');
+    renderGlbCustomRules();
   }
 
   // ── Close on backdrop click / ESC ─────────────────────
@@ -1463,6 +1505,7 @@
 
   // Initial render on page load
   renderAccordion();
+  renderGlbCustomRules();
 </script>
 </body>
 </html>
