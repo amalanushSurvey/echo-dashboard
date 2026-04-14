@@ -172,6 +172,16 @@
     }
     .aw-dot-teal { width: 5px; height: 5px; border-radius: 50%; background: #0d9488; flex-shrink: 0; margin-top: 5px; }
     .aw-dot-amber { width: 5px; height: 5px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; margin-top: 5px; }
+    .aw-priority-step { display: flex; align-items: flex-start; gap: 10px; }
+    .aw-priority-badge { width: 26px; height: 26px; border-radius: 8px; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; letter-spacing: 0.02em; }
+    .aw-p1 { background: #fef3c7; color: #92400e; }
+    .aw-p2 { background: #dbeafe; color: #1e40af; }
+    .aw-p3 { background: #f0fdf4; color: #166534; }
+    .aw-priority-content { flex: 1; }
+    .aw-priority-title { font-size: 12px; font-weight: 600; color: #111827; margin-bottom: 2px; }
+    .aw-priority-desc { font-size: 11px; color: #6b7280; line-height: 1.4; }
+    .aw-priority-arrow { font-size: 14px; color: #d1d5db; text-align: center; padding: 2px 0 2px 5px; }
+    .aw-priority-note { margin-top: 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 9px 11px; font-size: 11px; color: #6b7280; line-height: 1.5; }
     .aw-tip-card {
       background: #fffbeb;
       border: 1px solid #fde68a;
@@ -1261,6 +1271,41 @@
         <li><span class="aw-dot-amber"></span>User-initiated feedback</li>
         <li><span class="aw-dot-amber"></span>Explicit exceptions (premium users)</li>
       </ul>
+    </div>
+
+    <div class="awareness-card">
+      <div class="awareness-card-title">How Rules Are Evaluated</div>
+      <p style="font-size:12px;color:#6b7280;margin-bottom:14px;line-height:1.5;">When a survey invite is triggered, rules are checked in priority order. The first match wins.</p>
+
+      <div class="aw-priority-step">
+        <div class="aw-priority-badge aw-p1">P1</div>
+        <div class="aw-priority-content">
+          <div class="aw-priority-title">Exclusion Rule</div>
+          <div class="aw-priority-desc">Contact is exempt — invite sent freely, no limits apply.</div>
+        </div>
+      </div>
+      <div class="aw-priority-arrow">↓</div>
+
+      <div class="aw-priority-step">
+        <div class="aw-priority-badge aw-p2">P2</div>
+        <div class="aw-priority-content">
+          <div class="aw-priority-title">Custom Limit Rule</div>
+          <div class="aw-priority-desc">Contact-specific limits override the default rule.</div>
+        </div>
+      </div>
+      <div class="aw-priority-arrow">↓</div>
+
+      <div class="aw-priority-step">
+        <div class="aw-priority-badge aw-p3">P3</div>
+        <div class="aw-priority-content">
+          <div class="aw-priority-title">Default Rule</div>
+          <div class="aw-priority-desc">Fallback limits apply if no custom rule matches.</div>
+        </div>
+      </div>
+
+      <div class="aw-priority-note">
+        When multiple custom rules match, the <strong>most specific rule</strong> wins.
+      </div>
     </div>
 
   </aside>
