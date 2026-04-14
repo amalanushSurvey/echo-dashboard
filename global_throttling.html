@@ -570,6 +570,80 @@
     }
     .btn-add-cond:hover { background: #f0fdfa; }
 
+    /* Rule type radio options */
+    .rule-type-options { display: flex; flex-direction: column; gap: 8px; }
+    .rule-type-opt {
+      display: flex; align-items: flex-start; gap: 12px;
+      border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 14px 16px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    }
+    .rule-type-opt:hover { border-color: #99f6e4; background: #fafffe; }
+    .rule-type-opt.selected { border-color: #0d9488; background: #f0fdfa; }
+    .rto-radio {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid #d1d5db; flex-shrink: 0; margin-top: 3px;
+      background: #fff; transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .rule-type-opt.selected .rto-radio { border-color: #0d9488; background: #0d9488; box-shadow: inset 0 0 0 3px #fff; }
+    .rto-icon { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .rto-icon-excl { background: #fef3c7; color: #d97706; }
+    .rto-icon-limit { background: #eff6ff; color: #2563eb; }
+    .rto-text { flex: 1; }
+    .rto-title { font-size: 13.5px; font-weight: 600; color: #111827; margin-bottom: 3px; }
+    .rto-desc { font-size: 12.5px; color: #6b7280; line-height: 1.45; }
+
+    /* Stepper */
+    .stepper { display: flex; align-items: center; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; background: #fff; height: 36px; }
+    .stepper-btn { width: 36px; height: 36px; border: none; background: none; cursor: pointer; font-size: 16px; color: #6b7280; display: flex; align-items: center; justify-content: center; transition: background 0.12s, color 0.12s; flex-shrink: 0; }
+    .stepper-btn:hover { background: #f3f4f6; color: #111827; }
+    .stepper-val { width: 52px; text-align: center; border: none; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; font-size: 14px; font-weight: 600; color: #111827; outline: none; background: #fff; height: 100%; }
+
+    /* Styled select */
+    .select-wrap { position: relative; display: inline-flex; align-items: center; }
+    .select-styled { appearance: none; border: 1px solid #d1d5db; border-radius: 8px; padding: 8px 36px 8px 12px; font-size: 13.5px; color: #111827; background: #fff; cursor: pointer; outline: none; height: 36px; transition: border-color 0.15s; min-width: 160px; }
+    .select-styled:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.12); }
+    .select-chevron { position: absolute; right: 10px; pointer-events: none; color: #9ca3af; }
+
+    /* Rule control (label+input stack) */
+    .rule-control { display: flex; flex-direction: column; gap: 6px; }
+    .rule-control-label { font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Modal divider + section label */
+    .modal-divider { height: 1px; background: #f3f4f6; margin: 20px 0; }
+    .modal-section-label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 10px; }
+
+    /* Throttle limits */
+    .modal-limits { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 4px; }
+    .modal-limits-row1 { display: flex; gap: 20px; flex-wrap: wrap; }
+    .modal-mingap-section { margin-top: 16px; padding: 14px 16px; border: 1px solid #e5e7eb; border-radius: 10px; background: #f9fafb; width: 100%; }
+    .modal-mingap-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .modal-mingap-header-left { display: flex; flex-direction: column; gap: 2px; }
+    .optional-badge { display: inline-block; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: #f3f4f6; color: #9ca3af; border: 1px solid #e5e7eb; border-radius: 4px; padding: 1px 6px; vertical-align: middle; margin-left: 6px; }
+    .modal-mingap-hint { font-size: 12px; color: #9ca3af; margin-top: 3px; line-height: 1.5; }
+    .modal-mingap-stepper { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+    .modal-mingap-unit { font-size: 13px; color: #6b7280; }
+    .custom-interval-wrap { display: none; align-items: center; gap: 6px; margin-top: 8px; }
+    .custom-interval-wrap input { width: 80px; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 10px; font-size: 14px; color: #111827; outline: none; text-align: center; }
+    .custom-interval-wrap input:focus { border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.12); }
+    .custom-interval-unit { font-size: 13px; color: #6b7280; }
+
+    /* Add custom rule button (in accordion body) */
+    .btn-add-custom-rule {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #fff; border: 1.5px solid #0d9488; color: #0d9488;
+      border-radius: 8px; padding: 7px 16px; font-size: 13px; font-weight: 600;
+      cursor: pointer; margin-top: 10px; transition: background 0.15s, box-shadow 0.15s;
+    }
+    .btn-add-custom-rule:hover { background: #f0fdfa; box-shadow: 0 2px 6px rgba(13,148,136,0.15); }
+
+    /* Toggle (for rule item cards) */
+    .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; cursor: pointer; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track { position: absolute; inset: 0; background: #d1d5db; border-radius: 999px; transition: background 0.2s; }
+    .toggle input:checked + .toggle-track { background: #0d9488; }
+    .toggle-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 0.2s; }
+    .toggle input:checked ~ .toggle-thumb { left: 23px; }
+
     .modal-footer {
       padding: 16px 28px;
       border-top: 1px solid #f3f4f6;
@@ -807,6 +881,141 @@
   </main>
 </div>
 
+<!-- CUSTOM RULE MODAL -->
+<div class="modal-backdrop" id="glbCustomRuleModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-title" id="glbModalTitle">Add Custom Rule</div>
+        <div class="modal-subtitle">Define conditions and throttle limits for a specific contact segment.</div>
+      </div>
+      <button class="modal-close" onclick="closeGlbCustomRuleModal()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Rule name -->
+      <div class="rule-name-field">
+        <label class="rule-name-label" for="glbRuleName">Rule Name</label>
+        <input class="rule-name-input" id="glbRuleName" type="text" placeholder="e.g. Enterprise_contacts" oninput="validateGlbRuleName(this)">
+        <div class="field-error" id="glbRuleNameError">Only letters, numbers, and underscores. Must be unique.</div>
+        <div class="field-hint">Use underscores instead of spaces (e.g. VIP_segment)</div>
+      </div>
+
+      <!-- Conditions -->
+      <div class="modal-section-title">Conditions</div>
+      <div class="cond-group">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f9fafb;border-bottom:1px solid #e5e7eb;">
+          <div class="logic-pill" id="glbLogicPill">
+            <button class="logic-btn active" onclick="setGlbLogic('AND',this)">AND</button>
+            <button class="logic-btn" onclick="setGlbLogic('OR',this)">OR</button>
+          </div>
+          <span style="font-size:12.5px;color:#6b7280;">Match <span id="glbLogicLabel">all</span> conditions</span>
+        </div>
+        <div class="cond-rows" id="glbCondRows"></div>
+        <div class="cond-footer">
+          <button class="btn-add-cond" onclick="addGlbCondRow()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add condition
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <!-- Rule Type -->
+      <div class="modal-section-label">What should happen to matching contacts?</div>
+      <div class="rule-type-options">
+        <div class="rule-type-opt" id="glb-rto-exclude" onclick="selectGlbRuleType('exclude')">
+          <div class="rto-radio" id="glb-rto-radio-exclude"></div>
+          <div class="rto-icon rto-icon-excl">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>
+          </div>
+          <div class="rto-text">
+            <div class="rto-title">Exclude from throttling</div>
+            <div class="rto-desc">Contacts matching these conditions can receive invites freely — no throttle limits apply to them.</div>
+          </div>
+        </div>
+        <div class="rule-type-opt" id="glb-rto-limit" onclick="selectGlbRuleType('limit')">
+          <div class="rto-radio" id="glb-rto-radio-limit"></div>
+          <div class="rto-icon rto-icon-limit">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="rto-text">
+            <div class="rto-title">Apply custom throttle limits</div>
+            <div class="rto-desc">Contacts matching these conditions follow the invite limits you define below instead of the default rule.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Throttle Limits (shown only for 'limit' type) -->
+      <div id="glbThrottleLimitsSection" style="display:none;">
+        <div class="modal-divider"></div>
+        <div class="modal-section-label">Throttle Limits for Matching Contacts</div>
+        <div class="modal-limits">
+          <div class="modal-limits-row1">
+            <div class="rule-control">
+              <div class="rule-control-label">Max Invites</div>
+              <div class="stepper">
+                <button class="stepper-btn" onclick="glbStepperChange('glbMaxInvites',-1)">&#8722;</button>
+                <input class="stepper-val" id="glbMaxInvites" type="number" value="5" min="1">
+                <button class="stepper-btn" onclick="glbStepperChange('glbMaxInvites',1)">+</button>
+              </div>
+              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Maximum number of invites</div>
+            </div>
+            <div class="rule-control">
+              <div class="rule-control-label">Time Interval</div>
+              <div class="select-wrap">
+                <select class="select-styled" id="glbInterval" onchange="handleGlbIntervalChange(this)">
+                  <option value="7">Every 7 days</option>
+                  <option value="30" selected>Every 30 days</option>
+                  <option value="60">Every 60 days</option>
+                  <option value="90">Every 90 days</option>
+                  <option value="custom">Custom days...</option>
+                </select>
+                <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div id="glbCustomIntervalWrap" class="custom-interval-wrap">
+                <input type="number" id="glbIntervalCustom" min="1" value="45" placeholder="Days">
+                <span class="custom-interval-unit">days</span>
+              </div>
+              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Time window to count invites</div>
+            </div>
+          </div>
+          <div class="modal-mingap-section">
+            <div class="modal-mingap-header">
+              <div class="modal-mingap-header-left">
+                <div class="rule-control-label" style="display:flex;align-items:center;">
+                  Minimum Gap Between Invites<span class="optional-badge">Optional</span>
+                </div>
+                <div class="modal-mingap-hint">Minimum days that must pass between two invites sent to the same contact — regardless of how many invites are left in the time window.</div>
+              </div>
+              <label class="toggle" style="flex-shrink:0;margin-top:2px;">
+                <input type="checkbox" id="glbMinGapEnabled" onchange="handleGlbMinGapToggle(this)">
+                <span class="toggle-track"></span>
+              </label>
+            </div>
+            <div id="glbMinGapSection" style="display:none;margin-top:12px;">
+              <div class="modal-mingap-stepper">
+                <div class="stepper">
+                  <button class="stepper-btn" onclick="glbStepperChange('glbMinGap',-1)">&#8722;</button>
+                  <input class="stepper-val" id="glbMinGap" type="number" value="3" min="1">
+                  <button class="stepper-btn" onclick="glbStepperChange('glbMinGap',1)">+</button>
+                </div>
+                <span class="modal-mingap-unit">days</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeGlbCustomRuleModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveGlbCustomRule()">Save Rule</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast">
   <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
@@ -866,8 +1075,8 @@
       link: 'survey_level_throttling.html', modified: 'Sep 8, 2024',
       defaultRule: { maxInvites: 3, interval: '30 days', minGap: 7 },
       customRules: [
-        { name: 'No_recent_bounce', ruleType: 'exclude', conditions: ['Channel is Email'] },
-        { name: 'Enterprise_boost', ruleType: 'limit', maxInvites: 8, interval: '30 days', minGap: null, conditions: ['Smart Lists is in Enterprise'] }
+        { id: 1, name: 'No_recent_bounce', ruleType: 'exclude', enabled: true, conditions: ['Channel is Email'] },
+        { id: 2, name: 'Enterprise_boost', ruleType: 'limit', enabled: true, maxInvites: 8, interval: '30 days', minGap: null, conditions: ['Smart Lists is in Enterprise'] }
       ]
     },
     {
@@ -875,7 +1084,7 @@
       link: 'survey_level_throttling.html', modified: 'Nov 20, 2024',
       defaultRule: { maxInvites: 1, interval: '1 day', minGap: 1 },
       customRules: [
-        { name: 'Skip_trial_users', ruleType: 'exclude', conditions: ['Smart Lists is in Trial Users'] }
+        { id: 3, name: 'Skip_trial_users', ruleType: 'exclude', enabled: true, conditions: ['Smart Lists is in Trial Users'] }
       ]
     },
     {
@@ -889,7 +1098,7 @@
       link: 'survey_level_throttling.html', modified: 'Dec 1, 2024',
       defaultRule: { maxInvites: 2, interval: '14 days', minGap: 3 },
       customRules: [
-        { name: 'VIP_bypass', ruleType: 'exclude', conditions: ['Smart Lists is in VIP Customers'] }
+        { id: 4, name: 'VIP_bypass', ruleType: 'exclude', enabled: true, conditions: ['Smart Lists is in VIP Customers'] }
       ]
     },
     {
@@ -901,6 +1110,17 @@
   ];
 
   let activeOverrideFilter = 'all';
+  let glbRuleIdCounter = 100;
+  let glbEditingRuleId = null;
+  let glbActiveItemId = null;
+  let glbCondCount = 0;
+  let glbCondLogic = 'AND';
+  let glbSelectedRuleType = 'limit';
+
+  const glbFieldDefs = {
+    smart_lists: { label: 'Smart Lists', operators: ['is in', 'is not in'], values: ['VIP Customers', 'Enterprise', 'Trial Users', 'Churned Users', 'New Signups', 'Internal Testers'] },
+    channel: { label: 'Channel', operators: ['is', 'is not'], values: ['Email', 'WhatsApp', 'SMS', 'Spotchecks'] }
+  };
 
   function filterOverrides(type, btn) {
     activeOverrideFilter = type;
@@ -920,7 +1140,6 @@
       const typeBadgeLabel = item.type === 'survey' ? 'Survey' : 'Echo Agent';
       const totalRules = 1 + item.customRules.length;
 
-      // Default rule chips
       const dr = item.defaultRule;
       const defaultChips = [
         `<span class="acc-default-chip">Max ${dr.maxInvites} invite${dr.maxInvites !== 1 ? 's' : ''}</span>`,
@@ -928,45 +1147,46 @@
         dr.minGap != null ? `<span class="acc-default-chip">Min gap ${dr.minGap} day${dr.minGap !== 1 ? 's' : ''}</span>` : ''
       ].join('');
 
-      // Custom rule cards (IF/THEN style)
       const customRulesHtml = item.customRules.length === 0
-        ? `<div style="font-size:12.5px;color:#9ca3af;font-style:italic;padding:8px 0;">No custom rules configured</div>`
+        ? `<div style="font-size:12.5px;color:#9ca3af;font-style:italic;padding:8px 0;">No custom rules yet.</div>`
         : item.customRules.map(cr => {
             const isExcl = cr.ruleType === 'exclude';
+            const disabledClass = cr.enabled === false ? 'rule-disabled' : '';
             const typeBadge = isExcl
-              ? `<span style="display:inline-flex;align-items:center;gap:4px;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;flex-shrink:0;">
-                  <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>Exclusion</span>`
-              : `<span style="display:inline-flex;align-items:center;gap:4px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;flex-shrink:0;">
-                  <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>Custom Limit</span>`;
+              ? `<span style="display:inline-flex;align-items:center;gap:4px;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;flex-shrink:0;"><svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>Exclusion</span>`
+              : `<span style="display:inline-flex;align-items:center;gap:4px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;flex-shrink:0;"><svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>Custom Limit</span>`;
 
             const condPills = cr.conditions.map(c =>
-              `<span class="cri-pill">
-                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-                ${escHtml(c)}
-              </span>`
+              `<span class="cri-pill"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>${escHtml(typeof c === 'string' ? c : `${c.fieldLabel} ${c.op} ${c.val}`)}</span>`
             ).join('');
 
             const thenRow = isExcl
-              ? `<span style="font-size:12px;color:#92400e;font-weight:500;">
-                  <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>
-                  Excluded — can receive invites freely
-                </span>`
+              ? `<span style="font-size:12px;color:#92400e;font-weight:500;"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>Excluded — can receive invites freely</span>`
               : `<span class="cri-limit-chip">Max ${cr.maxInvites} invite${cr.maxInvites !== 1 ? 's' : ''}</span>
                  <span class="cri-limit-chip">Every ${cr.interval}</span>
                  ${cr.minGap != null ? `<span class="cri-limit-chip">Min gap ${cr.minGap} days</span>` : ''}`;
 
             return `
-              <div class="custom-rule-item" style="margin-bottom:8px;">
+              <div class="custom-rule-item ${disabledClass}" id="glb-cr-${item.id}-${cr.id}" style="margin-bottom:8px;">
                 <div class="cri-header">
                   <div class="cri-left">${typeBadge}<span class="cri-name">${escHtml(cr.name)}</span></div>
+                  <div class="cri-actions">
+                    <label class="toggle" title="Enable/disable rule">
+                      <input type="checkbox" ${cr.enabled !== false ? 'checked' : ''} onchange="toggleGlbCustomRule('${item.id}',${cr.id},this)">
+                      <div class="toggle-track"></div>
+                      <div class="toggle-thumb"></div>
+                    </label>
+                    <button class="btn-icon" title="Edit rule" onclick="editGlbCustomRule('${item.id}',${cr.id});event.stopPropagation()">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="btn-icon delete" title="Delete rule" onclick="deleteGlbCustomRule('${item.id}',${cr.id});event.stopPropagation()">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                    </button>
+                  </div>
                 </div>
                 <div class="cri-body">
-                  <div class="cri-conditions-row">
-                    <span class="cri-section-label">If</span>${condPills}
-                  </div>
-                  <div class="cri-limits-row">
-                    <span class="cri-section-label">Then</span>${thenRow}
-                  </div>
+                  <div class="cri-conditions-row"><span class="cri-section-label">If</span>${condPills}</div>
+                  <div class="cri-limits-row"><span class="cri-section-label">Then</span>${thenRow}</div>
                 </div>
               </div>`;
           }).join('');
@@ -974,33 +1194,272 @@
       return `
         <div class="acc-item" id="acc-${item.id}">
           <div class="acc-header" onclick="toggleAccordion('acc-${item.id}')">
-            <svg class="acc-chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
+            <svg class="acc-chevron" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
             <span class="acc-name">${escHtml(item.name)}</span>
             <span class="acc-type-badge ${typeBadgeClass}">${typeBadgeLabel}</span>
             <span class="acc-rule-count">${totalRules} rule${totalRules !== 1 ? 's' : ''}</span>
             <span class="acc-meta">Last modified ${item.modified}</span>
             <a class="acc-view-link" href="${item.link}" onclick="event.stopPropagation()">
-              View
-              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              View <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           </div>
           <div class="acc-body">
             <div class="acc-rule-section-label">Default Rule</div>
             <div class="acc-default-rule" style="margin-bottom:16px;">${defaultChips}</div>
             <div class="acc-rule-section-label">Custom Rules (${item.customRules.length})</div>
-            <div class="acc-custom-rules" style="margin-top:8px;">${customRulesHtml}</div>
+            <div style="margin-top:8px;">${customRulesHtml}</div>
+            <button class="btn-add-custom-rule" onclick="openGlbCustomRuleModal('${item.id}');event.stopPropagation()">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Custom Rule
+            </button>
           </div>
-        </div>
-      `;
+        </div>`;
     }).join('');
   }
 
   function toggleAccordion(id) {
-    const item = document.getElementById(id);
-    item.classList.toggle('open');
+    document.getElementById(id).classList.toggle('open');
   }
+
+  // ── Custom rule CRUD ──────────────────────────────────
+  function getOverrideItem(itemId) {
+    return overridesData.find(d => d.id === itemId);
+  }
+
+  function toggleGlbCustomRule(itemId, ruleId, cb) {
+    const item = getOverrideItem(itemId);
+    const rule = item && item.customRules.find(r => r.id === ruleId);
+    if (rule) { rule.enabled = cb.checked; renderAccordion(); document.getElementById('acc-' + itemId).classList.add('open'); }
+  }
+
+  function deleteGlbCustomRule(itemId, ruleId) {
+    const item = getOverrideItem(itemId);
+    if (!item) return;
+    const idx = item.customRules.findIndex(r => r.id === ruleId);
+    if (idx >= 0) {
+      const el = document.getElementById('glb-cr-' + itemId + '-' + ruleId);
+      if (el) { el.style.transition = 'opacity 0.2s, transform 0.2s'; el.style.opacity = '0'; el.style.transform = 'translateX(10px)'; }
+      setTimeout(() => { item.customRules.splice(idx, 1); renderAccordion(); document.getElementById('acc-' + itemId).classList.add('open'); }, 200);
+      showToast('Custom rule removed.', 'default');
+    }
+  }
+
+  function editGlbCustomRule(itemId, ruleId) {
+    const item = getOverrideItem(itemId);
+    const rule = item && item.customRules.find(r => r.id === ruleId);
+    if (!rule) return;
+    glbEditingRuleId = ruleId;
+    openGlbCustomRuleModal(itemId, rule);
+  }
+
+  // ── Modal open/close ──────────────────────────────────
+  function openGlbCustomRuleModal(itemId, prefill) {
+    glbActiveItemId = itemId;
+    glbCondCount = 0;
+    glbCondLogic = prefill ? (prefill.logic || 'AND') : 'AND';
+    if (!prefill) glbEditingRuleId = null;
+
+    document.getElementById('glbModalTitle').textContent = prefill ? 'Edit Custom Rule' : 'Add Custom Rule';
+    document.getElementById('glbRuleName').value = prefill ? prefill.name : '';
+    document.getElementById('glbRuleName').classList.remove('error');
+    document.getElementById('glbRuleNameError').classList.remove('visible');
+    document.getElementById('glbCondRows').innerHTML = '';
+
+    // AND/OR pill
+    const pill = document.getElementById('glbLogicPill');
+    pill.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
+    pill.querySelector('.logic-btn:nth-child(' + (glbCondLogic === 'AND' ? '1' : '2') + ')').classList.add('active');
+    document.getElementById('glbLogicLabel').textContent = glbCondLogic === 'AND' ? 'all' : 'any';
+
+    // Rule type
+    selectGlbRuleType((prefill && prefill.ruleType) ? prefill.ruleType : 'limit');
+
+    // Limits
+    document.getElementById('glbMaxInvites').value = prefill ? (prefill.maxInvites || 5) : 5;
+    const rawInterval = prefill ? (String(prefill.interval || '30 days')).replace('Every ', '').replace(' days', '').replace(' day', '') : '30';
+    const stdOpts = ['7','30','60','90'];
+    if (stdOpts.includes(rawInterval)) {
+      glbSetSelectValue('glbInterval', rawInterval);
+      document.getElementById('glbCustomIntervalWrap').style.display = 'none';
+    } else {
+      glbSetSelectValue('glbInterval', 'custom');
+      document.getElementById('glbCustomIntervalWrap').style.display = 'flex';
+      document.getElementById('glbIntervalCustom').value = rawInterval || 45;
+    }
+    const hasMinGap = prefill && prefill.minGap != null && prefill.minGap > 0;
+    document.getElementById('glbMinGapEnabled').checked = hasMinGap;
+    document.getElementById('glbMinGapSection').style.display = hasMinGap ? 'block' : 'none';
+    document.getElementById('glbMinGap').value = hasMinGap ? prefill.minGap : 3;
+
+    // Conditions
+    if (prefill && prefill.conditions && prefill.conditions.length > 0) {
+      prefill.conditions.forEach(c => addGlbCondRow(typeof c === 'object' ? c : null));
+    } else {
+      addGlbCondRow();
+    }
+
+    document.getElementById('glbCustomRuleModal').classList.add('open');
+  }
+
+  function closeGlbCustomRuleModal() {
+    document.getElementById('glbCustomRuleModal').classList.remove('open');
+    glbEditingRuleId = null;
+  }
+
+  function selectGlbRuleType(type) {
+    glbSelectedRuleType = type;
+    document.getElementById('glb-rto-exclude').classList.toggle('selected', type === 'exclude');
+    document.getElementById('glb-rto-limit').classList.toggle('selected', type === 'limit');
+    document.getElementById('glbThrottleLimitsSection').style.display = type === 'limit' ? 'block' : 'none';
+  }
+
+  function handleGlbIntervalChange(sel) {
+    document.getElementById('glbCustomIntervalWrap').style.display = sel.value === 'custom' ? 'flex' : 'none';
+  }
+
+  function handleGlbMinGapToggle(cb) {
+    document.getElementById('glbMinGapSection').style.display = cb.checked ? 'block' : 'none';
+  }
+
+  function glbStepperChange(id, delta) {
+    const input = document.getElementById(id);
+    const val = parseInt(input.value) + delta;
+    if (val >= parseInt(input.min || 1)) input.value = val;
+  }
+
+  function glbSetSelectValue(id, val) {
+    const sel = document.getElementById(id);
+    for (let opt of sel.options) { if (opt.value === String(val)) { opt.selected = true; return; } }
+  }
+
+  // ── AND/OR ────────────────────────────────────────────
+  function setGlbLogic(logic, btn) {
+    glbCondLogic = logic;
+    document.getElementById('glbLogicPill').querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('glbLogicLabel').textContent = logic === 'AND' ? 'all' : 'any';
+    Array.from(document.getElementById('glbCondRows').children).forEach((r, i) => {
+      if (i > 0) { const lbl = r.querySelector('.cond-row-logic'); if (lbl) lbl.textContent = logic; }
+    });
+  }
+
+  // ── Condition rows ────────────────────────────────────
+  function addGlbCondRow(prefill) {
+    glbCondCount++;
+    const rowId = glbCondCount;
+    const rows = document.getElementById('glbCondRows');
+    const isFirst = rows.children.length === 0;
+    const row = document.createElement('div');
+    row.className = 'cond-row';
+    row.dataset.rowId = rowId;
+    const logicLabel = isFirst ? '<span style="width:30px;flex-shrink:0;display:inline-block"></span>' : `<span class="cond-row-logic">${glbCondLogic}</span>`;
+    const prefillField = prefill ? (prefill.field || 'smart_lists') : 'smart_lists';
+    row.innerHTML = `
+      ${logicLabel}
+      <select class="cond-select" onchange="onGlbFieldChange(this,${rowId})">
+        <option value="smart_lists" ${prefillField==='smart_lists'?'selected':''}>Smart Lists</option>
+        <option value="channel" ${prefillField==='channel'?'selected':''}>Channel</option>
+      </select>
+      <span id="glb-op-cell-${rowId}" style="display:contents"></span>
+      <span id="glb-val-cell-${rowId}" style="display:contents"></span>
+      <button class="btn-remove-cond" onclick="removeGlbCondRow(this)" title="Remove">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>`;
+    rows.appendChild(row);
+    renderGlbOpVal(rowId, prefillField, prefill ? prefill.op : null, prefill ? prefill.val : null);
+  }
+
+  function renderGlbOpVal(rowId, field, prefillOp, prefillVal) {
+    const def = glbFieldDefs[field];
+    if (!def) return;
+    document.getElementById('glb-op-cell-' + rowId).innerHTML = `<select class="cond-select" id="glb-op-${rowId}">${def.operators.map(op => `<option value="${op}" ${op===prefillOp?'selected':''}>${op}</option>`).join('')}</select>`;
+    document.getElementById('glb-val-cell-' + rowId).innerHTML = `<select class="cond-select" id="glb-val-${rowId}">${def.values.map(v => `<option value="${v}" ${v===prefillVal?'selected':''}>${v}</option>`).join('')}</select>`;
+  }
+
+  function onGlbFieldChange(sel, rowId) {
+    document.getElementById('glb-op-cell-' + rowId).innerHTML = '';
+    document.getElementById('glb-val-cell-' + rowId).innerHTML = '';
+    renderGlbOpVal(rowId, sel.value, null, null);
+  }
+
+  function removeGlbCondRow(btn) {
+    const rows = document.getElementById('glbCondRows');
+    if (rows.children.length <= 1) { showToast('At least one condition is required.', 'default'); return; }
+    btn.closest('.cond-row').remove();
+    Array.from(rows.children).forEach((r, i) => {
+      if (i === 0) { const s = r.querySelector('.cond-row-logic'); if (s) s.outerHTML = '<span style="width:30px;flex-shrink:0;display:inline-block"></span>'; }
+    });
+  }
+
+  // ── Validate rule name ────────────────────────────────
+  function validateGlbRuleName(input) {
+    input.value = input.value.replace(/ /g, '_');
+    const item = getOverrideItem(glbActiveItemId);
+    const valid = /^[a-zA-Z0-9_]+$/.test(input.value);
+    const isUnique = !item || !item.customRules.some(r => r.name === input.value && r.id !== glbEditingRuleId);
+    const errEl = document.getElementById('glbRuleNameError');
+    if (!valid || !isUnique) {
+      input.classList.add('error'); errEl.classList.add('visible');
+      errEl.textContent = !isUnique ? 'A rule with this name already exists.' : 'Only letters, numbers, and underscores.';
+    } else { input.classList.remove('error'); errEl.classList.remove('visible'); }
+  }
+
+  // ── Save custom rule ──────────────────────────────────
+  function saveGlbCustomRule() {
+    const nameInput = document.getElementById('glbRuleName');
+    const name = nameInput.value.trim();
+    if (!name || !/^[a-zA-Z0-9_]+$/.test(name)) {
+      nameInput.classList.add('error'); document.getElementById('glbRuleNameError').classList.add('visible'); nameInput.focus(); return;
+    }
+    const item = getOverrideItem(glbActiveItemId);
+    if (item && item.customRules.some(r => r.name === name && r.id !== glbEditingRuleId)) {
+      nameInput.classList.add('error'); document.getElementById('glbRuleNameError').classList.add('visible');
+      document.getElementById('glbRuleNameError').textContent = 'A rule with this name already exists.'; nameInput.focus(); return;
+    }
+
+    const conditions = [];
+    document.getElementById('glbCondRows').querySelectorAll('.cond-row').forEach(row => {
+      const rowId = row.dataset.rowId;
+      const fieldSel = row.querySelector('.cond-select');
+      if (!fieldSel) return;
+      const opSel = document.getElementById('glb-op-' + rowId);
+      const valSel = document.getElementById('glb-val-' + rowId);
+      if (opSel && valSel) {
+        conditions.push({ field: fieldSel.value, fieldLabel: glbFieldDefs[fieldSel.value]?.label || fieldSel.value, op: opSel.value, val: valSel.value });
+      }
+    });
+    if (conditions.length === 0) { showToast('Please add at least one condition.', 'default'); return; }
+
+    const ruleData = { name, enabled: true, logic: glbCondLogic, conditions, ruleType: glbSelectedRuleType };
+    if (glbSelectedRuleType === 'limit') {
+      const intervalSel = document.getElementById('glbInterval');
+      ruleData.interval = intervalSel.value === 'custom'
+        ? (parseInt(document.getElementById('glbIntervalCustom').value) || 45) + ' days'
+        : intervalSel.options[intervalSel.selectedIndex].text.replace('Every ', '');
+      ruleData.maxInvites = parseInt(document.getElementById('glbMaxInvites').value) || 5;
+      const minGapEnabled = document.getElementById('glbMinGapEnabled').checked;
+      ruleData.minGap = minGapEnabled ? (parseInt(document.getElementById('glbMinGap').value) || 1) : null;
+    }
+
+    if (!item) return;
+    if (glbEditingRuleId !== null) {
+      const idx = item.customRules.findIndex(r => r.id === glbEditingRuleId);
+      if (idx >= 0) item.customRules[idx] = { id: glbEditingRuleId, ...ruleData, enabled: item.customRules[idx].enabled };
+      showToast('Custom rule updated.', 'success');
+    } else {
+      ruleData.id = ++glbRuleIdCounter;
+      item.customRules.push(ruleData);
+      showToast('Custom rule added.', 'success');
+    }
+
+    closeGlbCustomRuleModal();
+    renderAccordion();
+    document.getElementById('acc-' + glbActiveItemId).classList.add('open');
+  }
+
+  // ── Close on backdrop click / ESC ─────────────────────
+  document.getElementById('glbCustomRuleModal').addEventListener('click', function(e) { if (e.target === this) closeGlbCustomRuleModal(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeGlbCustomRuleModal(); });
 
   // Initial render on page load
   renderAccordion();
