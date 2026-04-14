@@ -1066,12 +1066,19 @@
       <p style="color:#6b7280;font-size:13.5px;line-height:1.5">Manage invite frequency limits across your account. Account admins only.</p>
     </div>
 
-    <!-- SECTION 1: DEFAULT RULE -->
+    <!-- SECTION 1: GLOBAL THROTTLING / DEFAULT RULE -->
     <div class="section-card">
-      <div class="section-header">
-        <h2 class="section-title">Default Rule</h2>
+      <div class="section-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <h2 class="section-title">Global Throttling</h2>
+        <label class="toggle" title="Enable or disable global throttling">
+          <input type="checkbox" id="globalThrottlingToggle" checked onchange="toggleGlobalThrottling(this)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
       </div>
       <p class="section-desc">Applies to all surveys across your account unless a survey-level override is configured.</p>
+
+      <div style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;margin:16px 0 10px;">Default Rule</div>
 
       <div class="global-badge">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -1087,11 +1094,6 @@
             <div class="rule-title">Invite Frequency Limit</div>
             <div class="rule-desc">Prevent the same contact from receiving too many invites within a set time period.</div>
           </div>
-          <label class="toggle" title="Toggle invite frequency limit">
-            <input type="checkbox" id="toggle1" checked onchange="toggleRuleBlock('ruleBlock1','body1',this)">
-            <div class="toggle-track"></div>
-            <div class="toggle-thumb"></div>
-          </label>
         </div>
         <div class="rule-body" id="body1">
           <div class="rule-control">
@@ -1105,7 +1107,7 @@
           <div class="rule-control">
             <div class="rule-control-label">Time interval</div>
             <div class="select-wrap">
-              <select class="select-styled" id="interval1">
+              <select class="select-styled" id="interval1" onchange="autoSave()">
                 <option value="7">Every 7 days</option>
                 <option value="30" selected>Every 30 days</option>
                 <option value="60">Every 60 days</option>
@@ -1159,13 +1161,6 @@
         </button>
       </div>
 
-      <div class="rules-footer">
-        <button class="btn-save" onclick="showToast('Default rule saved successfully.','success')">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-          Save changes
-        </button>
-        <span class="save-hint">Changes apply to all surveys without an override.</span>
-      </div>
     </div>
 
     <!-- SECTION 2: SURVEY/ECHO LEVEL THROTTLING -->
@@ -1459,7 +1454,21 @@
   function stepperChange(id, delta) {
     const input = document.getElementById(id);
     const val = parseInt(input.value) + delta;
-    if (val >= parseInt(input.min || 1)) input.value = val;
+    if (val >= parseInt(input.min || 1)) { input.value = val; autoSave(); }
+  }
+
+  function autoSave() {
+    showToast('Changes saved automatically.', 'success');
+  }
+
+  function toggleGlobalThrottling(checkbox) {
+    const mainContent = document.querySelector('.main-content');
+    const cards = mainContent.querySelectorAll('.rule-block, .custom-rules-section');
+    cards.forEach(el => {
+      el.style.opacity = checkbox.checked ? '' : '0.45';
+      el.style.pointerEvents = checkbox.checked ? '' : 'none';
+    });
+    showToast(checkbox.checked ? 'Global throttling enabled.' : 'Global throttling disabled.', 'success');
   }
 
   // ── Toggle rule block ─────────────────────────────────
