@@ -700,7 +700,7 @@
                 <svg width="13" height="13" fill="none" stroke="#6d28d9" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="17" r="3"/></svg>
                 Limit invites by variable values
               </div>
-              <div class="limit-by-cb-desc">Also limit invites per a specific field like Ticket ID or Order ID — on top of per-contact limits. Both apply simultaneously.</div>
+              <div class="limit-by-cb-desc">Scope the invite limit to a contact + variable pair. E.g. a contact won't receive more than 1 invite <em>for ticket #101</em>, but can still receive one for ticket #102.</div>
             </div>
           </div>
 
@@ -819,11 +819,11 @@
       <div class="aw-count-block" id="awBlockContact" style="border-left:3px solid #0d9488;padding-left:11px;margin-bottom:16px;transition:opacity .2s;">
         <div style="font-size:12px;font-weight:700;color:#0d9488;margin-bottom:4px;display:flex;align-items:center;gap:5px;">
           <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Per Contact <span style="font-size:10px;background:#d1fae5;color:#065f46;border-radius:999px;padding:1px 7px;font-weight:600;margin-left:2px;">always on</span>
+          Per Contact <span style="font-size:10px;background:#d1fae5;color:#065f46;border-radius:999px;padding:1px 7px;font-weight:600;margin-left:2px;">default</span>
         </div>
-        <div style="font-size:12px;color:#374151;line-height:1.5;margin-bottom:7px;">Counts how many surveys each <strong>person</strong> has received. Always the base layer — applies to every contact, every time.</div>
+        <div style="font-size:12px;color:#374151;line-height:1.5;margin-bottom:7px;">Limits how many times a <strong>contact</strong> receives this survey overall — across all their tickets, orders, or interactions.</div>
         <div style="font-size:11px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:7px 9px;color:#065f46;line-height:1.5;">
-          <strong>Example:</strong> Max 2 surveys per contact in 30 days, regardless of how many tickets they raise.
+          <strong>Example:</strong> Max 2 surveys to John in 30 days, no matter how many tickets he raises.
         </div>
       </div>
 
@@ -831,16 +831,16 @@
       <div class="aw-count-block" id="awBlockVariable" style="border-left:3px solid #ddd6fe;padding-left:11px;opacity:0.45;transition:opacity .2s,border-color .2s;">
         <div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:4px;display:flex;align-items:center;gap:5px;">
           <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="17" r="3"/></svg>
-          + Per Variable <span style="font-size:10px;background:#ede9fe;color:#6d28d9;border-radius:999px;padding:1px 7px;font-weight:600;margin-left:2px;">when enabled</span>
+          Per Contact + Variable <span style="font-size:10px;background:#ede9fe;color:#6d28d9;border-radius:999px;padding:1px 7px;font-weight:600;margin-left:2px;">when enabled</span>
         </div>
-        <div style="font-size:12px;color:#374151;line-height:1.5;margin-bottom:7px;">An <strong>additional</strong> check on top of per-contact. Also limits by a specific field like Ticket ID — whichever limit hits first wins.</div>
+        <div style="font-size:12px;color:#374151;line-height:1.5;margin-bottom:7px;">Limits how many times a contact is invited <strong>for a specific variable value</strong>. The same contact can still be invited for a different variable value.</div>
         <div style="font-size:11px;background:#faf5ff;border:1px solid #ddd6fe;border-radius:7px;padding:7px 9px;color:#6d28d9;line-height:1.5;">
-          <strong>Example:</strong> Max 1 survey per Ticket ID — even if the contact hasn't hit their personal limit yet.
+          <strong>Example:</strong> John won't get more than 1 invite for <em>Ticket #101</em> — but he can still get one for Ticket #102.
         </div>
       </div>
 
       <hr style="border:none;border-top:1px solid #e5e7eb;margin:14px 0 10px;">
-      <div style="font-size:11px;color:#9ca3af;line-height:1.5;">Both limits run in parallel. A contact is throttled if <strong>either</strong> limit is reached.</div>
+      <div style="font-size:11px;color:#9ca3af;line-height:1.5;">The limit is scoped to the <strong>contact + variable pair</strong>. Each new variable value resets the count for that contact.</div>
     </div>
   </aside>
 
