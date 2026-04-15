@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Distribute – test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f4f5f7; color: #1a1a2e; min-height: 100vh; }
+
+    /* ── Top Nav ── */
+    .topnav {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      padding: 0 24px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topnav-left {
+      display: flex; align-items: center; gap: 8px; font-size: 14px; color: #374151;
+    }
+    .topnav-left svg { color: #9ca3af; }
+    .topnav-left .sep { color: #d1d5db; font-size: 16px; }
+    .topnav-left .survey-name { font-weight: 500; }
+    .topnav-center {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .nav-link {
+      padding: 6px 16px; font-size: 14px; font-weight: 500; color: #6b7280;
+      text-decoration: none; border-radius: 6px; cursor: pointer; border: none; background: none;
+    }
+    .nav-link:hover { color: #111827; background: #f3f4f6; }
+    .nav-link.active { color: #111827; font-weight: 600; border-bottom: 2px solid #111827; border-radius: 0; padding-bottom: 4px; }
+    .topnav-right { display: flex; align-items: center; gap: 8px; }
+    .headphone-btn {
+      width: 34px; height: 34px; border-radius: 50%; border: 1px solid #e5e7eb;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fff;
+      color: #6b7280;
+    }
+    .headphone-btn:hover { background: #f9fafb; }
+
+    /* ── Page Layout ── */
+    .page { max-width: 960px; margin: 32px auto; padding: 0 24px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff; border-radius: 12px; border: 1px solid #e5e7eb;
+      padding: 28px 32px;
+    }
+    .card-title { font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 20px; }
+
+    /* ── Share URL row ── */
+    .share-url-row {
+      display: flex; align-items: center; gap: 12px;
+      border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 14px;
+      margin-bottom: 24px;
+    }
+    .share-url-avatar {
+      width: 32px; height: 32px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .share-url-text { flex: 1; font-size: 14px; color: #374151; }
+    .share-url-actions { display: flex; align-items: center; gap: 6px; }
+    .icon-btn { background: none; border: none; cursor: pointer; color: #9ca3af; display: flex; align-items: center; padding: 4px; border-radius: 4px; }
+    .icon-btn:hover { color: #6b7280; background: #f3f4f6; }
+    .copy-btn {
+      display: flex; align-items: center; gap: 0;
+      border-radius: 8px; overflow: hidden;
+      border: none; cursor: pointer;
+    }
+    .copy-btn-main {
+      background: #0ea87e; color: #fff; font-size: 13px; font-weight: 600;
+      padding: 8px 16px; border: none; cursor: pointer;
+    }
+    .copy-btn-main:hover { background: #0d9970; }
+    .copy-btn-arrow {
+      background: #0ea87e; color: #fff; padding: 8px 10px; border: none; cursor: pointer;
+      border-left: 1px solid rgba(255,255,255,0.3);
+    }
+    .copy-btn-arrow:hover { background: #0d9970; }
+
+    /* ── Distributions header ── */
+    .dist-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+    }
+    .dist-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #9ca3af; text-transform: uppercase; }
+    .dist-actions { display: flex; align-items: center; gap: 8px; }
+    .channels-filter {
+      display: flex; align-items: center; gap: 6px;
+      border: 1px solid #e5e7eb; border-radius: 7px; padding: 5px 10px;
+      font-size: 13px; color: #374151; cursor: pointer; background: #fff;
+    }
+    .channels-filter:hover { background: #f9fafb; }
+
+    /* ── Distribution row ── */
+    .dist-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0; border-top: 1px solid #f3f4f6;
+    }
+    .dist-icon {
+      width: 36px; height: 36px; border-radius: 50%; background: #eff6ff;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .dist-icon svg { color: #3b82f6; }
+    .dist-name { font-size: 14px; font-weight: 500; color: #111827; flex: 1; }
+    .dist-date { font-size: 13px; color: #6b7280; min-width: 180px; }
+    .dist-responses { font-size: 13px; color: #6b7280; min-width: 100px; }
+    .dist-controls { display: flex; align-items: center; gap: 8px; }
+    .bar-icon { color: #d1d5db; cursor: pointer; }
+    .bar-icon:hover { color: #9ca3af; }
+
+    /* Toggle */
+    .toggle { position: relative; width: 40px; height: 22px; cursor: pointer; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: #3b82f6; border-radius: 11px; transition: background 0.2s;
+    }
+    .toggle-track::after {
+      content: ''; position: absolute; width: 16px; height: 16px;
+      background: #fff; border-radius: 50%; top: 3px; left: 3px;
+      transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    input:checked + .toggle-track { background: #3b82f6; }
+    input:checked + .toggle-track::after { transform: translateX(18px); }
+    .more-btn { background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 18px; padding: 2px 4px; border-radius: 4px; }
+    .more-btn:hover { color: #6b7280; background: #f3f4f6; }
+
+    /* ── More ways card ── */
+    .more-card-inner { display: flex; gap: 32px; }
+    .channels-col { flex: 1; }
+    .promo-col { width: 260px; display: flex; flex-direction: column; gap: 24px; }
+
+    .section-label { font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 16px; }
+
+    .channels-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+    .channel-item {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      cursor: pointer; padding: 4px;
+    }
+    .channel-item:hover .ch-icon { transform: scale(1.05); }
+    .ch-icon {
+      width: 60px; height: 60px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; transition: transform 0.15s;
+      position: relative;
+    }
+    .ch-label { font-size: 12px; color: #374151; font-weight: 500; text-align: center; }
+
+    /* Channel icon colours */
+    .ch-email    { background: #fbbf24; }
+    .ch-emailemb { background: #a855f7; }
+    .ch-sms      { background: #ec4899; }
+    .ch-whatsapp { background: #22c55e; }
+    .ch-weblink  { background: #3b82f6; }
+    .ch-qr       { background: #e5e7eb; }
+    .ch-facebook { background: #1877f2; }
+    .ch-x        { background: #000; }
+    .ch-spotcheck{ background: #7c3aed; }
+    .ch-embed    { background: #f97316; }
+    .ch-mobilesdk{ background: #ef4444; }
+
+    .new-badge {
+      position: absolute; top: -2px; left: -2px;
+      background: #6366f1; color: #fff; font-size: 8px; font-weight: 700;
+      padding: 1px 5px; border-radius: 4px; letter-spacing: 0.05em;
+    }
+
+    /* ── Promo boxes ── */
+    .promo-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+    .promo-icon-wrap { margin-bottom: 12px; }
+    .promo-title { font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .promo-new { background: #dcfce7; color: #16a34a; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.05em; }
+    .promo-desc { font-size: 13px; color: #6b7280; line-height: 1.5; margin-bottom: 14px; }
+    .promo-link { font-size: 13px; color: #3b82f6; text-decoration: none; display: block; margin-bottom: 14px; }
+    .promo-link:hover { text-decoration: underline; }
+    .promo-btn {
+      background: #1f2937; color: #fff; border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 500; padding: 8px 16px; cursor: pointer;
+    }
+    .promo-btn:hover { background: #111827; }
+
+    /* SmartReach icon */
+    .smartreach-icon {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: conic-gradient(#22c55e 0% 50%, #f59e0b 50% 75%, #7c3aed 75% 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .smartreach-inner {
+      width: 26px; height: 26px; background: #fff; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Audience icon */
+    .audience-icon {
+      width: 44px; height: 44px; background: #ede9fe; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* SVG icons inline */
+
+    /* QR dist row icon */
+    .dist-icon.qr-icon { background: #f3f4f6; }
+    .dist-icon.qr-icon svg { color: #374151; }
+  </style>
+</head>
+<body>
+
+<!-- ── Top Navigation ── -->
+<nav class="topnav">
+  <div class="topnav-left">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+    <span class="sep">›</span>
+    <span class="survey-name">test</span>
+  </div>
+  <div class="topnav-center">
+    <a class="nav-link">Build</a>
+    <a class="nav-link">Integrate</a>
+    <a class="nav-link active">Distribute</a>
+    <a class="nav-link">Results</a>
+  </div>
+  <div class="topnav-right">
+    <div class="headphone-btn">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:2px"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Page Content ── -->
+<div class="page">
+
+  <!-- Card 1: Share this survey -->
+  <div class="card">
+    <div class="card-title">Share this survey</div>
+
+    <!-- URL row -->
+    <div class="share-url-row">
+      <div class="share-url-avatar">
+        <svg width="18" height="18" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="10" r="3"/><path d="M21 21v-1a3 3 0 0 0-3-3h-1"/></svg>
+      </div>
+      <span class="share-url-text">https://sprw.io/qrshare</span>
+      <div class="share-url-actions">
+        <button class="icon-btn" title="Edit link">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </button>
+        <div class="copy-btn">
+          <button class="copy-btn-main" onclick="navigator.clipboard.writeText('https://sprw.io/qrshare')">Copy Link</button>
+          <button class="copy-btn-arrow">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distributions header -->
+    <div class="dist-header">
+      <span class="dist-label">Distributions</span>
+      <div class="dist-actions">
+        <button class="icon-btn">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <div class="channels-filter">
+          All channels
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distribution row -->
+    <div class="dist-row">
+      <div class="dist-icon">
+        <svg width="18" height="18" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <span class="dist-name">Web Link Share</span>
+      <span class="dist-date">07 April 2026 12:21 AM</span>
+      <span class="dist-responses">0 responses</span>
+      <div class="dist-controls">
+        <svg class="bar-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
+        <label class="toggle">
+          <input type="checkbox" checked />
+          <span class="toggle-track"></span>
+        </label>
+        <button class="more-btn">⋮</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: More ways to distribute -->
+  <div class="card">
+    <div class="card-title">More ways to distribute</div>
+    <div class="more-card-inner">
+
+      <!-- Left: channels -->
+      <div class="channels-col">
+
+        <!-- Direct Channels -->
+        <div class="section-label">Direct Channels</div>
+        <div class="channels-grid">
+          <div class="channel-item">
+            <div class="ch-icon ch-email">
+              <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2 7 12 13 22 7"/></svg>
+            </div>
+            <span class="ch-label">Email</span>
+          </div>
+          <div class="channel-item">
+            <div class="ch-icon ch-emailemb">
+              <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2 7 12 13 22 7"/></svg>
+            </div>
+            <span class="ch-label">Email Embed</span>
+          </div>
+          <div class="channel-item">
+            <div class="ch-icon ch-sms">
+              <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="ch-label">SMS</span>
+          </div>
+          <div class="channel-item">
+            <div class="ch-icon ch-whatsapp">
+              <!-- WhatsApp logo approximation -->
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            </div>
+            <span class="ch-label">WhatsApp</span>
+          </div>
+        </div>
+
+        <!-- Public Channels -->
+        <div class="section-label">Public Channels</div>
+        <div class="channels-grid">
+          <div class="channel-item">
+            <div class="ch-icon ch-weblink">
+              <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <span class="ch-label">Web Link</span>
+          </div>
+          <div class="channel-item" onclick="window.location.href='qrshare/share.html'">
+            <div class="ch-icon ch-qr">
+              <!-- QR Code icon -->
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3" fill="#374151" stroke="none"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="16" y="5" width="3" height="3" fill="#374151" stroke="none"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="16" width="3" height="3" fill="#374151" stroke="none"/><line x1="14" y1="14" x2="14" y2="14" stroke-width="2"/><line x1="17" y1="14" x2="17" y2="14" stroke-width="2"/><line x1="20" y1="14" x2="20" y2="14" stroke-width="2"/><line x1="14" y1="17" x2="14" y2="17" stroke-width="2"/><line x1="17" y1="17" x2="20" y2="17" stroke-width="2"/><line x1="20" y1="20" x2="20" y2="20" stroke-width="2"/><line x1="17" y1="20" x2="14" y2="20" stroke-width="2"/><line x1="14" y1="20" x2="14" y2="17" stroke-width="2"/></svg>
+            </div>
+            <span class="ch-label">QR Code</span>
+          </div>
+          <div class="channel-item">
+            <div class="ch-icon ch-facebook">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+            <span class="ch-label">Facebook</span>
+          </div>
+          <div class="channel-item">
+            <div class="ch-icon ch-x">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.258 5.632 5.906-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </div>
+            <span class="ch-label">X</span>
+          </div>
+        </div>
+
+        <!-- Website & Apps -->
+        <div class="section-label">Website & Apps</div>
+        <div class="channels-grid">
+          <div class="channel-item">
+            <div class="ch-icon ch-spotcheck">
+              <span class="new-badge">NEW</span>
+              <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <span class="ch-label">SpotChecks</span>
+          </div>
+          <div class="channel-item">
+            <div class="ch-icon ch-embed">
+              <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <span class="ch-label">Embed</span>
+          </div>
+          <div class="channel-item">
+            <div class="ch-icon ch-mobilesdk">
+              <svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3" stroke-linecap="round"/></svg>
+            </div>
+            <span class="ch-label">Mobile SDK</span>
+          </div>
+        </div>
+
+      </div><!-- /channels-col -->
+
+      <!-- Right: promo -->
+      <div class="promo-col">
+
+        <!-- SmartReach -->
+        <div class="promo-box">
+          <div class="promo-icon-wrap">
+            <div class="smartreach-icon">
+              <div class="smartreach-inner">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="5 12 10 17 19 8"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="promo-title">
+            SmartReach
+            <span class="promo-new">NEW</span>
+          </div>
+          <p class="promo-desc">Improve response rates with AI-driven multi-channel distribution and optimized timing.</p>
+          <a href="#" class="promo-link">Learn more</a>
+          <button class="promo-btn">Setup New</button>
+        </div>
+
+        <!-- Find your perfect audience -->
+        <div class="promo-box">
+          <div class="promo-icon-wrap">
+            <div class="audience-icon">
+              <svg width="24" height="24" fill="none" stroke="#7c3aed" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1"/><path d="M18 14a3 3 0 0 1 3 3v1"/></svg>
+            </div>
+          </div>
+          <div class="promo-title">Find your perfect audience</div>
+          <p class="promo-desc">Amplify your insights with responses sourced from our meticulously verified panel audiences.</p>
+        </div>
+
+      </div><!-- /promo-col -->
+    </div><!-- /more-card-inner -->
+  </div><!-- /card -->
+
+</div><!-- /page -->
+
+<script>
+  // Load QR shares from localStorage and inject into distributions list
+  function loadQRDistributions() {
+    const shares = JSON.parse(localStorage.getItem('qrShares') || '[]');
+    if (shares.length === 0) return;
+
+    const distContainer = document.querySelector('.card:first-of-type');
+    // Find after the existing Web Link Share row
+    const existingRow = distContainer.querySelector('.dist-row');
+
+    shares.forEach(share => {
+      // Don't duplicate
+      if (document.getElementById('qr-dist-' + share.id)) return;
+
+      const row = document.createElement('div');
+      row.className = 'dist-row';
+      row.id = 'qr-dist-' + share.id;
+      row.style.cursor = 'pointer';
+      row.innerHTML = `
+        <div class="dist-icon qr-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="1.8">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="5" y="5" width="3" height="3" fill="#374151" stroke="none"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="16" y="5" width="3" height="3" fill="#374151" stroke="none"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="5" y="16" width="3" height="3" fill="#374151" stroke="none"/>
+            <rect x="14" y="14" width="3" height="3" fill="#374151" stroke="none"/>
+            <rect x="18" y="14" width="3" height="3" fill="#374151" stroke="none"/>
+            <rect x="14" y="18" width="3" height="3" fill="#374151" stroke="none"/>
+            <rect x="18" y="18" width="3" height="3" fill="#374151" stroke="none"/>
+          </svg>
+        </div>
+        <span class="dist-name">${share.name}</span>
+        <span class="dist-date">${share.createdAt}</span>
+        <span class="dist-responses">${share.type === 'bulk' && share.bulkData ? share.bulkData.length + ' QR codes' : '0 responses'}</span>
+        <div class="dist-controls">
+          <label class="toggle" onclick="event.stopPropagation()">
+            <input type="checkbox" checked />
+            <span class="toggle-track"></span>
+          </label>
+          <button class="more-btn" onclick="event.stopPropagation();deleteShare('${share.id}')">⋮</button>
+        </div>`;
+
+      row.addEventListener('click', () => {
+        if (share.type === 'single') {
+          window.location.href = 'qrshare/single.html?id=' + share.id;
+        } else {
+          window.location.href = 'qrshare/bulk.html?id=' + share.id;
+        }
+      });
+
+      existingRow.insertAdjacentElement('afterend', row);
+    });
+  }
+
+  function deleteShare(id) {
+    if (!confirm('Delete this QR share?')) return;
+    const shares = JSON.parse(localStorage.getItem('qrShares') || '[]');
+    const updated = shares.filter(s => s.id !== id);
+    localStorage.setItem('qrShares', JSON.stringify(updated));
+    const el = document.getElementById('qr-dist-' + id);
+    if (el) el.remove();
+  }
+
+  window.addEventListener('DOMContentLoaded', loadQRDistributions);
+</script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Share – test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f4f5f7; color: #1a1a2e; min-height: 100vh; }
+
+    .topnav {
+      background: #fff; border-bottom: 1px solid #e5e7eb;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 52px; padding: 0 24px; position: sticky; top: 0; z-index: 100;
+    }
+    .topnav-left { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #374151; }
+    .topnav-left .sep { color: #d1d5db; font-size: 16px; }
+    .topnav-left .survey-name { font-weight: 500; }
+    .topnav-center { display: flex; align-items: center; gap: 4px; }
+    .nav-link { padding: 6px 16px; font-size: 14px; font-weight: 500; color: #6b7280; text-decoration: none; border-radius: 6px; cursor: pointer; border: none; background: none; }
+    .nav-link:hover { color: #111827; background: #f3f4f6; }
+    .nav-link.active { color: #111827; font-weight: 600; border-bottom: 2px solid #111827; border-radius: 0; padding-bottom: 4px; }
+    .topnav-right { display: flex; align-items: center; gap: 8px; }
+    .headphone-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fff; color: #6b7280; }
+
+    .page { max-width: 960px; margin: 48px auto; padding: 0 24px; }
+
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 32px;
+      font-size: 13px; color: #6b7280;
+    }
+    .breadcrumb a { color: #6b7280; text-decoration: none; cursor: pointer; }
+    .breadcrumb a:hover { color: #111827; text-decoration: underline; }
+    .breadcrumb .sep { color: #d1d5db; }
+    .breadcrumb .current { color: #111827; font-weight: 500; }
+
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: 26px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+    .page-header p { font-size: 15px; color: #6b7280; line-height: 1.6; }
+
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+    .choice-card {
+      background: #fff; border: 2px solid #e5e7eb; border-radius: 16px;
+      padding: 36px 32px; cursor: pointer; transition: all 0.2s;
+      display: flex; flex-direction: column; gap: 20px;
+      position: relative; overflow: hidden;
+    }
+    .choice-card:hover {
+      border-color: #6366f1; box-shadow: 0 8px 32px rgba(99,102,241,0.12);
+      transform: translateY(-2px);
+    }
+    .choice-card.selected { border-color: #6366f1; background: #fafafe; }
+
+    .choice-icon {
+      width: 60px; height: 60px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .choice-icon.single { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
+    .choice-icon.bulk   { background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%); }
+
+    .choice-title { font-size: 18px; font-weight: 700; color: #111827; }
+    .choice-desc  { font-size: 14px; color: #6b7280; line-height: 1.6; }
+
+    .choice-features { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .feature-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #374151;
+    }
+    .feature-dot { width: 6px; height: 6px; border-radius: 50%; background: #6366f1; flex-shrink: 0; }
+
+    .choice-badge {
+      position: absolute; top: 16px; right: 16px;
+      background: #ede9fe; color: #7c3aed; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em;
+    }
+    .choice-badge.bulk-badge { background: #e0f2fe; color: #0369a1; }
+
+    .choice-cta {
+      margin-top: auto; padding-top: 16px;
+      display: flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 600; color: #6366f1;
+    }
+    .choice-cta svg { transition: transform 0.2s; }
+    .choice-card:hover .choice-cta svg { transform: translateX(4px); }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+    <span class="sep">›</span>
+    <span class="survey-name">test</span>
+  </div>
+  <div class="topnav-center">
+    <a class="nav-link">Build</a>
+    <a class="nav-link">Integrate</a>
+    <a class="nav-link active" href="../qrshare.html">Distribute</a>
+    <a class="nav-link">Results</a>
+  </div>
+  <div class="topnav-right">
+    <div class="headphone-btn">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:2px"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb">
+    <a href="../qrshare.html">Distribute</a>
+    <span class="sep">›</span>
+    <span>Public Channels</span>
+    <span class="sep">›</span>
+    <span class="current">QR Code</span>
+  </div>
+
+  <div class="page-header">
+    <h1>Create QR Code Share</h1>
+    <p>Generate personalized QR codes for your survey. Choose to create a single QR code<br>or generate multiple QR codes in bulk from a CSV file.</p>
+  </div>
+
+  <div class="choices">
+
+    <!-- Single -->
+    <div class="choice-card" onclick="createShare('single')">
+      <span class="choice-badge">PERSONALIZED</span>
+      <div class="choice-icon single">
+        <svg width="30" height="30" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="5" y="5" width="3" height="3" fill="#fff" stroke="none"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="16" y="5" width="3" height="3" fill="#fff" stroke="none"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="5" y="16" width="3" height="3" fill="#fff" stroke="none"/><rect x="14" y="14" width="3" height="3" fill="#fff" stroke="none" rx="0.5"/><rect x="18" y="14" width="3" height="3" fill="#fff" stroke="none" rx="0.5"/><rect x="14" y="18" width="3" height="3" fill="#fff" stroke="none" rx="0.5"/><rect x="18" y="18" width="3" height="3" fill="#fff" stroke="none" rx="0.5"/></svg>
+      </div>
+      <div>
+        <div class="choice-title">Single QR Code</div>
+      </div>
+      <div class="choice-desc">Create one personalized QR code for a specific contact. Map contact details and custom variables to pre-fill survey data.</div>
+      <div class="choice-features">
+        <div class="feature-item"><span class="feature-dot"></span>Map to a specific contact (optional)</div>
+        <div class="feature-item"><span class="feature-dot"></span>Add custom variables with text values</div>
+        <div class="feature-item"><span class="feature-dot"></span>Full appearance customization</div>
+        <div class="feature-item"><span class="feature-dot"></span>Download as branded PDF</div>
+      </div>
+      <div class="choice-cta">
+        Get started
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+    <!-- Bulk -->
+    <div class="choice-card" onclick="createShare('bulk')">
+      <span class="choice-badge bulk-badge">BULK</span>
+      <div class="choice-icon bulk">
+        <svg width="30" height="30" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="8" height="8" rx="1"/><rect x="4" y="5" width="4" height="4" fill="#fff" stroke="none" rx="0.5"/><rect x="14" y="3" width="8" height="8" rx="1"/><rect x="16" y="5" width="4" height="4" fill="#fff" stroke="none" rx="0.5"/><rect x="2" y="13" width="8" height="8" rx="1"/><rect x="4" y="15" width="4" height="4" fill="#fff" stroke="none" rx="0.5"/><rect x="14" y="13" width="8" height="8" rx="1"/><rect x="16" y="15" width="4" height="4" fill="#fff" stroke="none" rx="0.5"/></svg>
+      </div>
+      <div>
+        <div class="choice-title">Bulk QR Codes</div>
+      </div>
+      <div class="choice-desc">Upload a CSV file to generate hundreds of unique QR codes at once. Each row becomes a personalized QR code with its own data.</div>
+      <div class="choice-features">
+        <div class="feature-item"><span class="feature-dot" style="background:#06b6d4"></span>Upload CSV with contact & variable data</div>
+        <div class="feature-item"><span class="feature-dot" style="background:#06b6d4"></span>Map CSV columns to variables</div>
+        <div class="feature-item"><span class="feature-dot" style="background:#06b6d4"></span>Preview each QR individually</div>
+        <div class="feature-item"><span class="feature-dot" style="background:#06b6d4"></span>Bulk download all as PDF</div>
+      </div>
+      <div class="choice-cta" style="color:#06b6d4">
+        Get started
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function getNextShareName() {
+    const shares = JSON.parse(localStorage.getItem('qrShares') || '[]');
+    return 'QR Share ' + (shares.length + 1);
+  }
+
+  function createShare(type) {
+    const shares = JSON.parse(localStorage.getItem('qrShares') || '[]');
+    const id = 'qr_' + Date.now();
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' }) + ' ' +
+      now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
+
+    const share = {
+      id,
+      name: getNextShareName(),
+      type,
+      createdAt: dateStr,
+      config: { email: '', variables: [] },
+      appearance: {
+        title: 'How would you rate your experience?',
+        description: 'Take a quick survey by scanning the QR Code and tell us about your experience at the event',
+        logo: '',
+        dotColor: '#000000',
+        dotStyle: 'square',
+        cornerStyle: 'square',
+        bgColor: '#ffffff',
+        cardBg: '#ffffff',
+        cardBgType: 'solid',
+        cardGradientFrom: '#667eea',
+        cardGradientTo: '#764ba2',
+        buttonText: 'SCAN HERE',
+        buttonColor: '#1f2937',
+        fontFamily: 'Inter',
+        darkMode: false,
+        borderStyle: 'shadow',
+        logoPosition: 'top',
+        showBadge: true
+      },
+      bulkData: [],
+      bulkMapped: false
+    };
+
+    shares.push(share);
+    localStorage.setItem('qrShares', JSON.stringify(shares));
+
+    if (type === 'single') {
+      window.location.href = 'single.html?id=' + id;
+    } else {
+      window.location.href = 'bulk.html?id=' + id;
+    }
+  }
+</script>
+</body>
+</html>
