@@ -152,8 +152,17 @@
 
     /* RULE BLOCK */
     /* Limit-by selector */
+    /* Limit-by checkbox row */
     .limit-by-section { margin-bottom: 20px; }
-    .limit-by-label { font-size: 12px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .limit-by-cb-row { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; user-select: none; padding: 11px 13px; border: 1.5px solid #e5e7eb; border-radius: 9px; transition: border-color .15s, background .15s; }
+    .limit-by-cb-row:hover { border-color: #a78bfa; background: #faf5ff; }
+    .limit-by-cb-row.checked { border-color: #7c3aed; background: #faf5ff; }
+    .limit-by-cb { width: 17px; height: 17px; border: 1.5px solid #d1d5db; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; transition: background .15s, border-color .15s; }
+    .limit-by-cb-row.checked .limit-by-cb { background: #7c3aed; border-color: #7c3aed; }
+    .limit-by-cb-body { flex: 1; }
+    .limit-by-cb-title { font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+    .limit-by-cb-desc { font-size: 12px; color: #6b7280; line-height: 1.4; }
+    /* old 2-card styles (kept for reference) */
     .limit-by-options { display: flex; gap: 10px; }
     .limit-by-opt {
       flex: 1; border: 1.5px solid #e5e7eb; border-radius: 10px; padding: 14px 16px;
@@ -682,36 +691,20 @@
 
         <!-- LIMIT BY SELECTOR -->
         <div class="limit-by-section">
-          <div class="limit-by-label">Limit invites by</div>
-          <div class="limit-by-options">
-
-            <div class="limit-by-opt selected" id="lbo-contact" onclick="setLimitBy('contact')">
-              <div class="limit-by-radio"><div class="limit-by-radio-dot"></div></div>
-              <div class="limit-by-opt-icon contact">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </div>
-              <div class="limit-by-opt-body">
-                <div class="limit-by-opt-title">Contact</div>
-                <div class="limit-by-opt-desc">Limit invites per person in your contact list. Controls how often each contact receives this survey, regardless of how many times they interact with you.</div>
-                <div class="limit-by-opt-example"><strong>Example:</strong> A contact receives at most 2 surveys in 30 days, even if they interact multiple times.</div>
-              </div>
+          <div class="limit-by-cb-row" id="limitByVarRow" onclick="toggleLimitByVariable()">
+            <div class="limit-by-cb" id="limitByVarCb">
+              <svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
             </div>
-
-            <div class="limit-by-opt" id="lbo-variable" onclick="setLimitBy('variable')">
-              <div class="limit-by-radio"><div class="limit-by-radio-dot"></div></div>
-              <div class="limit-by-opt-icon variable">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="17" r="3"/></svg>
+            <div class="limit-by-cb-body">
+              <div class="limit-by-cb-title">
+                <svg width="13" height="13" fill="none" stroke="#6d28d9" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="17" r="3"/></svg>
+                Limit invites by variable values
               </div>
-              <div class="limit-by-opt-body">
-                <div class="limit-by-opt-title">Specific Field / Variable</div>
-                <div class="limit-by-opt-desc">Limit surveys based on a variable like a ticket ID or order number. Controls how often invites are sent for a specific context or interaction.</div>
-                <div class="limit-by-opt-example"><strong>Example:</strong> If limited by Ticket ID, only 1 survey is sent per ticket, even if multiple actions trigger it.</div>
-              </div>
+              <div class="limit-by-cb-desc">Instead of per contact, count invites per a specific field like Ticket ID or Order ID. Useful for transactional or event-driven surveys.</div>
             </div>
-
           </div>
 
-          <!-- Variable selector (shown when 'variable' is selected) -->
+          <!-- Variable selector (shown when checkbox is checked) -->
           <div class="variable-select-row" id="variableSelectRow" style="display:none;">
             <svg width="15" height="15" fill="none" stroke="#6d28d9" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="17" r="3"/></svg>
             <span class="variable-select-label">Select variable</span>
@@ -819,39 +812,35 @@
 
   <!-- RIGHT AWARENESS PANEL -->
   <aside class="awareness-panel">
-    <div class="awareness-card">
-      <div class="awareness-card-title">How Rules Are Evaluated</div>
-      <p style="font-size:12px;color:#6b7280;margin-bottom:14px;line-height:1.5;">When a survey invite is triggered, rules are checked in priority order. The first match wins.</p>
+    <div class="awareness-card" id="awInviteCountCard">
+      <div class="awareness-card-title">How Invites Are Counted</div>
 
-      <div class="aw-priority-step">
-        <div class="aw-priority-badge aw-p1">P1</div>
-        <div class="aw-priority-content">
-          <div class="aw-priority-title">Exclusion Rule</div>
-          <div class="aw-priority-desc">Contact is exempt — invite sent freely, no limits apply.</div>
+      <!-- Per Contact block -->
+      <div class="aw-count-block" id="awBlockContact" style="border-left:3px solid #0d9488;padding-left:11px;margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:#0d9488;margin-bottom:4px;display:flex;align-items:center;gap:5px;">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Per Contact <span style="font-size:10px;background:#d1fae5;color:#065f46;border-radius:999px;padding:1px 7px;font-weight:600;margin-left:2px;">default</span>
         </div>
-      </div>
-      <div class="aw-priority-arrow">↓</div>
-
-      <div class="aw-priority-step">
-        <div class="aw-priority-badge aw-p2">P2</div>
-        <div class="aw-priority-content">
-          <div class="aw-priority-title">Custom Limit Rule</div>
-          <div class="aw-priority-desc">Contact-specific limits override the default rule.</div>
-        </div>
-      </div>
-      <div class="aw-priority-arrow">↓</div>
-
-      <div class="aw-priority-step">
-        <div class="aw-priority-badge aw-p3">P3</div>
-        <div class="aw-priority-content">
-          <div class="aw-priority-title">Default Rule</div>
-          <div class="aw-priority-desc">Fallback limits apply if no custom rule matches.</div>
+        <div style="font-size:12px;color:#374151;line-height:1.5;margin-bottom:7px;">Counts how many surveys each <strong>person</strong> has received. A contact can get at most N invites in the time window, regardless of how many events trigger it.</div>
+        <div style="font-size:11px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;padding:7px 9px;color:#065f46;line-height:1.5;">
+          <strong>Example:</strong> Max 2 surveys per contact in 30 days — even if they submit 5 support tickets.
         </div>
       </div>
 
-      <div class="aw-priority-note">
-        When multiple custom rules match, the <strong>most specific rule</strong> wins.
+      <!-- Per Variable block -->
+      <div class="aw-count-block" id="awBlockVariable" style="border-left:3px solid #ddd6fe;padding-left:11px;opacity:0.5;transition:opacity .2s;">
+        <div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:4px;display:flex;align-items:center;gap:5px;">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="17" r="3"/></svg>
+          Per Variable
+        </div>
+        <div style="font-size:12px;color:#374151;line-height:1.5;margin-bottom:7px;">Counts by a specific <strong>field value</strong> like Ticket ID. Limits how many invites are sent for a single ticket or order, no matter who triggers it.</div>
+        <div style="font-size:11px;background:#faf5ff;border:1px solid #ddd6fe;border-radius:7px;padding:7px 9px;color:#6d28d9;line-height:1.5;">
+          <strong>Example:</strong> Max 1 survey per Ticket ID — even if 3 agents update the same ticket.
+        </div>
       </div>
+
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:14px 0 10px;">
+      <div style="font-size:11px;color:#9ca3af;line-height:1.5;">Both modes can be combined with <strong>custom rules</strong> for fine-grained control over specific segments.</div>
     </div>
   </aside>
 
@@ -1152,16 +1141,23 @@
   }
 
   // ── Default rule toggle ────────────────────────────────
-  // ── Limit-by selector ─────────────────────────────────
-  let limitByMode = 'contact'; // 'contact' | 'variable'
+  // ── Limit-by variable checkbox ────────────────────────
+  let limitByVariable = false;
 
-  function setLimitBy(mode) {
-    limitByMode = mode;
-    document.getElementById('lbo-contact').classList.toggle('selected', mode === 'contact');
-    document.getElementById('lbo-variable').classList.toggle('selected', mode === 'variable');
-    document.getElementById('variableSelectRow').style.display = mode === 'variable' ? 'flex' : 'none';
-    // Reset variable select when switching to contact
-    if (mode === 'contact') document.getElementById('limitByVariableSelect').value = '';
+  function toggleLimitByVariable() {
+    limitByVariable = !limitByVariable;
+    document.getElementById('limitByVarRow').classList.toggle('checked', limitByVariable);
+    document.getElementById('variableSelectRow').style.display = limitByVariable ? 'flex' : 'none';
+    if (!limitByVariable) document.getElementById('limitByVariableSelect').value = '';
+    // Sync right awareness panel highlights
+    const contact = document.getElementById('awBlockContact');
+    const variable = document.getElementById('awBlockVariable');
+    if (contact && variable) {
+      contact.style.opacity = limitByVariable ? '0.45' : '1';
+      contact.style.borderLeftColor = limitByVariable ? '#d1d5db' : '#0d9488';
+      variable.style.opacity = limitByVariable ? '1' : '0.5';
+      variable.style.borderLeftColor = limitByVariable ? '#7c3aed' : '#ddd6fe';
+    }
   }
 
   function toggleMinGap(checkbox) {
