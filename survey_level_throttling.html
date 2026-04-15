@@ -716,7 +716,6 @@
                 <option value="session_id">Session ID</option>
                 <option value="case_number">Case Number</option>
                 <option value="product_sku">Product SKU</option>
-                <option value="custom">Custom variable…</option>
               </select>
               <svg class="variable-select-chevron" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
             </div>
@@ -841,6 +840,41 @@
 
       <hr style="border:none;border-top:1px solid #e5e7eb;margin:14px 0 10px;">
       <div style="font-size:11px;color:#9ca3af;line-height:1.5;">The limit is scoped to the <strong>contact + variable pair</strong>. Each new variable value resets the count for that contact.</div>
+    </div>
+
+    <div class="awareness-card">
+      <div class="awareness-card-title">How Rules Are Evaluated</div>
+      <p style="font-size:12px;color:#6b7280;margin-bottom:14px;line-height:1.5;">When an invite is triggered, rules are checked in priority order. The first match wins.</p>
+
+      <div class="aw-priority-step">
+        <div class="aw-priority-badge aw-p1">P1</div>
+        <div class="aw-priority-content">
+          <div class="aw-priority-title">Exclusion Rule</div>
+          <div class="aw-priority-desc">Contact is exempt — invite sent freely, no limits apply.</div>
+        </div>
+      </div>
+      <div class="aw-priority-arrow">↓</div>
+
+      <div class="aw-priority-step">
+        <div class="aw-priority-badge aw-p2">P2</div>
+        <div class="aw-priority-content">
+          <div class="aw-priority-title">Custom Limit Rule</div>
+          <div class="aw-priority-desc">Segment-specific limits override the default rule.</div>
+        </div>
+      </div>
+      <div class="aw-priority-arrow">↓</div>
+
+      <div class="aw-priority-step">
+        <div class="aw-priority-badge aw-p3">P3</div>
+        <div class="aw-priority-content">
+          <div class="aw-priority-title">Default Rule</div>
+          <div class="aw-priority-desc">Fallback limits apply if no custom rule matches.</div>
+        </div>
+      </div>
+
+      <div class="aw-priority-note">
+        When multiple custom rules match, the <strong>most specific rule</strong> wins.
+      </div>
     </div>
   </aside>
 
