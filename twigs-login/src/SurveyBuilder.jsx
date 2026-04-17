@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import {
@@ -436,103 +436,200 @@ function LogicRow({ icon, title, description, onDefine, disabled, buttonLabel = 
   );
 }
 
-/* ─────────────────────────────────────────────
-   AI Writing Panel
-───────────────────────────────────────────── */
-function AIPanel({ onGenerate }) {
-  const [open, setOpen] = useState(false);
-  const [prompt, setPrompt] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
+function aiReplySummary(prompt) {
+  const p = prompt.toLowerCase();
+  if (p.includes('validate') || p.includes('required') || p.includes('check')) {
+    return 'I added validation in addOnReady. Review and edit the code on the left anytime.';
+  }
+  if (p.includes('hide') || p.includes('show') || p.includes('display')) {
+    return 'I added show/hide logic in addOnload. Tweak the selectors on the left if needed.';
+  }
+  if (p.includes('timer') || p.includes('time') || p.includes('countdown')) {
+    return 'I added a timer pattern in addOnReady. Adjust durations on the left.';
+  }
+  return 'I generated a starting script from your request. Refine it manually on the left or keep chatting here.';
+}
 
-  const handleGenerate = () => {
-    if (!prompt.trim()) return;
-    setLoading(true);
-    setDone(false);
-    setTimeout(() => {
-      onGenerate(generateAIMockCode(prompt));
+const AI_CHAT_WELCOME = 'Ask in plain language what the question JavaScript should do. I will update the editor on the left; you can still edit the code yourself.';
+
+/* ─────────────────────────────────────────────
+   AI chat (right pane) — updates code via onApplyCode
+───────────────────────────────────────────── */
+function AIChatPane({ active, onApplyCode }) {
+  const [messages, setMessages] = useState([{ id: '0', role: 'assistant', text: AI_CHAT_WELCOME }]);
+  const [draft, setDraft] = useState('');
+  const [loading, setLoading] = useState(false);
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    if (!active) {
+      setMessages([{ id: '0', role: 'assistant', text: AI_CHAT_WELCOME }]);
+      setDraft('');
       setLoading(false);
-      setDone(true);
-      setTimeout(() => { setDone(false); setOpen(false); setPrompt(''); }, 1500);
-    }, 1800);
+    }
+  }, [active]);
+
+  useEffect(() => {
+    const el = listRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages, loading]);
+
+  const send = () => {
+    const text = draft.trim();
+    if (!text || loading) return;
+    const userId = `u-${Date.now()}`;
+    setMessages((m) => [...m, { id: userId, role: 'user', text }]);
+    setDraft('');
+    setLoading(true);
+    setTimeout(() => {
+      const nextCode = generateAIMockCode(text);
+      onApplyCode(nextCode);
+      setMessages((m) => [
+        ...m,
+        { id: `a-${Date.now()}`, role: 'assistant', text: aiReplySummary(text) },
+      ]);
+      setLoading(false);
+    }, 1400);
   };
 
   return (
-    <Box css={{ borderBottom: '1px solid #2d2d2d' }}>
-      {/* Toggle bar */}
+    <Flex
+      flexDirection="column"
+      css={{
+        height: '100%',
+        minHeight: 0,
+        backgroundColor: '#0f0f10',
+      }}
+    >
       <Flex
         alignItems="center"
-        justifyContent="space-between"
-        onClick={() => setOpen((o) => !o)}
+        gap="$2"
         css={{
-          paddingLeft: '$5', paddingRight: '$5', paddingTop: '$3', paddingBottom: '$3',
-          cursor: 'pointer',
-          background: open ? 'linear-gradient(90deg, #1a1a2e 0%, #16213e 100%)' : '#1a1a2e',
-          '&:hover': { backgroundColor: '#16213e' },
+          flexShrink: 0,
+          paddingLeft: '$4',
+          paddingRight: '$4',
+          paddingTop: '$3',
+          paddingBottom: '$3',
+          background: 'linear-gradient(90deg, #1a1a2e 0%, #16213e 100%)',
+          borderBottom: '1px solid #2d2d2d',
         }}
       >
-        <Flex alignItems="center" gap="$2">
-          <Box css={{ color: '#a78bfa' }}><SparklesIcon /></Box>
-          <Text css={{ fontSize: '$xs', fontWeight: '$6', color: '#a78bfa' }}>Write JavaScript with AI</Text>
-          <Box css={{
-            fontSize: '10px', fontWeight: '$6', color: '#7c3aed',
-            backgroundColor: '#ede9fe', paddingLeft: '$2', paddingRight: '$2',
-            paddingTop: '1px', paddingBottom: '1px', borderRadius: '4px',
-          }}>BETA</Box>
-        </Flex>
-        <Box css={{ color: '#6b7280', transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-          <ChevronDown />
-        </Box>
+        <Box css={{ color: '#a78bfa' }}><SparklesIcon /></Box>
+        <Text css={{ fontSize: '$xs', fontWeight: '$6', color: '#a78bfa', flex: 1 }}>Chat with AI</Text>
+        <Box css={{
+          fontSize: '10px', fontWeight: '$6', color: '#7c3aed',
+          backgroundColor: '#ede9fe', paddingLeft: '$2', paddingRight: '$2',
+          paddingTop: '1px', paddingBottom: '1px', borderRadius: '4px',
+        }}>BETA</Box>
       </Flex>
 
-      {/* Expandable prompt area */}
-      {open && (
-        <Box css={{ backgroundColor: '#141414', paddingLeft: '$5', paddingRight: '$5', paddingTop: '$4', paddingBottom: '$4' }}>
-          <Text css={{ fontSize: '$xxs', color: '#6b7280', marginBottom: '$3', fontWeight: '$5' }}>
-            Describe what you want the JavaScript to do
-          </Text>
-          <Flex gap="$2" alignItems="flex-end">
-            <Box css={{ flex: 1, position: 'relative' }}>
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); } }}
-                placeholder="e.g. Validate that the user selects an option before proceeding..."
-                rows={2}
-                style={{
-                  width: '100%', background: '#1e1e1e', border: '1px solid #3d3d3d',
-                  borderRadius: '6px', color: '#d4d4d4', fontSize: '12px',
-                  padding: '8px 12px', resize: 'none', outline: 'none',
-                  fontFamily: 'inherit', lineHeight: 1.5,
-                }}
-              />
-            </Box>
-            <Button
-              size="sm"
-              color="primary"
-              disabled={!prompt.trim() || loading}
-              onClick={handleGenerate}
-              leftIcon={done ? <CheckIcon /> : loading ? undefined : <SendIcon />}
-              css={{ flexShrink: 0, minWidth: '90px' }}
+      <Box
+        ref={listRef}
+        css={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          paddingLeft: '$4',
+          paddingRight: '$4',
+          paddingTop: '$4',
+          paddingBottom: '$4',
+        }}
+      >
+        {messages.map((msg) => (
+          <Box
+            key={msg.id}
+            css={{
+              marginBottom: '$4',
+              display: 'flex',
+              justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+            }}
+          >
+            <Box
+              css={{
+                maxWidth: '100%',
+                paddingLeft: '$3',
+                paddingRight: '$3',
+                paddingTop: '$2',
+                paddingBottom: '$2',
+                borderRadius: '$lg',
+                fontSize: '$xs',
+                lineHeight: '$md',
+                color: msg.role === 'user' ? '#f3f4f6' : '#d1d5db',
+                backgroundColor: msg.role === 'user' ? '#3730a3' : '#1e1e1e',
+                border: msg.role === 'user' ? 'none' : '1px solid #2d2d2d',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}
             >
-              {loading ? 'Generating…' : done ? 'Done!' : 'Generate'}
-            </Button>
+              {msg.text}
+            </Box>
+          </Box>
+        ))}
+        {loading && (
+          <Flex alignItems="center" gap="$2" css={{ marginBottom: '$3' }}>
+            <div style={{ display: 'flex', gap: '4px' }}>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="ai-dot"
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: '#a78bfa',
+                  }}
+                />
+              ))}
+            </div>
+            <Text css={{ fontSize: '$xxs', color: '#6b7280' }}>Updating the editor…</Text>
           </Flex>
-          {loading && (
-            <Flex alignItems="center" gap="$2" css={{ marginTop: '$3' }}>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                {[0, 1, 2].map((i) => (
-                  <div key={i} className="ai-dot" style={{
-                    width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#a78bfa',
-                  }} />
-                ))}
-              </div>
-              <Text css={{ fontSize: '$xxs', color: '#6b7280' }}>AI is generating your JavaScript…</Text>
-            </Flex>
-          )}
-        </Box>
-      )}
-    </Box>
+        )}
+      </Box>
+
+      <Box css={{ flexShrink: 0, padding: '$4', borderTop: '1px solid #2d2d2d', backgroundColor: '#141414' }}>
+        <Flex gap="$2" alignItems="flex-end">
+          <Box css={{ flex: 1, minWidth: 0 }}>
+            <textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+                }
+              }}
+              placeholder="Describe the behaviour you want…"
+              rows={3}
+              disabled={loading}
+              style={{
+                width: '100%',
+                background: '#1e1e1e',
+                border: '1px solid #3d3d3d',
+                borderRadius: '6px',
+                color: '#d4d4d4',
+                fontSize: '12px',
+                padding: '8px 10px',
+                resize: 'none',
+                outline: 'none',
+                fontFamily: 'inherit',
+                lineHeight: 1.45,
+                opacity: loading ? 0.6 : 1,
+              }}
+            />
+          </Box>
+          <Button
+            size="sm"
+            color="primary"
+            disabled={!draft.trim() || loading}
+            onClick={send}
+            leftIcon={loading ? undefined : <SendIcon />}
+            css={{ flexShrink: 0, alignSelf: 'flex-end' }}
+          >
+            {loading ? '…' : 'Send'}
+          </Button>
+        </Flex>
+      </Box>
+    </Flex>
   );
 }
 
@@ -609,6 +706,7 @@ function JavaScriptEditorDialog({ open, onOpenChange }) {
   const [savedCode, setSavedCode] = useState(null);
   const [showSavedBanner, setShowSavedBanner] = useState(false);
   const missing = shellsMissing(code);
+  const splitHeight = fullscreen ? 'calc(100vh - 200px)' : 'min(520px, calc(90vh - 200px))';
 
   const handleClear = () => setCode(DEFAULT_JS);
 
@@ -645,46 +743,63 @@ function JavaScriptEditorDialog({ open, onOpenChange }) {
             </Flex>
           </DialogHeader>
 
-          <DialogBody>
-            <Box css={{ padding: '0' }}>
-              {/* AI Panel */}
-              <AIPanel onGenerate={setCode} />
-
-              {/* Shell warning banner */}
-              {missing.length > 0 && (
-                <Flex alignItems="center" gap="$2" css={{ paddingLeft: '$5', paddingRight: '$5', paddingTop: '$3', paddingBottom: '$3', backgroundColor: '#fff3cd', borderBottom: '1px solid #fcd34d' }}>
-                  <Box css={{ color: '#d97706' }}><WarningIcon /></Box>
-                  <Text css={{ fontSize: '$xs', color: '#92400e' }}>
-                    Required function shells removed: {missing.map(s => s.split('.').pop()).join(', ')}. These are needed for the survey to work.
-                  </Text>
-                  <Button size="xs" variant="ghost" color="default" onClick={handleClear} css={{ marginLeft: 'auto', flexShrink: 0 }}>
-                    Restore
-                  </Button>
-                </Flex>
-              )}
-
-              {/* Code editor */}
-              <Box css={{ overflowY: 'auto', maxHeight: fullscreen ? 'calc(100vh - 300px)' : '360px' }}>
-                <CodeEditor
-                  value={code}
-                  onChange={setCode}
-                  minHeight={fullscreen ? 'calc(100vh - 300px)' : '360px'}
-                />
-              </Box>
-
-              {/* JS API link */}
-              <Flex alignItems="center" css={{ paddingLeft: '$5', paddingRight: '$5', paddingTop: '$3', paddingBottom: '$3', backgroundColor: '#1e1e1e', borderTop: '1px solid #2d2d2d' }}>
-                <Box
-                  as="a"
-                  href="https://api.qualtrics.com/ZG9jOjg3NzY4Mg-qualtrics-java-script-question-api-class"
-                  target="_blank"
-                  rel="noreferrer"
-                  css={{ fontSize: '$xs', color: '#60a5fa', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-                >
-                  JS Question API ↗
+          <DialogBody css={{ padding: 0 }}>
+            <Flex
+              css={{
+                width: '100%',
+                height: splitHeight,
+                minHeight: fullscreen ? '320px' : '380px',
+                maxHeight: splitHeight,
+                overflow: 'hidden',
+                alignItems: 'stretch',
+              }}
+            >
+              {/* Left ~70% — code (manual edits + AI updates) */}
+              <Flex
+                flexDirection="column"
+                css={{
+                  flex: '1 1 70%',
+                  width: '70%',
+                  minWidth: 0,
+                  borderRight: '1px solid $neutral200',
+                }}
+              >
+                {missing.length > 0 && (
+                  <Flex alignItems="center" gap="$2" css={{ flexShrink: 0, paddingLeft: '$5', paddingRight: '$5', paddingTop: '$3', paddingBottom: '$3', backgroundColor: '#fff3cd', borderBottom: '1px solid #fcd34d' }}>
+                    <Box css={{ color: '#d97706' }}><WarningIcon /></Box>
+                    <Text css={{ fontSize: '$xs', color: '#92400e' }}>
+                      Required function shells removed: {missing.map(s => s.split('.').pop()).join(', ')}. These are needed for the survey to work.
+                    </Text>
+                    <Button size="xs" variant="ghost" color="default" onClick={handleClear} css={{ marginLeft: 'auto', flexShrink: 0 }}>
+                      Restore
+                    </Button>
+                  </Flex>
+                )}
+                <Box css={{ flex: 1, minHeight: 0, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+                  <CodeEditor
+                    value={code}
+                    onChange={setCode}
+                    minHeight={fullscreen ? 'calc(100vh - 280px)' : '340px'}
+                  />
                 </Box>
+                <Flex alignItems="center" css={{ flexShrink: 0, paddingLeft: '$5', paddingRight: '$5', paddingTop: '$3', paddingBottom: '$3', backgroundColor: '#1e1e1e', borderTop: '1px solid #2d2d2d' }}>
+                  <Box
+                    as="a"
+                    href="https://api.qualtrics.com/ZG9jOjg3NzY4Mg-qualtrics-java-script-question-api-class"
+                    target="_blank"
+                    rel="noreferrer"
+                    css={{ fontSize: '$xs', color: '#60a5fa', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                  >
+                    JS Question API ↗
+                  </Box>
+                </Flex>
               </Flex>
-            </Box>
+
+              {/* Right ~30% — AI chat */}
+              <Box css={{ flex: '0 0 30%', width: '30%', minWidth: '220px', maxWidth: '400px', minHeight: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <AIChatPane active={open} onApplyCode={setCode} />
+              </Box>
+            </Flex>
           </DialogBody>
 
           <DialogFooter>
