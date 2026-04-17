@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Survey Builder</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/@sparrowengg/twigs-react/dist/index.umd.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@sparrowengg/twigs-react/dist/index.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f6f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #root { display: flex; flex-direction: column; height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const {
+      ThemeProvider, Box, Flex, Text, Button, IconButton,
+      Input, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Separator,
+    } = TwigsReact;
+
+    const { useState } = React;
+
+    /* ── SVG Icons ── */
+    const HomeIcon = () => (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    );
+    const ChevronRight = () => (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    );
+    const ChevronDown = () => (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    );
+    const PlusIcon = () => (
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+    );
+    const DragIcon = () => (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+        <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+        <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+      </svg>
+    );
+    const ImageIcon = () => (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+    );
+    const EyeIcon = () => (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+      </svg>
+    );
+    const EditPencilIcon = () => (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+    );
+    const HiddenIcon = () => (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+        <line x1="1" y1="1" x2="23" y2="23"/>
+      </svg>
+    );
+    const TextIcon = () => (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/>
+      </svg>
+    );
+    const CheckCircleIcon = () => (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    );
+    const ArrowUpIcon = () => (
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+      </svg>
+    );
+    const ArrowDownIcon = () => (
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
+      </svg>
+    );
+    const PipeIcon = () => (
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 6H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/>
+        <path d="M16 6h3a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3"/>
+        <line x1="12" y1="3" x2="12" y2="21"/>
+      </svg>
+    );
+    const TagIcon = () => (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+        <line x1="7" y1="7" x2="7.01" y2="7"/>
+      </svg>
+    );
+    const StarIcon = () => (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    );
+    const UserIcon = () => (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+    );
+    const WingIcon = () => (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    );
+    const RecodeIcon = () => (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/>
+        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+      </svg>
+    );
+
+    /* ── Toggle Switch Row ── */
+    function ToggleRow({ label, value, onChange }) {
+      return (
+        <Flex alignItems="center" gap="$3">
+          <Switch size="sm" checked={value} onChange={onChange} />
+          <Text css={{ fontSize: '$xs', color: '$neutral600', fontWeight: '$5' }}>
+            {value ? 'ON' : 'OFF'}
+          </Text>
+        </Flex>
+      );
+    }
+
+    /* ── Question Sidebar Item ── */
+    function QuestionItem({ number, label, icon, active, tooltip }) {
+      return (
+        <Box css={{ position: 'relative' }}>
+          {tooltip && (
+            <Box css={{
+              position: 'absolute',
+              top: '-32px',
+              left: '32px',
+              backgroundColor: '$neutral800',
+              color: '$white900',
+              fontSize: '$xxs',
+              padding: '$2 $4',
+              borderRadius: '$md',
+              whiteSpace: 'nowrap',
+              zIndex: 10,
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                top: '100%',
+                left: '12px',
+                borderWidth: '4px',
+                borderStyle: 'solid',
+                borderColor: '#1f2937 transparent transparent transparent',
+              }
+            }}>
+              {tooltip}
+            </Box>
+          )}
+          <Flex
+            alignItems="center"
+            gap="$2"
+            css={{
+              padding: '$3 $4',
+              cursor: 'pointer',
+              backgroundColor: active ? '$primary50' : 'transparent',
+              borderLeft: active ? '3px solid $primary500' : '3px solid transparent',
+              '&:hover': { backgroundColor: active ? '$primary50' : '$neutral50' },
+            }}
+          >
+            <Box css={{ color: '$neutral300', cursor: 'grab', flexShrink: 0 }}><DragIcon /></Box>
+            <Box
+              css={{
+                width: '22px',
+                height: '22px',
+                borderRadius: '$round',
+                backgroundColor: active ? '$primary500' : '$neutral200',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Text css={{ fontSize: '$xxs', color: active ? '$white900' : '$neutral600', fontWeight: '$6', lineHeight: 1 }}>
+                {number}
+              </Text>
+            </Box>
+            <Text css={{
+              fontSize: '$xs',
+              color: active ? '$primary700' : '$neutral700',
+              fontWeight: active ? '$5' : '$4',
+              flex: 1,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {label}
+            </Text>
+            {icon && (
+              <Box css={{ color: '$neutral400', flexShrink: 0 }}>{icon}</Box>
+            )}
+          </Flex>
+        </Box>
+      );
+    }
+
+    /* ── Main App ── */
+    function SurveyBuilder() {
+      const [activeNav, setActiveNav] = useState('build');
+      const [activeView, setActiveView] = useState('edit');
+      const [choices, setChoices] = useState(['car', 'bus', 'auto']);
+      const [toggles, setToggles] = useState({
+        randomize: false,
+        stacked: false,
+        multipleAnswers: false,
+        allowOther: false,
+        noneAbove: false,
+        allAbove: false,
+        setDefault: false,
+      });
+
+      const setToggle = (key) => (val) => setToggles(prev => ({ ...prev, [key]: val }));
+
+      const navItems = [
+        { key: 'build', label: 'Build' },
+        { key: 'integrate', label: 'Integrate' },
+        { key: 'distribute', label: 'Distribute' },
+        { key: 'results', label: 'Results' },
+      ];
+
+      return (
+        <ThemeProvider>
+          <Flex flexDirection="column" css={{ height: '100vh', backgroundColor: '$neutral50', overflow: 'hidden' }}>
+
+            {/* ── TOP NAV ── */}
+            <Flex
+              alignItems="center"
+              css={{
+                height: '48px',
+                backgroundColor: '$white900',
+                borderBottom: '1px solid $neutral200',
+                paddingLeft: '$4',
+                paddingRight: '$6',
+                flexShrink: 0,
+                zIndex: 50,
+              }}
+            >
+              {/* Left: breadcrumb */}
+              <Flex alignItems="center" gap="$2" css={{ minWidth: '160px' }}>
+                <Box
+                  css={{
+                    width: '28px', height: '28px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    borderRadius: '$md', color: '$neutral600', cursor: 'pointer',
+                    '&:hover': { backgroundColor: '$neutral100' },
+                  }}
+                >
+                  <HomeIcon />
+                </Box>
+                <Box css={{ color: '$neutral300' }}><ChevronRight /></Box>
+                <Text css={{ fontSize: '$sm', color: '$neutral700', fontWeight: '$5' }}>test</Text>
+              </Flex>
+
+              {/* Center: nav tabs */}
+              <Flex alignItems="center" gap="$1" css={{ flex: 1, justifyContent: 'center' }}>
+                {navItems.map(({ key, label }) => (
+                  <Box
+                    key={key}
+                    onClick={() => setActiveNav(key)}
+                    css={{
+                      paddingLeft: '$5',
+                      paddingRight: '$5',
+                      paddingTop: '$3',
+                      paddingBottom: '$3',
+                      cursor: 'pointer',
+                      fontSize: '$sm',
+                      fontWeight: activeNav === key ? '$6' : '$4',
+                      color: activeNav === key ? '$primary600' : '$neutral600',
+                      borderBottom: activeNav === key ? '2px solid $primary500' : '2px solid transparent',
+                      transition: 'all $transitions$1 ease',
+                      '&:hover': { color: '$primary600' },
+                    }}
+                  >
+                    {label}
+                  </Box>
+                ))}
+              </Flex>
+
+              {/* Right: actions */}
+              <Flex alignItems="center" gap="$3" css={{ minWidth: '160px', justifyContent: 'flex-end' }}>
+                <Button size="sm" variant="outline" color="default">Save</Button>
+                <Button
+                  size="sm"
+                  color="primary"
+                  leftIcon={<EyeIcon />}
+                >
+                  Preview
+                </Button>
+              </Flex>
+            </Flex>
+
+            {/* ── BODY ── */}
+            <Flex css={{ flex: 1, overflow: 'hidden' }}>
+
+              {/* ── LEFT SIDEBAR ── */}
+              <Flex
+                flexDirection="column"
+                css={{
+                  width: '220px',
+                  flexShrink: 0,
+                  backgroundColor: '$white900',
+                  borderRight: '1px solid $neutral200',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Sidebar header */}
+                <Flex
+                  alignItems="center"
+                  justifyContent="space-between"
+                  css={{
+                    paddingLeft: '$5',
+                    paddingRight: '$4',
+                    paddingTop: '$4',
+                    paddingBottom: '$4',
+                    borderBottom: '1px solid $neutral100',
+                  }}
+                >
+                  <Text css={{ fontSize: '$xxs', fontWeight: '$7', color: '$neutral500', letterSpacing: '0.08em' }}>
+                    QUESTIONS
+                  </Text>
+                  <Flex alignItems="center" gap="$2">
+                    <Button size="xxs" variant="ghost" color="default">
+                      Invite
+                    </Button>
+                    <Box css={{
+                      width: '26px', height: '26px',
+                      borderRadius: '$round',
+                      backgroundColor: '$neutral200',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer',
+                      '&:hover': { backgroundColor: '$neutral300' },
+                    }}>
+                      <UserIcon />
+                    </Box>
+                  </Flex>
+                </Flex>
+
+                {/* Questions list */}
+                <Box css={{ flex: 1, overflowY: 'auto' }}>
+                  <QuestionItem number="1" label="what do u like" active={true} />
+                  <QuestionItem number="2" label="want to edit prev question ?" tooltip="want to edit prev question ?" />
+                  <QuestionItem number="3" label="Hidden Question" icon={<HiddenIcon />} />
+                  <QuestionItem number="4" label="What is your name" icon={<TextIcon />} />
+                </Box>
+
+                {/* Add question button */}
+                <Box css={{ borderTop: '1px solid $neutral100', padding: '$3' }}>
+                  <Flex css={{ width: '100%' }}>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      color="default"
+                      leftIcon={<PlusIcon />}
+                      css={{ flex: 1, justifyContent: 'flex-start', borderRadius: '$md 0 0 $md', borderRight: '1px solid $neutral200' }}
+                    >
+                      Add a question
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      color="default"
+                      css={{ borderRadius: '0 $md $md 0', paddingLeft: '$3', paddingRight: '$3' }}
+                    >
+                      <ChevronDown />
+                    </Button>
+                  </Flex>
+                </Box>
+              </Flex>
+
+              {/* ── MAIN CONTENT ── */}
+              <Flex flexDirection="column" css={{ flex: 1, overflow: 'hidden' }}>
+
+                {/* Edit/View toggle bar */}
+                <Flex
+                  justifyContent="flex-end"
+                  alignItems="center"
+                  css={{
+                    paddingLeft: '$6',
+                    paddingRight: '$6',
+                    paddingTop: '$3',
+                    paddingBottom: '$3',
+                    backgroundColor: '$white900',
+                    borderBottom: '1px solid $neutral100',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Flex css={{ border: '1px solid $neutral200', borderRadius: '$md', overflow: 'hidden' }}>
+                    {['edit', 'view'].map((v) => (
+                      <Box
+                        key={v}
+                        onClick={() => setActiveView(v)}
+                        css={{
+                          paddingLeft: '$5',
+                          paddingRight: '$5',
+                          paddingTop: '$2',
+                          paddingBottom: '$2',
+                          fontSize: '$xs',
+                          fontWeight: '$5',
+                          cursor: 'pointer',
+                          backgroundColor: activeView === v ? '$neutral800' : '$white900',
+                          color: activeView === v ? '$white900' : '$neutral600',
+                          transition: 'all $transitions$1 ease',
+                          '&:hover': {
+                            backgroundColor: activeView === v ? '$neutral800' : '$neutral50',
+                          },
+                        }}
+                      >
+                        {v.charAt(0).toUpperCase() + v.slice(1)}
+                      </Box>
+                    ))}
+                  </Flex>
+                </Flex>
+
+                {/* Question editor area */}
+                <Box css={{ flex: 1, overflowY: 'auto', padding: '$6' }}>
+                  <Box
+                    css={{
+                      backgroundColor: '$white900',
+                      borderRadius: '$xl',
+                      border: '1px solid $neutral200',
+                      boxShadow: '$sm',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {/* Question header */}
+                    <Flex
+                      alignItems="flex-start"
+                      css={{
+                        paddingLeft: '$6',
+                        paddingRight: '$6',
+                        paddingTop: '$5',
+                        paddingBottom: '$4',
+                        borderBottom: '1px solid $neutral100',
+                      }}
+                    >
+                      <Text css={{ fontSize: '$md', fontWeight: '$6', color: '$neutral800', marginRight: '$3', paddingTop: '2px' }}>
+                        1.
+                      </Text>
+                      <Box css={{ flex: 1 }}>
+                        <Text css={{ fontSize: '$md', fontWeight: '$6', color: '$neutral800', lineHeight: '$md' }}>
+                          what do u like
+                        </Text>
+                        <Text css={{ fontSize: '$xs', color: '$neutral400', marginTop: '$2', fontStyle: 'italic' }}>
+                          Add description to your question.
+                        </Text>
+                      </Box>
+                      {/* Right icons */}
+                      <Flex alignItems="center" gap="$1" css={{ marginLeft: '$4' }}>
+                        <Box css={{ color: '$neutral400', cursor: 'pointer', padding: '$1', '&:hover': { color: '$neutral600' } }}>
+                          <ArrowUpIcon />
+                        </Box>
+                        <Box css={{ color: '$neutral400', cursor: 'pointer', padding: '$1', '&:hover': { color: '$neutral600' } }}>
+                          <ArrowDownIcon />
+                        </Box>
+                        <Box css={{ width: '1px', height: '16px', backgroundColor: '$neutral200', marginLeft: '$1', marginRight: '$1' }} />
+                        <Box css={{ color: '$neutral400', cursor: 'pointer', padding: '$1', '&:hover': { color: '$neutral600' } }}>
+                          <PipeIcon />
+                        </Box>
+                      </Flex>
+                    </Flex>
+
+                    {/* Choices section */}
+                    <Box css={{ paddingLeft: '$6', paddingRight: '$6', paddingTop: '$5', paddingBottom: '$4' }}>
+                      {/* Choice inputs row */}
+                      <Flex gap="$3" alignItems="center" css={{ marginBottom: '$4' }}>
+                        {choices.map((choice, idx) => (
+                          <Input
+                            key={idx}
+                            size="sm"
+                            value={choice}
+                            onChange={(e) => {
+                              const updated = [...choices];
+                              updated[idx] = e.target.value;
+                              setChoices(updated);
+                            }}
+                            css={{ flex: 1 }}
+                          />
+                        ))}
+                      </Flex>
+
+                      {/* Add new choice + Wing/Pipe actions */}
+                      <Flex alignItems="center" justifyContent="space-between">
+                        <Box
+                          css={{
+                            display: 'flex', alignItems: 'center', gap: '$2',
+                            color: '$primary500', cursor: 'pointer', fontSize: '$xs', fontWeight: '$5',
+                            '&:hover': { color: '$primary700' },
+                          }}
+                        >
+                          <PlusIcon />
+                          <Text css={{ fontSize: '$xs', color: 'inherit', fontWeight: '$5' }}>Add New Choice</Text>
+                        </Box>
+                        <Flex alignItems="center" gap="$3">
+                          <Button size="xs" variant="ghost" color="default" leftIcon={<WingIcon />}>
+                            Wing Choice!
+                          </Button>
+                          <Button size="xs" variant="ghost" color="default" leftIcon={<PipeIcon />}>
+                            Pipe Answer
+                          </Button>
+                        </Flex>
+                      </Flex>
+                    </Box>
+
+                    {/* Separator */}
+                    <Box css={{ height: '1px', backgroundColor: '$neutral100', marginLeft: '$6', marginRight: '$6' }} />
+
+                    {/* Bottom options panel */}
+                    <Box>
+                      <Tabs defaultValue="options">
+                        <Flex alignItems="center" justifyContent="space-between" css={{ paddingLeft: '$4', paddingRight: '$6', borderBottom: '1px solid $neutral100' }}>
+                          <TabsList css={{ borderBottom: 'none', backgroundColor: 'transparent', gap: '$1' }}>
+                            <TabsTrigger value="options" css={{ fontSize: '$xs', paddingLeft: '$4', paddingRight: '$4' }}>
+                              <Flex alignItems="center" gap="$2">
+                                Options
+                                {/* Red dot indicator */}
+                                <Box css={{ width: '6px', height: '6px', borderRadius: '$round', backgroundColor: '$negative500' }} />
+                              </Flex>
+                            </TabsTrigger>
+                            <TabsTrigger value="logic" css={{ fontSize: '$xs', paddingLeft: '$4', paddingRight: '$4' }}>Logic</TabsTrigger>
+                            <TabsTrigger value="bulk" css={{ fontSize: '$xs', paddingLeft: '$4', paddingRight: '$4' }}>Bulk Choices</TabsTrigger>
+                          </TabsList>
+
+                          {/* Add Score button */}
+                          <Box css={{ display: 'flex', alignItems: 'center', gap: '$2' }}>
+                            <Button size="xs" variant="ghost" color="default" leftIcon={<StarIcon />}>
+                              + Add Score
+                            </Button>
+                            <Button size="xs" variant="outline" color="default">
+                              Required
+                            </Button>
+                            <Button size="xs" color="primary">
+                              Add Next Question
+                            </Button>
+                          </Box>
+                        </Flex>
+
+                        {/* Options Tab */}
+                        <TabsContent value="options">
+                          <Box css={{ paddingLeft: '$6', paddingRight: '$6', paddingTop: '$5', paddingBottom: '$5' }}>
+                            {/* Toggle grid */}
+                            <Box
+                              css={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(4, 1fr)',
+                                gap: '$5 $6',
+                              }}
+                            >
+                              {/* Randomize */}
+                              <Flex flexDirection="column" gap="$2">
+                                <Text css={{ fontSize: '$xs', color: '$neutral500', fontWeight: '$5' }}>Randomize</Text>
+                                <ToggleRow value={toggles.randomize} onChange={setToggle('randomize')} />
+                              </Flex>
+                              {/* Stacked */}
+                              <Flex flexDirection="column" gap="$2">
+                                <Text css={{ fontSize: '$xs', color: '$neutral500', fontWeight: '$5' }}>Stacked</Text>
+                                <ToggleRow value={toggles.stacked} onChange={setToggle('stacked')} />
+                              </Flex>
+                              {/* Multiple Answers */}
+                              <Flex flexDirection="column" gap="$2">
+                                <Text css={{ fontSize: '$xs', color: '$neutral500', fontWeight: '$5' }}>Multiple Answers</Text>
+                                <ToggleRow value={toggles.multipleAnswers} onChange={setToggle('multipleAnswers')} />
+                              </Flex>
+                              {/* Allow Other Option */}
+                              <Flex flexDirection="column" gap="$2">
+                                <Text css={{ fontSize: '$xs', color: '$neutral500', fontWeight: '$5' }}>Allow Other Option</Text>
+                                <ToggleRow value={toggles.allowOther} onChange={setToggle('allowOther')} />
+                              </Flex>
+                              {/* None of the above */}
+                              <Flex flexDirection="column" gap="$2">
+                                <Text css={{ fontSize: '$xs', color: '$neutral500', fontWeight: '$5' }}>None of the above</Text>
+                                <ToggleRow value={toggles.noneAbove} onChange={setToggle('noneAbove')} />
+                              </Flex>
+                              {/* All of the above */}
+                              <Flex flexDirection="column" gap="$2">
+                                <Text css={{ fontSize: '$xs', color: '$neutral500', fontWeight: '$5' }}>All of the above</Text>
+                                <ToggleRow value={toggles.allAbove} onChange={setToggle('allAbove')} />
+                              </Flex>
+                            </Box>
+
+                            {/* Set Default Answer row */}
+                            <Box css={{ marginTop: '$5', paddingTop: '$4', borderTop: '1px solid $neutral100' }}>
+                              <Flex flexDirection="column" gap="$2" css={{ display: 'inline-flex' }}>
+                                <Text css={{ fontSize: '$xs', color: '$neutral500', fontWeight: '$5' }}>Set Default Answer</Text>
+                                <ToggleRow value={toggles.setDefault} onChange={setToggle('setDefault')} />
+                              </Flex>
+                            </Box>
+
+                            {/* Footer actions row */}
+                            <Flex alignItems="center" justifyContent="space-between" css={{ marginTop: '$5', paddingTop: '$4', borderTop: '1px solid $neutral100' }}>
+                              <Box
+                                css={{
+                                  display: 'flex', alignItems: 'center', gap: '$2',
+                                  color: '$neutral500', cursor: 'pointer',
+                                  '&:hover': { color: '$neutral700' },
+                                }}
+                              >
+                                <TagIcon />
+                                <Text css={{ fontSize: '$xs', color: 'inherit', fontWeight: '$5' }}>+ Add Tag</Text>
+                              </Box>
+                              <Flex alignItems="center" gap="$2">
+                                <Box
+                                  css={{
+                                    display: 'flex', alignItems: 'center', gap: '$2',
+                                    color: '$neutral500', cursor: 'pointer',
+                                    '&:hover': { color: '$neutral700' },
+                                  }}
+                                >
+                                  <RecodeIcon />
+                                  <Text css={{ fontSize: '$xs', color: 'inherit' }}>Recode values</Text>
+                                </Box>
+                              </Flex>
+                            </Flex>
+                          </Box>
+                        </TabsContent>
+
+                        {/* Logic Tab */}
+                        <TabsContent value="logic">
+                          <Box css={{ paddingLeft: '$6', paddingRight: '$6', paddingTop: '$8', paddingBottom: '$8', textAlign: 'center' }}>
+                            <Text css={{ fontSize: '$sm', color: '$neutral400' }}>No logic rules added yet.</Text>
+                          </Box>
+                        </TabsContent>
+
+                        {/* Bulk Choices Tab */}
+                        <TabsContent value="bulk">
+                          <Box css={{ paddingLeft: '$6', paddingRight: '$6', paddingTop: '$8', paddingBottom: '$8', textAlign: 'center' }}>
+                            <Text css={{ fontSize: '$sm', color: '$neutral400' }}>Paste bulk choices here.</Text>
+                          </Box>
+                        </TabsContent>
+                      </Tabs>
+                    </Box>
+                  </Box>
+                </Box>
+              </Flex>
+            </Flex>
+          </Flex>
+        </ThemeProvider>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<SurveyBuilder />);
+  </script>
+</body>
+</html>

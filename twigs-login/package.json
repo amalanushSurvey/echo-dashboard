@@ -12,8 +12,10 @@
   "dependencies": {
     "@sparrowengg/twigs-react": "^0.38.0",
     "@sparrowengg/twigs-react-icons": "^0.4.1",
+    "prismjs": "^1.30.0",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "react-simple-code-editor": "^0.14.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
