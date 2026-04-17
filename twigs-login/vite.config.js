@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: '/echo-dashboard/',
+  // Dev at /survey_builder.html; production build keeps the dashboard subpath.
+  base: command === 'serve' ? '/' : '/echo-dashboard/',
   build: {
     rollupOptions: {
       input: {
@@ -14,4 +15,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))
