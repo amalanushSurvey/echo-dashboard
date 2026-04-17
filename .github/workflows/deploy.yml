@@ -1,0 +1,64 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: twigs-login/package-lock.json
+
+      - name: Install dependencies
+        working-directory: twigs-login
+        run: npm ci
+
+      - name: Build
+        working-directory: twigs-login
+        run: npm run build
+
+      - name: Copy static HTML files to dist
+        run: |
+          cp condition_builder.html twigs-login/dist/
+          cp echo_dashboard.html twigs-login/dist/ 2>/dev/null || true
+          cp global_throttling.html twigs-login/dist/ 2>/dev/null || true
+          cp logic_builder.html twigs-login/dist/ 2>/dev/null || true
+          cp survey_level_throttling.html twigs-login/dist/ 2>/dev/null || true
+          cp survey_throttling.html twigs-login/dist/ 2>/dev/null || true
+          cp sample.html twigs-login/dist/ 2>/dev/null || true
+          cp login.html twigs-login/dist/ 2>/dev/null || true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: twigs-login/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
