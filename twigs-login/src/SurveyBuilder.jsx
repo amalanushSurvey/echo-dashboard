@@ -856,7 +856,7 @@ export default function SurveyBuilder() {
 
                 {/* Tabs panel */}
                 <Box css={{ borderTop: '1px solid $neutral100' }}>
-                  <Tabs defaultValue="options">
+                  <Tabs defaultValue="logic">
                     <Flex alignItems="center" justifyContent="space-between" css={{ paddingLeft: '$3', paddingRight: '$4', borderBottom: '1px solid $neutral100' }}>
                       <TabsList css={{ borderBottom: 'none', backgroundColor: 'transparent' }}>
                         <TabsTrigger value="options" css={{ fontSize: '$xs' }}>
