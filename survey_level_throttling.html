@@ -650,6 +650,44 @@
     }
     .btn-drawer-save:hover { background: #0f766e; }
 
+    /* RULES SUBSECTIONS */
+    .rules-subsection { margin-bottom: 4px; }
+    .rules-subsection-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+      display: flex; align-items: center; gap: 7px; margin-bottom: 5px;
+    }
+    .rules-subsection-desc { font-size: 12.5px; color: #6b7280; margin-bottom: 10px; line-height: 1.45; }
+    .rules-subsection-divider { height: 1px; background: #f0f0f0; margin: 16px 0; }
+
+    .label-excl { color: #92400e; }
+    .label-limit { color: #1d4ed8; }
+    .label-dot-excl { width: 8px; height: 8px; border-radius: 50%; background: #fcd34d; flex-shrink: 0; }
+    .label-dot-limit { width: 8px; height: 8px; border-radius: 50%; background: #93c5fd; flex-shrink: 0; }
+
+    .btn-add-excl {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff; border: 1.5px solid #fcd34d; color: #92400e;
+      border-radius: 8px; padding: 7px 16px; font-size: 13px; font-weight: 600;
+      cursor: pointer; margin-top: 6px; transition: background 0.15s;
+    }
+    .btn-add-excl:hover { background: #fffbeb; }
+
+    .btn-add-limit {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff; border: 1.5px solid #93c5fd; color: #1d4ed8;
+      border-radius: 8px; padding: 7px 16px; font-size: 13px; font-weight: 600;
+      cursor: pointer; margin-top: 6px; transition: background 0.15s;
+    }
+    .btn-add-limit:hover { background: #eff6ff; }
+
+    .drawer-type-banner {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;
+      font-size: 13px; font-weight: 600;
+    }
+    .drawer-type-banner.excl { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+    .drawer-type-banner.limit { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
     /* EVAL STEPS INSIDE CARD */
     .eval-steps { display: flex; flex-direction: column; gap: 0; margin-top: 4px; }
     .eval-step-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f3f4f6; }
@@ -782,24 +820,53 @@
           </div>
         </div>
 
-        <!-- UNIFIED RULES SECTION -->
+        <!-- RULES SECTION -->
         <div class="custom-rules-section">
           <div class="custom-rules-header">
             <div class="custom-rules-title">Rules</div>
           </div>
-          <p class="custom-rules-desc">Rules are checked top to bottom — the first one that matches a contact wins. Add custom rules above the default for segments that need different limits or exemptions.</p>
+          <p class="custom-rules-desc">Exclusion rules always take priority. Among limit rules, the most specific match wins. The default applies when nothing else matches.</p>
 
-          <div id="customRulesList">
-            <!-- Custom rules rendered by JS -->
+          <!-- EXCLUSION SUB-SECTION -->
+          <div class="rules-subsection">
+            <div class="rules-subsection-label">
+              <span class="label-dot-excl"></span>
+              <span class="label-excl">Exclusion rules</span>
+            </div>
+            <div class="rules-subsection-desc">Contacts in this group bypass all throttling — invites are sent freely regardless of limits.</div>
+            <div id="exclusionRulesList"></div>
+            <button class="btn-add-excl" id="btnAddExclude" onclick="openRuleDrawer('exclude')">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Exclusion Rule
+            </button>
+            <div id="exclusionDrawerAnchor"></div>
           </div>
 
-          <button class="btn-add-custom-rule" id="btnAddRule" onclick="openRuleDrawer()">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Rule
-          </button>
+          <div class="rules-subsection-divider"></div>
 
-          <!-- INLINE DRAWER -->
+          <!-- CUSTOM LIMIT SUB-SECTION -->
+          <div class="rules-subsection">
+            <div class="rules-subsection-label">
+              <span class="label-dot-limit"></span>
+              <span class="label-limit">Custom limit rules</span>
+            </div>
+            <div class="rules-subsection-desc">Override the default with segment-specific invite limits. The rule with the most conditions wins if multiple match.</div>
+            <div id="limitRulesList"></div>
+            <button class="btn-add-limit" id="btnAddLimit" onclick="openRuleDrawer('limit')">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Limit Rule
+            </button>
+            <div id="limitDrawerAnchor"></div>
+          </div>
+
+          <!-- SHARED INLINE DRAWER (moved to correct anchor by JS) -->
           <div class="rule-drawer" id="ruleDrawer" style="display:none;">
+
+            <!-- Type banner -->
+            <div class="drawer-type-banner" id="drawerTypeBanner">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>
+              <span id="drawerTypeLabel">Exclusion Rule</span>
+            </div>
 
             <!-- Step 1 -->
             <div class="drawer-step-label">
@@ -829,33 +896,6 @@
                   <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   Add condition
                 </button>
-              </div>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="drawer-step-label">
-              <span class="drawer-step-num">3</span> What should happen to matching contacts?
-            </div>
-            <div class="rule-type-options">
-              <div class="rule-type-opt" id="rto-exclude" onclick="selectModalRuleType('exclude')">
-                <div class="rto-radio" id="rto-radio-exclude"></div>
-                <div class="rto-icon rto-icon-excl">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>
-                </div>
-                <div class="rto-text">
-                  <div class="rto-title">Exclude from throttling</div>
-                  <div class="rto-desc">Contacts matching these conditions can receive invites freely — no throttle limits apply.</div>
-                </div>
-              </div>
-              <div class="rule-type-opt" id="rto-limit" onclick="selectModalRuleType('limit')">
-                <div class="rto-radio" id="rto-radio-limit"></div>
-                <div class="rto-icon rto-icon-limit">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
-                </div>
-                <div class="rto-text">
-                  <div class="rto-title">Apply custom throttle limits</div>
-                  <div class="rto-desc">Contacts matching these conditions follow the invite limits you define below instead of the default rule.</div>
-                </div>
               </div>
             </div>
 
@@ -1263,19 +1303,24 @@
 
   // ── Render custom rules ────────────────────────────────
   function renderCustomRules() {
-    const list = document.getElementById('customRulesList');
     const rules = surveyCustomRules[currentSurveyIdx] || [];
+    const exclusionList = document.getElementById('exclusionRulesList');
+    const limitList = document.getElementById('limitRulesList');
 
-    if (rules.length === 0) {
-      list.innerHTML = `
-        <div style="text-align:center;padding:24px 0;color:#9ca3af;font-size:13.5px;
-          border:1.5px dashed #e5e7eb;border-radius:10px;margin-bottom:4px">
-          No custom rules yet. Add one to target specific segments with different limits.
-        </div>`;
-      return;
-    }
+    const exclusions = rules.filter(r => r.ruleType === 'exclude');
+    const limits = rules.filter(r => r.ruleType !== 'exclude');
 
-    list.innerHTML = rules.map(r => {
+    const emptyExcl = `<div style="text-align:center;padding:18px 0;color:#9ca3af;font-size:13px;border:1.5px dashed #fcd34d;border-radius:10px;margin-bottom:4px;">No exclusion rules yet.</div>`;
+    const emptyLimit = `<div style="text-align:center;padding:18px 0;color:#9ca3af;font-size:13px;border:1.5px dashed #93c5fd;border-radius:10px;margin-bottom:4px;">No custom limit rules yet.</div>`;
+
+    if (exclusions.length === 0) { exclusionList.innerHTML = emptyExcl; }
+    else { exclusionList.innerHTML = exclusions.map(r => renderRuleCard(r)).join(''); }
+
+    if (limits.length === 0) { limitList.innerHTML = emptyLimit; }
+    else { limitList.innerHTML = limits.map(r => renderRuleCard(r)).join(''); }
+  }
+
+  function renderRuleCard(r) {
       const condHtml = r.conditions.map(c => {
         const label = c.field === 'survey_var'
           ? `${c.varLabel || c.val} ${c.op} ${c.varVal || ''}`
@@ -1342,7 +1387,6 @@
           </div>
         </div>
       `;
-    }).join('');
   }
 
   function toggleCustomRule(id, checkbox) {
@@ -1373,7 +1417,7 @@
     const rule = rules.find(r => r.id === id);
     if (!rule) return;
     editingRuleId = id;
-    openRuleDrawer(rule);
+    openRuleDrawer(rule.ruleType, rule);
   }
 
   // ── Rule type selection ────────────────────────────────
@@ -1387,7 +1431,7 @@
   }
 
   // ── Drawer ─────────────────────────────────────────────
-  function openRuleDrawer(prefill) {
+  function openRuleDrawer(type, prefill) {
     customCondCount = 0;
     customCondLogic = prefill ? (prefill.logic || 'AND') : 'AND';
 
@@ -1401,8 +1445,14 @@
     pill.querySelector('.logic-btn:nth-child(' + (customCondLogic === 'AND' ? '1' : '2') + ')').classList.add('active');
     document.getElementById('customLogicLabel').textContent = customCondLogic === 'AND' ? 'all' : 'any';
 
-    const ruleType = (prefill && prefill.ruleType) ? prefill.ruleType : 'limit';
+    const ruleType = type || 'limit';
     selectModalRuleType(ruleType);
+
+    // Configure type banner
+    const banner = document.getElementById('drawerTypeBanner');
+    const typeLabel = document.getElementById('drawerTypeLabel');
+    banner.className = 'drawer-type-banner ' + (ruleType === 'exclude' ? 'excl' : 'limit');
+    typeLabel.textContent = ruleType === 'exclude' ? 'Exclusion Rule' : 'Custom Limit Rule';
 
     document.getElementById('mMaxInvites').value = prefill ? (prefill.maxInvites || 5) : 5;
 
@@ -1430,15 +1480,21 @@
 
     if (!prefill) editingRuleId = null;
 
+    // Move drawer to correct anchor
+    const anchor = document.getElementById(ruleType === 'exclude' ? 'exclusionDrawerAnchor' : 'limitDrawerAnchor');
     const drawer = document.getElementById('ruleDrawer');
+    anchor.appendChild(drawer);
     drawer.style.display = 'block';
     drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    document.getElementById('btnAddRule').style.display = 'none';
+
+    document.getElementById('btnAddExclude').style.display = 'none';
+    document.getElementById('btnAddLimit').style.display = 'none';
   }
 
   function closeRuleDrawer() {
     document.getElementById('ruleDrawer').style.display = 'none';
-    document.getElementById('btnAddRule').style.display = '';
+    document.getElementById('btnAddExclude').style.display = '';
+    document.getElementById('btnAddLimit').style.display = '';
     editingRuleId = null;
   }
 
