@@ -1096,22 +1096,9 @@
 
   // ── Custom rules store (per survey index) ──────────────
   const surveyCustomRules = {
-    0: [
-      { id: 1, name: 'Enterprise_segment', enabled: true,
-        logic: 'AND',
-        conditions: [{ field: 'smart_lists', fieldLabel: 'Smart Lists', op: 'is in', val: 'Enterprise' }],
-        maxInvites: 8, interval: '30 days', minGap: 5 }
-    ],
+    0: [],
     1: [],
-    2: [
-      { id: 2, name: 'VIP_contacts', enabled: true,
-        logic: 'OR',
-        conditions: [
-          { field: 'smart_lists', fieldLabel: 'Smart Lists', op: 'is in', val: 'VIP Customers' },
-          { field: 'channel', fieldLabel: 'Channel', op: 'is', val: 'Email' }
-        ],
-        maxInvites: 10, interval: '90 days', minGap: 7 }
-    ],
+    2: [],
     3: []
   };
   let ruleIdCounter = 100;
