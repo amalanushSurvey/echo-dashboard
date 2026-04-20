@@ -614,11 +614,30 @@
       transition: background 0.2s;
     }
 
-    /* INLINE DRAWER */
-    .rule-drawer {
-      background: #f9fafb; border: 1.5px solid #e5e7eb;
-      border-radius: 10px; padding: 20px 22px; margin-top: 12px;
+    /* RULE MODAL */
+    .rule-modal-overlay {
+      position: fixed; inset: 0; background: rgba(17,24,39,0.45);
+      z-index: 500; display: flex; align-items: center; justify-content: center;
+      padding: 24px 16px;
     }
+    .rule-drawer {
+      background: #fff; border-radius: 14px;
+      width: 100%; max-width: 540px; max-height: calc(100vh - 48px);
+      overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      display: flex; flex-direction: column;
+    }
+    .rule-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px 0; flex-shrink: 0;
+    }
+    .rule-modal-title { font-size: 16px; font-weight: 700; color: #111827; }
+    .rule-modal-close {
+      width: 30px; height: 30px; border: none; background: none; cursor: pointer;
+      color: #9ca3af; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+      transition: background 0.12s, color 0.12s;
+    }
+    .rule-modal-close:hover { background: #f3f4f6; color: #374151; }
+    .rule-modal-body { padding: 16px 22px; flex: 1; }
     .drawer-step-label {
       display: flex; align-items: center; gap: 7px;
       font-size: 12px; font-weight: 600; color: #374151;
@@ -633,8 +652,8 @@
     }
     .drawer-footer {
       display: flex; align-items: center; justify-content: flex-end;
-      gap: 8px; margin-top: 18px; padding-top: 16px;
-      border-top: 1px solid #e9ecf0;
+      gap: 8px; padding: 16px 22px;
+      border-top: 1px solid #e9ecf0; flex-shrink: 0;
     }
     .btn-drawer-cancel {
       padding: 8px 18px; border: 1px solid #e5e7eb; border-radius: 8px;
@@ -859,14 +878,21 @@
             <div id="limitDrawerAnchor"></div>
           </div>
 
-          <!-- SHARED INLINE DRAWER (moved to correct anchor by JS) -->
-          <div class="rule-drawer" id="ruleDrawer" style="display:none;">
+          <!-- RULE MODAL POPUP -->
+          <div class="rule-modal-overlay" id="ruleDrawer" style="display:none;" onclick="if(event.target===this)closeRuleDrawer()">
+            <div class="rule-drawer">
 
-            <!-- Type banner -->
-            <div class="drawer-type-banner" id="drawerTypeBanner">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>
-              <span id="drawerTypeLabel">Exclusion Rule</span>
+            <div class="rule-modal-header">
+              <div>
+                <div class="rule-modal-title" id="drawerTypeLabel">Add Exclusion Rule</div>
+                <div id="drawerTypeBanner" style="margin-top:4px;"></div>
+              </div>
+              <button class="rule-modal-close" onclick="closeRuleDrawer()" title="Close">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
             </div>
+
+            <div class="rule-modal-body">
 
             <!-- Step 1 -->
             <div class="drawer-step-label">
@@ -959,11 +985,14 @@
               </div>
             </div>
 
+            </div><!-- /rule-modal-body -->
+
             <div class="drawer-footer">
               <button class="btn-drawer-cancel" onclick="closeRuleDrawer()">Cancel</button>
               <button class="btn-drawer-save" onclick="saveCustomRule()">Save Rule</button>
             </div>
-          </div><!-- /ruleDrawer -->
+            </div><!-- /rule-drawer -->
+          </div><!-- /rule-modal-overlay -->
 
           <!-- DEFAULT RULE — pinned last, non-deletable -->
           <div class="custom-rule-item" id="defaultRuleCard" style="border-color:#86efac;background:#f0fdf4;margin-top:8px;">
@@ -1446,11 +1475,9 @@
     const ruleType = type || 'limit';
     selectModalRuleType(ruleType);
 
-    // Configure type banner
-    const banner = document.getElementById('drawerTypeBanner');
-    const typeLabel = document.getElementById('drawerTypeLabel');
-    banner.className = 'drawer-type-banner ' + (ruleType === 'exclude' ? 'excl' : 'limit');
-    typeLabel.textContent = ruleType === 'exclude' ? 'Exclusion Rule' : 'Custom Limit Rule';
+    // Set modal title
+    document.getElementById('drawerTypeLabel').textContent =
+      (editingRuleId !== null ? 'Edit' : 'Add') + (ruleType === 'exclude' ? ' Exclusion Rule' : ' Custom Limit Rule');
 
     document.getElementById('mMaxInvites').value = prefill ? (prefill.maxInvites || 5) : 5;
 
@@ -1478,21 +1505,11 @@
 
     if (!prefill) editingRuleId = null;
 
-    // Move drawer to correct anchor
-    const anchor = document.getElementById(ruleType === 'exclude' ? 'exclusionDrawerAnchor' : 'limitDrawerAnchor');
-    const drawer = document.getElementById('ruleDrawer');
-    anchor.appendChild(drawer);
-    drawer.style.display = 'block';
-    drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-    document.getElementById('btnAddExclude').style.display = 'none';
-    document.getElementById('btnAddLimit').style.display = 'none';
+    document.getElementById('ruleDrawer').style.display = 'flex';
   }
 
   function closeRuleDrawer() {
     document.getElementById('ruleDrawer').style.display = 'none';
-    document.getElementById('btnAddExclude').style.display = '';
-    document.getElementById('btnAddLimit').style.display = '';
     editingRuleId = null;
   }
 
