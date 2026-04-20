@@ -758,7 +758,7 @@
             </select>
           </div>
           <div class="scope-example-box" id="scopeExampleBox">
-            John can receive max 2 invites in 30 days — regardless of how many tickets he raises.
+            <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;margin-right:6px;">e.g.</span>John can receive max 2 invites in 30 days — regardless of how many tickets he raises.
           </div>
         </div>
 
@@ -1213,7 +1213,7 @@
 
   function updateScopeExample() {
     const v = document.getElementById('scopeSelect').value;
-    document.getElementById('scopeExampleBox').textContent = scopeExamples[v] || scopeExamples.contact;
+    document.getElementById('scopeExampleBox').innerHTML = '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;margin-right:6px;">e.g.</span>' + (scopeExamples[v] || scopeExamples.contact);
   }
 
   // ── Survey-level throttling toggle ────────────────────
