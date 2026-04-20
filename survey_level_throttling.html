@@ -1425,8 +1425,6 @@
 
   function selectModalRuleType(type) {
     selectedModalRuleType = type;
-    document.getElementById('rto-exclude').classList.toggle('selected', type === 'exclude');
-    document.getElementById('rto-limit').classList.toggle('selected', type === 'limit');
     document.getElementById('throttleLimitsSection').style.display = type === 'limit' ? 'block' : 'none';
   }
 
