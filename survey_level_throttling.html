@@ -746,17 +746,37 @@
 
         <!-- INVITE SCOPE SELECTOR -->
         <div style="margin-bottom:20px;">
-          <div style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">How should invites be counted?</div>
-          <div class="select-wrap" style="display:block;">
-            <select class="select-styled" id="scopeSelect" onchange="updateScopeExample()" style="width:100%;max-width:340px;">
-              <option value="contact">Per contact (overall)</option>
-              <option value="ticket">Per contact + Ticket ID</option>
-              <option value="order">Per contact + Order ID</option>
-              <option value="session">Per contact + Session ID</option>
-              <option value="case">Per contact + Case Number</option>
-              <option value="product">Per contact + Product SKU</option>
-            </select>
+          <div style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">How should invites be counted?</div>
+
+          <!-- Step 1: toggle mode -->
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <div id="scopeOptContact" onclick="setScopeMode('contact')"
+              style="flex:1;border:1.5px solid #0d9488;background:#f0fdfa;border-radius:9px;padding:10px 14px;cursor:pointer;transition:all .15s;">
+              <div style="font-size:13px;font-weight:600;color:#0f766e;margin-bottom:2px;">Per contact</div>
+              <div style="font-size:12px;color:#6b7280;">Limit applies across all interactions</div>
+            </div>
+            <div id="scopeOptVariable" onclick="setScopeMode('variable')"
+              style="flex:1;border:1.5px solid #e5e7eb;background:#fff;border-radius:9px;padding:10px 14px;cursor:pointer;transition:all .15s;">
+              <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:2px;">Per contact + variable</div>
+              <div style="font-size:12px;color:#6b7280;">Limit resets for each variable value</div>
+            </div>
           </div>
+
+          <!-- Step 2: variable picker (shown only in variable mode) -->
+          <div id="variablePickerRow" style="display:none;align-items:center;gap:10px;margin-bottom:10px;">
+            <span style="font-size:12.5px;color:#374151;white-space:nowrap;">Count per contact +</span>
+            <div class="select-wrap" style="flex:1;max-width:220px;">
+              <select class="select-styled" id="scopeVariableSelect" onchange="updateScopeExample()" style="width:100%;">
+                <option value="ticket">Ticket ID</option>
+                <option value="order">Order ID</option>
+                <option value="session">Session ID</option>
+                <option value="case">Case Number</option>
+                <option value="product">Product SKU</option>
+              </select>
+              <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+
           <div class="scope-example-box" id="scopeExampleBox">
             <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;margin-right:6px;">e.g.</span>John can receive max 2 invites in 30 days — regardless of how many tickets he raises.
           </div>
@@ -1201,7 +1221,7 @@
   // ── Scenario switcher ─────────────────────────────────
   let currentScenario = 1;
 
-  // ── Scope dropdown examples ────────────────────────────
+  // ── Scope two-step UI ─────────────────────────────────
   const scopeExamples = {
     contact: 'John can receive max 2 invites in 30 days — regardless of how many tickets he raises.',
     ticket:  'John won\'t get more than 1 invite for Ticket #101, but can still get one for Ticket #102.',
@@ -1211,9 +1231,35 @@
     product: 'John won\'t get more than 1 invite for Product SKU-A, but can still get one for SKU-B.'
   };
 
+  let scopeMode = 'contact';
+
+  function setScopeMode(mode) {
+    scopeMode = mode;
+    const isVar = mode === 'variable';
+
+    const optContact  = document.getElementById('scopeOptContact');
+    const optVariable = document.getElementById('scopeOptVariable');
+    const picker      = document.getElementById('variablePickerRow');
+
+    optContact.style.border    = isVar ? '1.5px solid #e5e7eb' : '1.5px solid #0d9488';
+    optContact.style.background = isVar ? '#fff' : '#f0fdfa';
+    optContact.querySelector('div').style.color = isVar ? '#374151' : '#0f766e';
+
+    optVariable.style.border    = isVar ? '1.5px solid #0d9488' : '1.5px solid #e5e7eb';
+    optVariable.style.background = isVar ? '#f0fdfa' : '#fff';
+    optVariable.querySelector('div').style.color = isVar ? '#0f766e' : '#374151';
+
+    picker.style.display = isVar ? 'flex' : 'none';
+    updateScopeExample();
+  }
+
   function updateScopeExample() {
-    const v = document.getElementById('scopeSelect').value;
-    document.getElementById('scopeExampleBox').innerHTML = '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;margin-right:6px;">e.g.</span>' + (scopeExamples[v] || scopeExamples.contact);
+    const key = scopeMode === 'variable'
+      ? (document.getElementById('scopeVariableSelect').value || 'ticket')
+      : 'contact';
+    document.getElementById('scopeExampleBox').innerHTML =
+      '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#9ca3af;margin-right:6px;">e.g.</span>'
+      + scopeExamples[key];
   }
 
   // ── Survey-level throttling toggle ────────────────────
