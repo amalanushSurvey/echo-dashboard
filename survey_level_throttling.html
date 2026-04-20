@@ -782,80 +782,20 @@
           </div>
         </div>
 
-        <!-- DEFAULT RULE BLOCK (merged with min gap) -->
-        <div class="rule-block rule-active" id="defaultRuleBlock">
-          <div class="rule-block-header">
-            <div class="rule-text">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-                <div class="rule-title" style="margin:0;">Default Rule</div>
-                <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:#f0fdf4;color:#059669;border:1px solid #86efac;border-radius:999px;padding:2px 8px;flex-shrink:0;">Fallback for all contacts</span>
-              </div>
-              <div class="rule-desc">Applied when no custom rule matches a contact. Set the baseline invite frequency here.</div>
-            </div>
-          </div>
-          <div class="rule-body" id="defaultRuleBody">
-            <div class="rule-control">
-              <div class="rule-control-label">Max Invites</div>
-              <div class="stepper">
-                <button class="stepper-btn" onclick="stepperChange('defMaxInvites',-1)">&#8722;</button>
-                <input class="stepper-val" id="defMaxInvites" type="number" value="3" min="1">
-                <button class="stepper-btn" onclick="stepperChange('defMaxInvites',1)">+</button>
-              </div>
-            </div>
-            <div class="rule-control">
-              <div class="rule-control-label">Time Interval</div>
-              <div class="select-wrap">
-                <select class="select-styled" id="defInterval">
-                  <option value="7">Every 7 days</option>
-                  <option value="30" selected>Every 30 days</option>
-                  <option value="60">Every 60 days</option>
-                  <option value="90">Every 90 days</option>
-                </select>
-                <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-              </div>
-            </div>
-          </div>
-          <!-- MIN GAP — nested inside default rule card -->
-          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed #e5e7eb;" id="minGapBlock">
-            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
-              <div>
-                <div style="font-size:12px;font-weight:600;color:#374151;display:flex;align-items:center;gap:6px;">
-                  Minimum Gap Between Invites
-                  <span style="font-size:10px;font-weight:600;text-transform:uppercase;background:#f3f4f6;color:#9ca3af;border:1px solid #e5e7eb;border-radius:4px;padding:1px 6px;">Optional</span>
-                </div>
-                <div style="font-size:12px;color:#9ca3af;margin-top:2px;line-height:1.4;">Minimum days that must pass between two invites, regardless of the window count.</div>
-              </div>
-              <label class="toggle" title="Toggle minimum gap" style="flex-shrink:0;margin-top:2px;">
-                <input type="checkbox" id="minGapToggle" checked onchange="toggleMinGap(this)">
-                <div class="toggle-track"></div>
-                <div class="toggle-thumb"></div>
-              </label>
-            </div>
-            <div id="minGapBody" style="display:flex;align-items:center;gap:10px;margin-top:12px;">
-              <div class="stepper">
-                <button class="stepper-btn" onclick="stepperChange('defMinGap',-1)">&#8722;</button>
-                <input class="stepper-val" id="defMinGap" type="number" value="7" min="1">
-                <button class="stepper-btn" onclick="stepperChange('defMinGap',1)">+</button>
-              </div>
-              <span style="font-size:13px;color:#6b7280;">days</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- CUSTOM RULES SECTION -->
+        <!-- UNIFIED RULES SECTION -->
         <div class="custom-rules-section">
           <div class="custom-rules-header">
-            <div class="custom-rules-title">Custom Rules <span style="font-size:12px;font-weight:500;color:#9ca3af;margin-left:4px;">— optional overrides</span></div>
+            <div class="custom-rules-title">Rules</div>
           </div>
-          <p class="custom-rules-desc">Add rules for segments that need different limits or full exemptions. Each rule has <strong>conditions</strong> (who it targets) and an <strong>action</strong> (exclude from throttling, or apply custom limits). If a contact matches multiple rules, the most specific one wins.</p>
+          <p class="custom-rules-desc">Rules are checked top to bottom — the first one that matches a contact wins. Add custom rules above the default for segments that need different limits or exemptions.</p>
 
           <div id="customRulesList">
-            <!-- Rendered by JS -->
+            <!-- Custom rules rendered by JS -->
           </div>
 
           <button class="btn-add-custom-rule" id="btnAddRule" onclick="openRuleDrawer()">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Custom Rule
+            Add Rule
           </button>
 
           <!-- INLINE DRAWER -->
@@ -985,32 +925,77 @@
             </div>
           </div><!-- /ruleDrawer -->
 
-          <!-- EVALUATION ORDER — inside custom rules card -->
-          <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f3f4f6;">
-            <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">How rules are evaluated (first match wins)</div>
-            <div class="eval-steps">
-              <div class="eval-step-row">
-                <div class="eval-badge-sm ebadge-excl">1</div>
-                <div>
-                  <div style="font-size:13px;font-weight:600;color:#111827;">Exclusion rules</div>
-                  <div style="font-size:12px;color:#6b7280;margin-top:1px;">Contact is exempt — invite sent freely</div>
+          <!-- DEFAULT RULE — pinned last, non-deletable -->
+          <div class="custom-rule-item" id="defaultRuleCard" style="border-color:#86efac;background:#f0fdf4;margin-top:8px;">
+            <div class="cri-header">
+              <div class="cri-left">
+                <span style="display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;color:#059669;border:1px solid #86efac;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 9px;flex-shrink:0;">
+                  Default
+                </span>
+                <span class="cri-name" style="color:#374151;">All contacts</span>
+              </div>
+              <div class="cri-actions" style="gap:8px;">
+                <span style="font-size:11px;color:#9ca3af;display:flex;align-items:center;gap:4px;">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                  Always last
+                </span>
+              </div>
+            </div>
+            <div class="cri-body" style="margin-top:14px;">
+              <div style="font-size:12px;color:#6b7280;margin-bottom:14px;font-style:italic;">
+                Fallback — applies when no rule above matches a contact.
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:20px;margin-bottom:14px;">
+                <div class="rule-control">
+                  <div class="rule-control-label">Max Invites</div>
+                  <div class="stepper">
+                    <button class="stepper-btn" onclick="stepperChange('defMaxInvites',-1)">&#8722;</button>
+                    <input class="stepper-val" id="defMaxInvites" type="number" value="3" min="1">
+                    <button class="stepper-btn" onclick="stepperChange('defMaxInvites',1)">+</button>
+                  </div>
+                </div>
+                <div class="rule-control">
+                  <div class="rule-control-label">Time Interval</div>
+                  <div class="select-wrap">
+                    <select class="select-styled" id="defInterval">
+                      <option value="7">Every 7 days</option>
+                      <option value="30" selected>Every 30 days</option>
+                      <option value="60">Every 60 days</option>
+                      <option value="90">Every 90 days</option>
+                    </select>
+                    <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                  </div>
                 </div>
               </div>
-              <div class="eval-step-row">
-                <div class="eval-badge-sm ebadge-custom">2</div>
-                <div>
-                  <div style="font-size:13px;font-weight:600;color:#111827;">Custom limit rules</div>
-                  <div style="font-size:12px;color:#6b7280;margin-top:1px;">Most specific rule wins if multiple match</div>
+              <div style="padding-top:12px;border-top:1px dashed #bbf7d0;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                  <div>
+                    <div style="font-size:12px;font-weight:600;color:#374151;display:flex;align-items:center;gap:6px;">
+                      Minimum Gap Between Invites
+                      <span style="font-size:10px;font-weight:600;text-transform:uppercase;background:#f3f4f6;color:#9ca3af;border:1px solid #e5e7eb;border-radius:4px;padding:1px 6px;">Optional</span>
+                    </div>
+                    <div style="font-size:12px;color:#9ca3af;margin-top:2px;line-height:1.4;">Minimum days between two invites, regardless of window count.</div>
+                  </div>
+                  <label class="toggle" title="Toggle minimum gap" style="flex-shrink:0;margin-top:2px;">
+                    <input type="checkbox" id="minGapToggle" checked onchange="toggleMinGap(this)">
+                    <div class="toggle-track"></div>
+                    <div class="toggle-thumb"></div>
+                  </label>
                 </div>
-              </div>
-              <div class="eval-step-row">
-                <div class="eval-badge-sm ebadge-default">3</div>
-                <div>
-                  <div style="font-size:13px;font-weight:600;color:#111827;">Default rule</div>
-                  <div style="font-size:12px;color:#6b7280;margin-top:1px;">Fallback if no custom rule matches</div>
+                <div id="minGapBody" style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+                  <div class="stepper">
+                    <button class="stepper-btn" onclick="stepperChange('defMinGap',-1)">&#8722;</button>
+                    <input class="stepper-val" id="defMinGap" type="number" value="7" min="1">
+                    <button class="stepper-btn" onclick="stepperChange('defMinGap',1)">+</button>
+                  </div>
+                  <span style="font-size:13px;color:#6b7280;">days</span>
                 </div>
               </div>
             </div>
+          </div><!-- /defaultRuleCard -->
+
+          <div style="margin-top:10px;font-size:12px;color:#9ca3af;text-align:center;">
+            Rules above are checked first — the default is the final fallback.
           </div>
         </div>
 
