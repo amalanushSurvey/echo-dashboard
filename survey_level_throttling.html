@@ -602,6 +602,62 @@
       .main { padding: 20px 16px; }
       .sidebar { display: none; }
     }
+
+    /* LOCKED OVERLAY */
+    .config-locked { opacity: 0.45; pointer-events: none; user-select: none; transition: opacity 0.2s; }
+
+    /* SCOPE EXAMPLE BOX */
+    .scope-example-box {
+      font-size: 12.5px; color: #374151; background: #f9fafb;
+      border: 1px solid #e5e7eb; border-radius: 8px;
+      padding: 9px 12px; margin-top: 10px; line-height: 1.5;
+      transition: background 0.2s;
+    }
+
+    /* INLINE DRAWER */
+    .rule-drawer {
+      background: #f9fafb; border: 1.5px solid #e5e7eb;
+      border-radius: 10px; padding: 20px 22px; margin-top: 12px;
+    }
+    .drawer-step-label {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 12px; font-weight: 600; color: #374151;
+      margin-bottom: 8px; margin-top: 18px;
+    }
+    .drawer-step-label:first-of-type { margin-top: 0; }
+    .drawer-step-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #0d9488; color: #fff;
+      font-size: 10px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .drawer-footer {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 8px; margin-top: 18px; padding-top: 16px;
+      border-top: 1px solid #e9ecf0;
+    }
+    .btn-drawer-cancel {
+      padding: 8px 18px; border: 1px solid #e5e7eb; border-radius: 8px;
+      background: #fff; color: #374151; font-size: 13.5px; cursor: pointer;
+      transition: background 0.12s;
+    }
+    .btn-drawer-cancel:hover { background: #f9fafb; }
+    .btn-drawer-save {
+      padding: 8px 20px; border: none; border-radius: 8px;
+      background: #0d9488; color: #fff; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+      box-shadow: 0 1px 3px rgba(13,148,136,0.25);
+    }
+    .btn-drawer-save:hover { background: #0f766e; }
+
+    /* EVAL STEPS INSIDE CARD */
+    .eval-steps { display: flex; flex-direction: column; gap: 0; margin-top: 4px; }
+    .eval-step-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f3f4f6; }
+    .eval-step-row:last-child { border-bottom: none; }
+    .eval-badge-sm { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .ebadge-excl { background: #fef3c7; color: #92400e; }
+    .ebadge-custom { background: #eff6ff; color: #1d4ed8; }
+    .ebadge-default { background: #f3f4f6; color: #6b7280; }
   </style>
 </head>
 <body>
@@ -680,48 +736,29 @@
       </div>
       <p class="section-desc">Override global throttling with rules specific to this survey. Custom rules take priority over the default — the most targeted rule always wins.</p>
 
-      <!-- Using default block (shown when toggle OFF) -->
-      <div class="using-default-block" id="usingDefaultBlock" style="display:none">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-        <span>Survey-level throttling is off — global account throttling rules apply to this survey. Enable the toggle to configure custom rules.</span>
+      <!-- Status line -->
+      <div id="toggleStatusLine" style="font-size:12.5px;color:#6b7280;margin-bottom:16px;display:none;">
+        Off — global account throttling rules apply. Enable the toggle above to configure custom rules for this survey.
       </div>
 
-      <!-- Override panel (shown when override ON) -->
+      <!-- Override panel — locked when toggle OFF -->
       <div id="overridePanel">
 
-        <!-- LIMIT BY SELECTOR -->
-        <div class="limit-by-section">
-          <div style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">
-            How should invites be counted?
+        <!-- INVITE SCOPE SELECTOR -->
+        <div style="margin-bottom:20px;">
+          <div style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">How should invites be counted?</div>
+          <div class="select-wrap" style="display:block;">
+            <select class="select-styled" id="scopeSelect" onchange="updateScopeExample()" style="width:100%;max-width:340px;">
+              <option value="contact">Per contact (overall)</option>
+              <option value="ticket">Per contact + Ticket ID</option>
+              <option value="order">Per contact + Order ID</option>
+              <option value="session">Per contact + Session ID</option>
+              <option value="case">Per contact + Case Number</option>
+              <option value="product">Per contact + Product SKU</option>
+            </select>
           </div>
-          <div class="limit-by-cb-row" id="limitByVarRow" onclick="toggleLimitByVariable()">
-            <div class="limit-by-cb" id="limitByVarCb">
-              <svg width="10" height="10" fill="none" stroke="#fff" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-            </div>
-            <div class="limit-by-cb-body">
-              <div class="limit-by-cb-title">
-                <svg width="13" height="13" fill="none" stroke="#6d28d9" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="17" r="3"/></svg>
-                Count per contact + variable (e.g. per ticket)
-              </div>
-              <div class="limit-by-cb-desc">By default, limits apply per contact across all interactions. Enable this to scope the limit to a specific variable — so the same contact can receive invites for each unique ticket, order, or case separately.</div>
-            </div>
-          </div>
-
-          <!-- Variable selector (shown when checkbox is checked) -->
-          <div class="variable-select-row" id="variableSelectRow" style="display:none;">
-            <svg width="15" height="15" fill="none" stroke="#6d28d9" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7"/><circle cx="18" cy="17" r="3"/></svg>
-            <span class="variable-select-label">Select variable</span>
-            <div class="variable-select-wrap">
-              <select id="limitByVariableSelect">
-                <option value="">— Choose a variable —</option>
-                <option value="ticket_id">Ticket ID</option>
-                <option value="order_id">Order ID</option>
-                <option value="session_id">Session ID</option>
-                <option value="case_number">Case Number</option>
-                <option value="product_sku">Product SKU</option>
-              </select>
-              <svg class="variable-select-chevron" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
+          <div class="scope-example-box" id="scopeExampleBox">
+            John can receive max 2 invites in 30 days — regardless of how many tickets he raises.
           </div>
         </div>
 
@@ -790,37 +827,171 @@
           <div class="custom-rules-header">
             <div class="custom-rules-title">Custom Rules <span style="font-size:12px;font-weight:500;color:#9ca3af;margin-left:4px;">— optional overrides</span></div>
           </div>
-          <p class="custom-rules-desc">Add rules for segments that need different limits or full exemptions. Each rule has <strong>conditions</strong> (who it targets) and an <strong>action</strong> (exclude from throttling, or apply custom limits). If a contact matches multiple rules, the one with the most specific conditions wins.</p>
+          <p class="custom-rules-desc">Add rules for segments that need different limits or full exemptions. Each rule has <strong>conditions</strong> (who it targets) and an <strong>action</strong> (exclude from throttling, or apply custom limits). If a contact matches multiple rules, the most specific one wins.</p>
 
           <div id="customRulesList">
             <!-- Rendered by JS -->
           </div>
 
-          <button class="btn-add-custom-rule" onclick="openCustomRuleModal()">
+          <button class="btn-add-custom-rule" id="btnAddRule" onclick="openRuleDrawer()">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add Custom Rule
           </button>
-        </div>
 
-        <!-- PRIORITY ORDER -->
-        <div style="margin-top:20px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px 18px;">
-          <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">How rules are evaluated (first match wins)</div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span style="display:inline-flex;align-items:center;gap:5px;background:#fef3c7;color:#92400e;border:1px solid #fcd34d;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;">
-              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>
-              Exclusion rule
-            </span>
-            <svg width="14" height="14" fill="none" stroke="#d1d5db" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-            <span style="display:inline-flex;align-items:center;gap:5px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;">
-              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
-              Custom limit rule
-            </span>
-            <svg width="14" height="14" fill="none" stroke="#d1d5db" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-            <span style="display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;color:#059669;border:1px solid #86efac;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600;">
-              Default rule
-            </span>
+          <!-- INLINE DRAWER -->
+          <div class="rule-drawer" id="ruleDrawer" style="display:none;">
+
+            <!-- Step 1 -->
+            <div class="drawer-step-label">
+              <span class="drawer-step-num">1</span> Rule name
+            </div>
+            <div class="field-group" style="margin-bottom:0;">
+              <input class="field-input" id="customRuleName" type="text" placeholder="e.g. Enterprise_contacts" oninput="validateCustomRuleName(this)">
+              <div class="field-error" id="customRuleNameError">Only letters, numbers, and underscores. Must be unique.</div>
+              <div class="field-hint">Use underscores instead of spaces (e.g. VIP_segment)</div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="drawer-step-label">
+              <span class="drawer-step-num">2</span> Who does this rule apply to?
+            </div>
+            <div class="cond-group">
+              <div class="cond-group-header">
+                <div class="logic-pill" id="customLogicPill">
+                  <button class="logic-btn active" onclick="setCustomLogic('AND',this)">AND</button>
+                  <button class="logic-btn" onclick="setCustomLogic('OR',this)">OR</button>
+                </div>
+                <span class="cond-group-label">Match <span id="customLogicLabel">all</span> conditions</span>
+              </div>
+              <div class="cond-rows" id="customCondRows"></div>
+              <div class="cond-footer">
+                <button class="btn-add-cond" onclick="addCustomCondRow()">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Add condition
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="drawer-step-label">
+              <span class="drawer-step-num">3</span> What should happen to matching contacts?
+            </div>
+            <div class="rule-type-options">
+              <div class="rule-type-opt" id="rto-exclude" onclick="selectModalRuleType('exclude')">
+                <div class="rto-radio" id="rto-radio-exclude"></div>
+                <div class="rto-icon rto-icon-excl">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/></svg>
+                </div>
+                <div class="rto-text">
+                  <div class="rto-title">Exclude from throttling</div>
+                  <div class="rto-desc">Contacts matching these conditions can receive invites freely — no throttle limits apply.</div>
+                </div>
+              </div>
+              <div class="rule-type-opt" id="rto-limit" onclick="selectModalRuleType('limit')">
+                <div class="rto-radio" id="rto-radio-limit"></div>
+                <div class="rto-icon rto-icon-limit">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+                </div>
+                <div class="rto-text">
+                  <div class="rto-title">Apply custom throttle limits</div>
+                  <div class="rto-desc">Contacts matching these conditions follow the invite limits you define below instead of the default rule.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Throttle limits (limit type only) -->
+            <div id="throttleLimitsSection" style="display:none;">
+              <div style="height:1px;background:#f3f4f6;margin:16px 0;"></div>
+              <div class="modal-section-label">Throttle limits for matching contacts</div>
+              <div class="modal-limits">
+                <div class="modal-limits-row1">
+                  <div class="rule-control">
+                    <div class="rule-control-label">Max Invites</div>
+                    <div class="stepper">
+                      <button class="stepper-btn" onclick="stepperChange('mMaxInvites',-1)">&#8722;</button>
+                      <input class="stepper-val" id="mMaxInvites" type="number" value="5" min="1">
+                      <button class="stepper-btn" onclick="stepperChange('mMaxInvites',1)">+</button>
+                    </div>
+                  </div>
+                  <div class="rule-control">
+                    <div class="rule-control-label">Time Interval</div>
+                    <div class="select-wrap">
+                      <select class="select-styled" id="mInterval" onchange="handleIntervalChange(this)">
+                        <option value="7">Every 7 days</option>
+                        <option value="30" selected>Every 30 days</option>
+                        <option value="60">Every 60 days</option>
+                        <option value="90">Every 90 days</option>
+                        <option value="custom">Custom days...</option>
+                      </select>
+                      <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                    <div id="customIntervalWrap" class="custom-interval-wrap">
+                      <input type="number" id="mIntervalCustom" min="1" value="45" placeholder="Days">
+                      <span class="custom-interval-unit">days</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-mingap-section" style="width:100%;">
+                  <div class="modal-mingap-header">
+                    <div class="modal-mingap-header-left">
+                      <div class="rule-control-label" style="display:flex;align-items:center;">
+                        Minimum Gap Between Invites
+                        <span class="optional-badge">Optional</span>
+                      </div>
+                      <div class="modal-mingap-hint">Minimum days that must pass between two invites for the same contact.</div>
+                    </div>
+                    <label class="toggle" style="flex-shrink:0;margin-top:2px;">
+                      <input type="checkbox" id="mMinGapEnabled" onchange="handleMinGapToggle(this)">
+                      <span class="toggle-track"></span>
+                    </label>
+                  </div>
+                  <div id="mMinGapSection" style="display:none;margin-top:12px;">
+                    <div class="modal-mingap-stepper">
+                      <div class="stepper">
+                        <button class="stepper-btn" onclick="stepperChange('mMinGap',-1)">&#8722;</button>
+                        <input class="stepper-val" id="mMinGap" type="number" value="3" min="1">
+                        <button class="stepper-btn" onclick="stepperChange('mMinGap',1)">+</button>
+                      </div>
+                      <span class="modal-mingap-unit">days</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="drawer-footer">
+              <button class="btn-drawer-cancel" onclick="closeRuleDrawer()">Cancel</button>
+              <button class="btn-drawer-save" onclick="saveCustomRule()">Save Rule</button>
+            </div>
+          </div><!-- /ruleDrawer -->
+
+          <!-- EVALUATION ORDER — inside custom rules card -->
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid #f3f4f6;">
+            <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">How rules are evaluated (first match wins)</div>
+            <div class="eval-steps">
+              <div class="eval-step-row">
+                <div class="eval-badge-sm ebadge-excl">1</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:#111827;">Exclusion rules</div>
+                  <div style="font-size:12px;color:#6b7280;margin-top:1px;">Contact is exempt — invite sent freely</div>
+                </div>
+              </div>
+              <div class="eval-step-row">
+                <div class="eval-badge-sm ebadge-custom">2</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:#111827;">Custom limit rules</div>
+                  <div style="font-size:12px;color:#6b7280;margin-top:1px;">Most specific rule wins if multiple match</div>
+                </div>
+              </div>
+              <div class="eval-step-row">
+                <div class="eval-badge-sm ebadge-default">3</div>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:#111827;">Default rule</div>
+                  <div style="font-size:12px;color:#6b7280;margin-top:1px;">Fallback if no custom rule matches</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div style="font-size:11.5px;color:#9ca3af;margin-top:8px;">Among custom rules, the one with the most conditions (most targeted) wins.</div>
         </div>
 
       </div><!-- /overridePanel -->
@@ -900,184 +1071,6 @@
   </aside>
 
   </main>
-</div>
-
-<!-- CUSTOM RULE MODAL -->
-<div class="modal-backdrop" id="customRuleModal">
-  <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="customModalTitle">Add Custom Rule</div>
-        <div class="modal-subtitle">Define conditions and throttle limits for a specific contact segment.</div>
-      </div>
-      <button class="modal-close" onclick="closeCustomRuleModal()">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-
-    <!-- Step progress -->
-    <div style="display:flex;align-items:center;gap:0;padding:14px 28px 0;background:#fafafa;border-bottom:1px solid #f3f4f6;">
-      <div style="display:flex;align-items:center;gap:6px;flex:1;padding-bottom:14px;">
-        <div style="width:22px;height:22px;border-radius:50%;background:#0d9488;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
-        <span style="font-size:12px;font-weight:600;color:#0d9488;">Name it</span>
-      </div>
-      <div style="width:24px;height:1px;background:#e5e7eb;flex-shrink:0;margin-bottom:14px;"></div>
-      <div style="display:flex;align-items:center;gap:6px;flex:1;padding-bottom:14px;padding-left:6px;">
-        <div style="width:22px;height:22px;border-radius:50%;background:#e5e7eb;color:#6b7280;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
-        <span style="font-size:12px;font-weight:600;color:#9ca3af;">Who it applies to</span>
-      </div>
-      <div style="width:24px;height:1px;background:#e5e7eb;flex-shrink:0;margin-bottom:14px;"></div>
-      <div style="display:flex;align-items:center;gap:6px;flex:1;padding-bottom:14px;padding-left:6px;">
-        <div style="width:22px;height:22px;border-radius:50%;background:#e5e7eb;color:#6b7280;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
-        <span style="font-size:12px;font-weight:600;color:#9ca3af;">What happens</span>
-      </div>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- Step 1: Rule Name -->
-      <div class="field-group">
-        <label class="field-label" for="customRuleName" style="display:flex;align-items:center;gap:7px;">
-          <span style="width:20px;height:20px;border-radius:50%;background:#0d9488;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
-          Rule Name
-        </label>
-        <input class="field-input" id="customRuleName" type="text" placeholder="e.g. Enterprise_contacts"
-          oninput="validateCustomRuleName(this)">
-        <div class="field-error" id="customRuleNameError">Only letters, numbers, and underscores. Must be unique.</div>
-        <div class="field-hint">Use underscores instead of spaces (e.g. VIP_segment)</div>
-      </div>
-
-      <!-- Step 2: Conditions -->
-      <div class="modal-section-label" style="display:flex;align-items:center;gap:8px;">
-        <span style="width:20px;height:20px;border-radius:50%;background:#0d9488;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>
-        Who does this rule apply to?
-      </div>
-      <div class="cond-group">
-        <div class="cond-group-header">
-          <div class="logic-pill" id="customLogicPill">
-            <button class="logic-btn active" onclick="setCustomLogic('AND',this)">AND</button>
-            <button class="logic-btn" onclick="setCustomLogic('OR',this)">OR</button>
-          </div>
-          <span class="cond-group-label">Match <span id="customLogicLabel">all</span> conditions</span>
-        </div>
-        <div class="cond-rows" id="customCondRows"></div>
-        <div class="cond-footer">
-          <button class="btn-add-cond" onclick="addCustomCondRow()">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add condition
-          </button>
-        </div>
-      </div>
-
-      <div class="modal-divider"></div>
-
-      <!-- Step 3: Rule Type -->
-      <div class="modal-section-label" style="display:flex;align-items:center;gap:8px;">
-        <span style="width:20px;height:20px;border-radius:50%;background:#0d9488;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">3</span>
-        What should happen to matching contacts?
-      </div>
-      <div class="rule-type-options">
-        <!-- Option 1: Exclude -->
-        <div class="rule-type-opt" id="rto-exclude" onclick="selectModalRuleType('exclude')">
-          <div class="rto-radio" id="rto-radio-exclude"></div>
-          <div class="rto-icon rto-icon-excl">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9"/><path d="M4.93 4.93l14.14 14.14"/>
-            </svg>
-          </div>
-          <div class="rto-text">
-            <div class="rto-title">Exclude from throttling</div>
-            <div class="rto-desc">Contacts matching these conditions can receive invites freely — no throttle limits apply to them.</div>
-          </div>
-        </div>
-        <!-- Option 2: Custom limits -->
-        <div class="rule-type-opt" id="rto-limit" onclick="selectModalRuleType('limit')">
-          <div class="rto-radio" id="rto-radio-limit"></div>
-          <div class="rto-icon rto-icon-limit">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/>
-            </svg>
-          </div>
-          <div class="rto-text">
-            <div class="rto-title">Apply custom throttle limits</div>
-            <div class="rto-desc">Contacts matching these conditions follow the invite limits you define below instead of the default rule.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Throttle Limits (shown only for 'limit' type) -->
-      <div id="throttleLimitsSection" style="display:none;">
-        <div class="modal-divider"></div>
-        <div class="modal-section-label">Throttle Limits for Matching Contacts</div>
-        <div class="modal-limits">
-          <div class="modal-limits-row1">
-            <!-- Max Invites -->
-            <div class="rule-control">
-              <div class="rule-control-label">Max Invites</div>
-              <div class="stepper">
-                <button class="stepper-btn" onclick="stepperChange('mMaxInvites',-1)">&#8722;</button>
-                <input class="stepper-val" id="mMaxInvites" type="number" value="5" min="1">
-                <button class="stepper-btn" onclick="stepperChange('mMaxInvites',1)">+</button>
-              </div>
-              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Maximum number of invites</div>
-            </div>
-            <!-- Time Interval -->
-            <div class="rule-control">
-              <div class="rule-control-label">Time Interval</div>
-              <div class="select-wrap">
-                <select class="select-styled" id="mInterval" onchange="handleIntervalChange(this)">
-                  <option value="7">Every 7 days</option>
-                  <option value="30" selected>Every 30 days</option>
-                  <option value="60">Every 60 days</option>
-                  <option value="90">Every 90 days</option>
-                  <option value="custom">Custom days...</option>
-                </select>
-                <svg class="select-chevron" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-              </div>
-              <div id="customIntervalWrap" class="custom-interval-wrap">
-                <input type="number" id="mIntervalCustom" min="1" value="45" placeholder="Days">
-                <span class="custom-interval-unit">days</span>
-              </div>
-              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Time window to count invites</div>
-            </div>
-          </div>
-
-          <!-- Min Gap — optional -->
-          <div class="modal-mingap-section" style="width:100%;">
-            <div class="modal-mingap-header">
-              <div class="modal-mingap-header-left">
-                <div class="rule-control-label" style="display:flex;align-items:center;">
-                  Minimum Gap Between Invites
-                  <span class="optional-badge">Optional</span>
-                </div>
-                <div class="modal-mingap-hint">Minimum days that must pass between two invites sent to the same contact — regardless of how many invites are left in the time window.</div>
-              </div>
-              <label class="toggle" style="flex-shrink:0;margin-top:2px;">
-                <input type="checkbox" id="mMinGapEnabled" onchange="handleMinGapToggle(this)">
-                <span class="toggle-track"></span>
-              </label>
-            </div>
-            <div id="mMinGapSection" style="display:none; margin-top:12px;">
-              <div class="modal-mingap-stepper">
-                <div class="stepper">
-                  <button class="stepper-btn" onclick="stepperChange('mMinGap',-1)">&#8722;</button>
-                  <input class="stepper-val" id="mMinGap" type="number" value="3" min="1">
-                  <button class="stepper-btn" onclick="stepperChange('mMinGap',1)">+</button>
-                </div>
-                <span class="modal-mingap-unit">days</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn-modal-cancel" onclick="closeCustomRuleModal()">Cancel</button>
-      <button class="btn-modal-save" onclick="saveCustomRule()">Save Rule</button>
-    </div>
-  </div>
 </div>
 
 <!-- TOAST -->
@@ -1188,12 +1181,6 @@
     setSelectValue('defInterval', s.defInterval);
     document.getElementById('defMinGap').value = s.defMinGap;
 
-    const defToggle = document.getElementById('defaultRuleToggle');
-    defToggle.checked = s.defEnabled;
-    toggleDefaultRule(defToggle);
-
-    document.getElementById('saveTimestamp').textContent = s.lastSaved ? 'Last saved: ' + s.lastSaved : 'Not yet saved';
-
     applyOverrideState(s.hasOverride);
     renderCustomRules();
   }
@@ -1214,36 +1201,38 @@
   // ── Scenario switcher ─────────────────────────────────
   let currentScenario = 1;
 
+  // ── Scope dropdown examples ────────────────────────────
+  const scopeExamples = {
+    contact: 'John can receive max 2 invites in 30 days — regardless of how many tickets he raises.',
+    ticket:  'John won\'t get more than 1 invite for Ticket #101, but can still get one for Ticket #102.',
+    order:   'John won\'t get more than 1 invite for Order #5001, but can still get one for Order #5002.',
+    session: 'John won\'t get more than 1 invite per session — a new session resets his count.',
+    case:    'John won\'t get more than 1 invite for Case #301, but can still get one for Case #302.',
+    product: 'John won\'t get more than 1 invite for Product SKU-A, but can still get one for SKU-B.'
+  };
+
+  function updateScopeExample() {
+    const v = document.getElementById('scopeSelect').value;
+    document.getElementById('scopeExampleBox').textContent = scopeExamples[v] || scopeExamples.contact;
+  }
+
   // ── Survey-level throttling toggle ────────────────────
   function handleOverrideToggle(checkbox) {
     surveys[currentSurveyIdx].hasOverride = checkbox.checked;
-    document.getElementById('overridePanel').style.display = checkbox.checked ? '' : 'none';
-    document.getElementById('usingDefaultBlock').style.display = checkbox.checked ? 'none' : '';
+    applyOverrideState(checkbox.checked);
     showToast(checkbox.checked ? 'Survey-level throttling enabled.' : 'Survey-level throttling disabled.', 'success');
   }
 
-  // ── Default rule toggle ────────────────────────────────
-  // ── Limit-by variable checkbox ────────────────────────
-  let limitByVariable = false;
-
-  function toggleLimitByVariable() {
-    limitByVariable = !limitByVariable;
-    document.getElementById('limitByVarRow').classList.toggle('checked', limitByVariable);
-    document.getElementById('variableSelectRow').style.display = limitByVariable ? 'flex' : 'none';
-    if (!limitByVariable) document.getElementById('limitByVariableSelect').value = '';
-    // Sync right awareness panel — contact always on, variable highlights when enabled
-    const variable = document.getElementById('awBlockVariable');
-    if (variable) {
-      variable.style.opacity = limitByVariable ? '1' : '0.45';
-      variable.style.borderLeftColor = limitByVariable ? '#7c3aed' : '#ddd6fe';
-    }
+  function applyOverrideState(isOn) {
+    const panel = document.getElementById('overridePanel');
+    const statusLine = document.getElementById('toggleStatusLine');
+    panel.classList.toggle('config-locked', !isOn);
+    statusLine.style.display = isOn ? 'none' : '';
+    if (!isOn) closeRuleDrawer();
   }
 
   function toggleMinGap(checkbox) {
-    const block = document.getElementById('minGapBlock');
-    const body = document.getElementById('minGapBody');
-    block.classList.toggle('rule-active', checkbox.checked);
-    body.style.display = checkbox.checked ? '' : 'none';
+    document.getElementById('minGapBody').style.display = checkbox.checked ? 'flex' : 'none';
   }
 
   // ── Stepper ────────────────────────────────────────────
@@ -1366,7 +1355,7 @@
     const rule = rules.find(r => r.id === id);
     if (!rule) return;
     editingRuleId = id;
-    openCustomRuleModal(rule);
+    openRuleDrawer(rule);
   }
 
   // ── Rule type selection ────────────────────────────────
@@ -1379,31 +1368,26 @@
     document.getElementById('throttleLimitsSection').style.display = type === 'limit' ? 'block' : 'none';
   }
 
-  // ── Modal ──────────────────────────────────────────────
-  function openCustomRuleModal(prefill) {
+  // ── Drawer ─────────────────────────────────────────────
+  function openRuleDrawer(prefill) {
     customCondCount = 0;
     customCondLogic = prefill ? (prefill.logic || 'AND') : 'AND';
 
-    document.getElementById('customModalTitle').textContent = prefill ? 'Edit Custom Rule' : 'Add Custom Rule';
     document.getElementById('customRuleName').value = prefill ? prefill.name : '';
     document.getElementById('customRuleName').classList.remove('error');
     document.getElementById('customRuleNameError').classList.remove('visible');
     document.getElementById('customCondRows').innerHTML = '';
 
-    // Reset AND/OR pill
     const pill = document.getElementById('customLogicPill');
     pill.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
     pill.querySelector('.logic-btn:nth-child(' + (customCondLogic === 'AND' ? '1' : '2') + ')').classList.add('active');
     document.getElementById('customLogicLabel').textContent = customCondLogic === 'AND' ? 'all' : 'any';
 
-    // Set rule type (radio)
     const ruleType = (prefill && prefill.ruleType) ? prefill.ruleType : 'limit';
     selectModalRuleType(ruleType);
 
-    // Set limits
     document.getElementById('mMaxInvites').value = prefill ? (prefill.maxInvites || 5) : 5;
 
-    // Interval — handle custom
     const rawInterval = prefill ? (prefill.interval || '30 days').replace('Every ', '').replace(' days', '').replace(' day', '') : '30';
     const stdOptions = ['7','30','60','90'];
     if (stdOptions.includes(rawInterval)) {
@@ -1415,13 +1399,11 @@
       document.getElementById('mIntervalCustom').value = rawInterval || 45;
     }
 
-    // Min gap — optional toggle
     const hasMinGap = prefill && prefill.minGap != null && prefill.minGap > 0;
     document.getElementById('mMinGapEnabled').checked = hasMinGap;
     document.getElementById('mMinGapSection').style.display = hasMinGap ? 'block' : 'none';
     document.getElementById('mMinGap').value = hasMinGap ? prefill.minGap : 3;
 
-    // Pre-fill conditions
     if (prefill && prefill.conditions.length > 0) {
       prefill.conditions.forEach(c => addCustomCondRow(c));
     } else {
@@ -1429,11 +1411,16 @@
     }
 
     if (!prefill) editingRuleId = null;
-    document.getElementById('customRuleModal').classList.add('open');
+
+    const drawer = document.getElementById('ruleDrawer');
+    drawer.style.display = 'block';
+    drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.getElementById('btnAddRule').style.display = 'none';
   }
 
-  function closeCustomRuleModal() {
-    document.getElementById('customRuleModal').classList.remove('open');
+  function closeRuleDrawer() {
+    document.getElementById('ruleDrawer').style.display = 'none';
+    document.getElementById('btnAddRule').style.display = '';
     editingRuleId = null;
   }
 
@@ -1719,7 +1706,7 @@
       showToast('Custom rule added.', 'success');
     }
 
-    closeCustomRuleModal();
+    closeRuleDrawer();
     renderCustomRules();
   }
 
@@ -1729,7 +1716,6 @@
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const dateStr = months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
     surveys[currentSurveyIdx].lastSaved = dateStr;
-    document.getElementById('saveTimestamp').textContent = 'Last saved: ' + dateStr;
     showToast('Throttling settings saved.', 'success');
   }
 
@@ -1748,17 +1734,13 @@
     toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 2800);
   }
 
-  // ── Modal backdrop click / ESC ─────────────────────────
-  document.getElementById('customRuleModal').addEventListener('click', function(e) {
-    if (e.target === this) closeCustomRuleModal();
-  });
+  // ── ESC closes drawer ──────────────────────────────────
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeCustomRuleModal();
+    if (e.key === 'Escape') closeRuleDrawer();
   });
 
   // ── Init ───────────────────────────────────────────────
   switchSurvey(0);
-  setScenario(1);
 </script>
 </body>
 </html>
